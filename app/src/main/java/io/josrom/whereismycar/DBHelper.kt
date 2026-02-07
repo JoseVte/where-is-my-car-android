@@ -9,7 +9,7 @@ import android.location.Address
 import org.json.JSONObject
 import org.osmdroid.api.IGeoPoint
 
-class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) : SQLiteOpenHelper(context, DATABASE_NAME, factory, DATABASE_VERSION) {
+class DBHelper(private val context: Context, factory: SQLiteDatabase.CursorFactory?) : SQLiteOpenHelper(context, DATABASE_NAME, factory, DATABASE_VERSION) {
     override fun onCreate(db: SQLiteDatabase?) {
         val createTableQuery = """
             CREATE TABLE $TABLE_NAME (
@@ -168,6 +168,7 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) : SQLit
         }
 
         writableDatabase.insert(TABLE_NAME, null, values)
+        SyncManager(context).sync()
     }
 
     fun updateLocation(id: Int, address: String, location: IGeoPoint) {
@@ -185,10 +186,12 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) : SQLit
         }
 
         writableDatabase.update(TABLE_NAME, values, "$COLUMN_ID = ?", arrayOf(id.toString()))
+        SyncManager(context).sync()
     }
 
     fun deleteLocation(id: Int) {
         writableDatabase.delete(TABLE_NAME, "$COLUMN_ID = ?", arrayOf(id.toString()))
+        SyncManager(context).sync()
     }
 
     fun getLocation(locationId: Int): SavedLocation? {

@@ -13,14 +13,18 @@ navigationUiKtx = "2.9.7"
 osmbonuspack = "6.9.0"
 osmdroidAndroid = "6.1.20"
 javaxInject = "1"
-kotlin = "2.0.21"
+kotlin = "2.3.10"
 composeBom = "2026.01.01"
 composeMaterial = "1.5.6"
 composeFoundation = "1.5.6"
 wearToolingPreview = "1.0.0"
 activityCompose = "1.12.3"
 coreSplashscreen = "1.2.0"
-preference = "1.2.0"
+preference = "1.2.1"
+playServicesAuth = "21.5.0"
+gson = "2.13.2"
+firebaseBom = "34.9.0"
+googleServices = "4.4.4"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -50,8 +54,13 @@ androidx-wear-tooling-preview = { group = "androidx.wear", name = "wear-tooling-
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
 androidx-core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "coreSplashscreen" }
 androidx-preference = { group = "androidx.preference", name = "preference", version.ref = "preference" }
+play-services-auth = { group = "com.google.android.gms", name = "play-services-auth", version.ref = "playServicesAuth" }
+gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
+firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
+firebase-auth = { group = "com.google.firebase", name = "firebase-auth-ktx" }
+firebase-database = { group = "com.google.firebase", name = "firebase-database-ktx" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
-
+google-services = { id = "com.google.gms.google-services", version.ref = "googleServices" }
