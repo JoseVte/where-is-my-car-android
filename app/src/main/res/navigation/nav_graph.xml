@@ -8,7 +8,7 @@
     <fragment
         android:id="@+id/LocationListFragment"
         android:name="io.josrom.whereismycar.LocationListFragment"
-        android:label="@string/location_list_fragment_label"
+        android:label=""
         tools:layout="@layout/fragment_location_list">
 
         <action

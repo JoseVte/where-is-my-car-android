@@ -14,9 +14,15 @@
 
         <Button
             android:id="@+id/save_car"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:padding="8dp"
             android:text="@string/save_position"
+            android:maxLines="2"
+            android:ellipsize="end"
+            app:cornerRadius="40dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -41,6 +47,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom|end"
                 android:layout_margin="16dp"
+                android:contentDescription="@string/current_location"
                 android:src="@android:drawable/ic_menu_mylocation"
                 android:visibility="gone"
                 app:fabSize="mini" />

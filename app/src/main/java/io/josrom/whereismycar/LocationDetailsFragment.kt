@@ -1,5 +1,7 @@
 package io.josrom.whereismycar
 
+import android.content.Context
+import android.location.LocationManager
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -55,6 +57,19 @@ class LocationDetailsFragment : Fragment() {
 
         loadLocationData()
         setupRouteButton()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        checkLocationSettings()
+    }
+
+    private fun checkLocationSettings() {
+        val locationManager = requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        val isGpsEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
+        val isNetworkEnabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
+
+        binding.btnRoute.visibility = if (isGpsEnabled || isNetworkEnabled) View.VISIBLE else View.GONE
     }
 
     private fun loadLocationData() {
@@ -129,6 +144,10 @@ class LocationDetailsFragment : Fragment() {
                 if (road.mStatus == Road.STATUS_OK) {
                     roadOverlay = RoadManager.buildRoadOverlay(road)
                     map.overlays.add(roadOverlay)
+                    
+                    // Zoom out to show the whole route
+                    map.zoomToBoundingBox(road.mBoundingBox, true, 150)
+                    
                     map.invalidate()
                     isRouteShown = true
                     binding.btnRoute.setImageResource(android.R.drawable.ic_menu_close_clear_cancel)
@@ -149,6 +168,12 @@ class LocationDetailsFragment : Fragment() {
         map.invalidate()
         isRouteShown = false
         binding.btnRoute.setImageResource(android.R.drawable.ic_menu_directions)
+        
+        // Return to car location
+        location?.let {
+            map.controller.animateTo(GeoPoint(it.latitude, it.longitude))
+            map.controller.setZoom(18.0)
+        }
     }
 
     override fun onDestroyView() {

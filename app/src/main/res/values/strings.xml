@@ -82,4 +82,5 @@
     <!-- Location Preferences -->
     <string name="location_service_title">Location Service</string>
     <string name="location_service_summary">Enable/Disable location updates</string>
+    <string name="current_location">Go to current location</string>
 </resources>

@@ -16,6 +16,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
@@ -68,13 +69,13 @@ class LocationListFragment : Fragment(), LocationListener, SharedPreferences.OnS
 
     // This property is only valid between onCreateView and
     // onDestroyView.
-    private val binding get() = _binding!!
+    private val binding get() = _binding
 
     @RequiresApi(Build.VERSION_CODES.R)
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
+    ): View? {
         _prefs = PreferenceManager.getDefaultSharedPreferences(requireContext())
         _prefs.registerOnSharedPreferenceChangeListener(this)
         
@@ -126,13 +127,16 @@ class LocationListFragment : Fragment(), LocationListener, SharedPreferences.OnS
         // Create database helper instance
         _db = DBHelper(requireContext(), null)
 
-        return binding.root
+        return _binding?.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.saveCar.setOnClickListener {
+        // Clear the activity title for this fragment
+        (activity as? AppCompatActivity)?.supportActionBar?.title = ""
+
+        binding?.saveCar?.setOnClickListener {
             // Save the current location to database
             val location = _currentCarOverlay?.position
 
@@ -158,7 +162,7 @@ class LocationListFragment : Fragment(), LocationListener, SharedPreferences.OnS
             }
         }
 
-        binding.btnCenterLocation.setOnClickListener {
+        binding?.btnCenterLocation?.setOnClickListener {
             _location?.let {
                 val centerPoint = GeoPoint(it.latitude, it.longitude)
                 _mapController.animateTo(centerPoint)
@@ -166,13 +170,13 @@ class LocationListFragment : Fragment(), LocationListener, SharedPreferences.OnS
         }
 
         // Initialize RecyclerView
-        binding.carLocations.layoutManager = LinearLayoutManager(context)
+        binding?.carLocations?.layoutManager = LinearLayoutManager(context)
 
         this.getSavedLocations()
     }
 
     private fun getSavedLocations() {
-        binding.carLocations.adapter = LocationAdapter(_db.getAllLocations(20), { id ->
+        binding?.carLocations?.adapter = LocationAdapter(_db.getAllLocations(20), { id ->
             val bundle = Bundle().apply {
                 putInt("locationId", id)
             }
@@ -194,6 +198,7 @@ class LocationListFragment : Fragment(), LocationListener, SharedPreferences.OnS
 
     override fun onResume() {
         super.onResume()
+        (activity as? AppCompatActivity)?.supportActionBar?.title = ""
         _binding?.map?.onResume()
         updateLocationServiceStatus()
         this.getSavedLocations()
@@ -281,15 +286,15 @@ class LocationListFragment : Fragment(), LocationListener, SharedPreferences.OnS
                 _myLocationNewOverlay?.enableMyLocation()
                 _compassOverlay?.enableCompass()
                 registerLocationListener()
-                binding.btnCenterLocation.visibility = View.VISIBLE
+                binding?.btnCenterLocation?.visibility = View.VISIBLE
             } else {
-                binding.btnCenterLocation.visibility = View.GONE
+                binding?.btnCenterLocation?.visibility = View.GONE
             }
         } else {
             _myLocationNewOverlay?.disableMyLocation()
             _compassOverlay?.disableCompass()
             unregisterLocationListener()
-            binding.btnCenterLocation.visibility = View.GONE
+            binding?.btnCenterLocation?.visibility = View.GONE
         }
     }
 
