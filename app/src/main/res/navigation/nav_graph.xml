@@ -18,6 +18,18 @@
             android:id="@+id/action_ExploreFragment_to_SettingsFragment"
             app:destination="@id/SettingsFragment" />
     </fragment>
+
+    <fragment
+        android:id="@+id/nav_history"
+        android:name="io.josrom.whereismycar.HistoryFragment"
+        android:label="History"
+        tools:layout="@layout/fragment_history" />
+
+    <fragment
+        android:id="@+id/nav_settings"
+        android:name="io.josrom.whereismycar.SettingsFragment"
+        android:label="Settings" />
+
     <fragment
         android:id="@+id/LocationDetailsFragment"
         android:name="io.josrom.whereismycar.LocationDetailsFragment"

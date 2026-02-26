@@ -22,53 +22,58 @@
         android:id="@+id/bottom_nav_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#0A0E14"
-        android:layout_marginBottom="-32dp"
+        android:paddingTop="16dp"
+        android:background="@android:color/transparent"
         app:layout_constraintBottom_toBottomOf="parent">
 
+        <!-- Fondo negro de la barra -->
         <View
             android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="#1AFFFFFF"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:layout_height="70dp"
+            android:background="#0A0E14"
+            app:layout_constraintBottom_toBottomOf="parent" />
 
-        <View
-            android:id="@+id/bg_nav_center_view"
-            android:layout_width="128dp"
-            android:layout_height="128dp"
-            android:layout_marginTop="-32dp"
-            android:background="@drawable/bg_nav_center_selected"
-            android:clickable="true"
-            android:onClick="goToExplorer"
-            app:layout_constraintBottom_toBottomOf="parent"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:elevation="8dp"
+            android:layout_marginTop="-16dp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintStart_toStartOf="parent">
+            <!-- Círculo Azul/Gris Central -->
+            <View
+                android:id="@+id/bg_nav_center_view"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:background="@drawable/bg_nav_center_selected"
+                android:clickable="true"
+                android:focusable="true" />
 
-        <ImageView
-            android:layout_width="64dp"
-            android:layout_height="64dp"
-            android:src="@drawable/ic_map"
-            app:tint="@android:color/white"
-            android:clickable="false"
-            android:elevation="10dp"
-            app:layout_constraintTop_toTopOf="@id/bg_nav_center_view"
-            app:layout_constraintBottom_toBottomOf="@id/bg_nav_center_view"
-            app:layout_constraintStart_toStartOf="@id/bg_nav_center_view"
-            app:layout_constraintEnd_toEndOf="@id/bg_nav_center_view"
-            />
+            <!-- Icono del Mapa -->
+            <ImageView
+                android:id="@+id/ic_nav_center_icon"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:elevation="10dp"
+                android:src="@drawable/ic_map"
+                app:layout_constraintBottom_toBottomOf="@+id/bg_nav_center_view"
+                app:layout_constraintEnd_toEndOf="@id/bg_nav_center_view"
+                app:layout_constraintStart_toStartOf="@+id/bg_nav_center_view"
+                app:layout_constraintTop_toTopOf="@id/bg_nav_center_view"
+                app:layout_constraintVertical_bias="0.4"
+                app:tint="@android:color/white" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/bottom_navigation"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@android:color/transparent"
+            android:layout_height="100dp"
+            android:background="@color/bg_dark"
             style="@style/BottomNavigationViewStyle"
             app:elevation="0dp"
-            app:itemIconTint="@null"
+            app:itemIconTint="@color/nav_item_color"
             app:itemTextColor="@color/nav_item_color"
-            app:itemActiveIndicatorStyle="@style/Theme.PlayCore.Transparent"
+            app:itemActiveIndicatorStyle="@android:color/transparent"
             app:menu="@menu/bottom_nav_menu"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent" />

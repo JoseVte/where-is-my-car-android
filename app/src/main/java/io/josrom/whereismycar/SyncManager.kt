@@ -58,8 +58,8 @@ class SyncManager(private val context: Context) {
     }
 
     private fun uploadData(userId: String) {
-        val dbHelper = DBHelper(context, null)
-        val locations = dbHelper.getAllLocations()
+        val locationRepository = SavedLocationRepository(context)
+        val locations = locationRepository.getAllLocations()
         val userRef = database.getReference("users").child(userId).child("locations")
         
         for (location in locations) {
@@ -71,14 +71,14 @@ class SyncManager(private val context: Context) {
         val userRef = database.getReference("users").child(userId).child("locations")
         userRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                val dbHelper = DBHelper(context, null)
-                val localLocations = dbHelper.getAllLocations()
+                val locationRepository = SavedLocationRepository(context)
+                val localLocations = locationRepository.getAllLocations()
                 val localIds = localLocations.map { it.id }
 
                 for (locationSnapshot in snapshot.children) {
                     val cloudLocation = locationSnapshot.getValue(SavedLocation::class.java)
                     if (cloudLocation != null && !localIds.contains(cloudLocation.id)) {
-                        insertCloudLocation(dbHelper, cloudLocation)
+                        insertCloudLocation(locationRepository, cloudLocation)
                     }
                 }
             }
@@ -89,18 +89,22 @@ class SyncManager(private val context: Context) {
         })
     }
 
-    private fun insertCloudLocation(dbHelper: DBHelper, location: SavedLocation) {
+    private fun insertCloudLocation(locationRepository: SavedLocationRepository, location: SavedLocation) {
+        val dbHelper = DBHelper(context, null)
         val values = ContentValues().apply {
-            put(DBHelper.COLUMN_ID, location.id)
-            put(DBHelper.COLUMN_ADDRESS, JSONObject(location.address as Map<*, *>).toString())
-            put(DBHelper.COLUMN_DISPLAY_NAME, location.displayName)
-            put(DBHelper.COLUMN_CITY, location.city)
-            put(DBHelper.COLUMN_COUNTRY, location.country)
-            put(DBHelper.COLUMN_LATITUDE, location.latitude)
-            put(DBHelper.COLUMN_LONGITUDE, location.longitude)
-            put(DBHelper.COLUMN_DATE, location.date)
+            put(SavedLocation.COLUMN_ID, location.id)
+            put(SavedLocation.COLUMN_DISPLAY_NAME, location.displayName)
+            put(SavedLocation.COLUMN_ADDRESS, location.address)
+            put(SavedLocation.COLUMN_CITY, location.city)
+            put(SavedLocation.COLUMN_COUNTRY, location.country)
+            put(SavedLocation.COLUMN_LATITUDE, location.latitude)
+            put(SavedLocation.COLUMN_LONGITUDE, location.longitude)
+            put(SavedLocation.COLUMN_DATE, location.date)
+            put(SavedLocation.COLUMN_CATEGORY_ID, location.categoryId)
+            put(SavedLocation.COLUMN_NOTE, location.note)
+            put(SavedLocation.COLUMN_ADDRESS_DATA, JSONObject(location.addressData as Map<*, *>).toString())
         }
-        dbHelper.writableDatabase.insertWithOnConflict(DBHelper.TABLE_NAME, null, values, android.database.sqlite.SQLiteDatabase.CONFLICT_IGNORE)
+        dbHelper.writableDatabase.insertWithOnConflict(SavedLocation.TABLE_NAME, null, values, android.database.sqlite.SQLiteDatabase.CONFLICT_IGNORE)
     }
 
     fun deleteFromCloud(locationId: Int) {

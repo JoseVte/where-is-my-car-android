@@ -1,5 +1,7 @@
 package io.josrom.whereismycar
 
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Context
 import android.location.LocationManager
 import android.os.Bundle
@@ -9,7 +11,8 @@ import android.preference.PreferenceManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatActivity
+import android.widget.PopupMenu
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import io.josrom.whereismycar.databinding.FragmentLocationDetailsBinding
 import org.osmdroid.bonuspack.routing.OSRMRoadManager
@@ -22,12 +25,14 @@ import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.Polyline
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
+import java.util.Locale
+import kotlin.math.abs
 
 class LocationDetailsFragment : Fragment() {
 
     private var _binding: FragmentLocationDetailsBinding? = null
     private val binding get() = _binding!!
-    private lateinit var _db: DBHelper
+    private lateinit var _locationRepository: SavedLocationRepository
     private var locationId: Int = -1
     private var location: SavedLocation? = null
     
@@ -46,9 +51,14 @@ class LocationDetailsFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        Configuration.getInstance().load(context, PreferenceManager.getDefaultSharedPreferences(requireContext()))
+        // Initialize osmdroid configuration
+        val ctx = requireContext()
+        Configuration.getInstance().load(ctx, PreferenceManager.getDefaultSharedPreferences(ctx))
+        // Crucial: Set a unique User-Agent for tile servers
+        Configuration.getInstance().userAgentValue = ctx.packageName
+        
         _binding = FragmentLocationDetailsBinding.inflate(inflater, container, false)
-        _db = DBHelper(requireContext(), null)
+        _locationRepository = SavedLocationRepository(ctx)
         return binding.root
     }
 
@@ -56,12 +66,21 @@ class LocationDetailsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         loadLocationData()
-        setupRouteButton()
+        setupClickListeners()
+        
+        binding.distanceText.visibility = View.GONE
+        binding.timeText.visibility = View.GONE
     }
 
     override fun onResume() {
         super.onResume()
+        binding.map.onResume() // Important for tiles
         checkLocationSettings()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        binding.map.onPause() // Important for tiles
     }
 
     private fun checkLocationSettings() {
@@ -69,51 +88,84 @@ class LocationDetailsFragment : Fragment() {
         val isGpsEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
         val isNetworkEnabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
 
-        binding.btnRoute.visibility = if (isGpsEnabled || isNetworkEnabled) View.VISIBLE else View.GONE
+        binding.btnStartNavigation.isEnabled = isGpsEnabled || isNetworkEnabled
     }
 
     private fun loadLocationData() {
-        location = _db.getLocation(locationId)
-        if (location != null) {
-            // Set the date as the activity title
-            (activity as? AppCompatActivity)?.supportActionBar?.title = location!!.date
+        location = _locationRepository.getLocation(locationId)
+        location?.let { loc ->
+            binding.locationName.text = loc.displayName.ifEmpty { "Saved Location" }
+            binding.addressSubtext.text = "${loc.city}, ${loc.country}"
+            binding.noteText.text = loc.note?.ifEmpty { "No notes added for this location." } ?: "No notes added for this location."
+            binding.dateText.text = loc.date
+            binding.categoryText.text = "Leisure" 
 
-            binding.dateLocation.text = location!!.date
-            val addressText = location!!.address.filter { (key, value) ->  key.startsWith("Address Line") && value.isNotEmpty() }
-            val otherAddressText = location!!.address.filter { (key, value) ->  !key.startsWith("Address Line") && value.isNotEmpty() }
-            binding.addressText.text = addressText.values.joinToString("\n")
-            binding.otherAddressText.text = otherAddressText.map { (key, value) -> "$key: $value" }.joinToString("\n")
-            binding.latitude.text = location!!.latitude.toString()
-            binding.longitude.text = location!!.longitude.toString()
+            val lat = String.format(Locale.US, "%.4f", abs(loc.latitude))
+            val lon = String.format(Locale.US, "%.4f", abs(loc.longitude))
+            val latDir = if (loc.latitude >= 0) "N" else "S"
+            val lonDir = if (loc.longitude >= 0) "E" else "W"
+            binding.coordsText.text = "$lat° $latDir, $lon° $lonDir"
 
             val map = binding.map
             map.setTileSource(TileSourceFactory.MAPNIK)
             map.setMultiTouchControls(true)
             val mapController = map.controller
             mapController.setZoom(18.0)
-            val startPoint = GeoPoint(location!!.latitude, location!!.longitude)
+            val startPoint = GeoPoint(loc.latitude, loc.longitude)
             mapController.setCenter(startPoint)
 
             val marker = Marker(map)
             marker.position = startPoint
             marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
-            marker.title = "Car Location"
+            marker.title = loc.displayName
             map.overlays.add(marker)
             
-            // Initialize location overlay but don't enable it yet
             locationOverlay = MyLocationNewOverlay(GpsMyLocationProvider(requireContext()), map)
             locationOverlay?.enableMyLocation()
         }
     }
 
-    private fun setupRouteButton() {
-        binding.btnRoute.setOnClickListener {
-            if (isRouteShown) {
-                removeRoute()
-            } else {
-                showRoute()
-            }
+    private fun setupClickListeners() {
+        binding.btnBack.setOnClickListener {
+            parentFragmentManager.popBackStack()
         }
+
+        binding.btnCopy.setOnClickListener {
+            val clipboard = requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+            val clip = ClipData.newPlainText("Coordinates", binding.coordsText.text)
+            clipboard.setPrimaryClip(clip)
+            Toast.makeText(context, "Coordinates copied to clipboard", Toast.LENGTH_SHORT).show()
+        }
+
+        binding.btnStartNavigation.setOnClickListener {
+            if (isRouteShown) removeRoute() else showRoute()
+        }
+        
+        binding.btnEdit.setOnClickListener {
+            Toast.makeText(context, "Edit functionality coming soon", Toast.LENGTH_SHORT).show()
+        }
+
+        binding.btnLayers.setOnClickListener {
+            showMapLayersMenu(it)
+        }
+    }
+
+    private fun showMapLayersMenu(view: View) {
+        val popup = PopupMenu(requireContext(), view)
+        popup.menu.add(0, 1, 0, "Standard Map")
+        popup.menu.add(0, 2, 0, "Public Transport")
+        popup.menu.add(0, 3, 0, "Topographic")
+
+        popup.setOnMenuItemClickListener { item ->
+            when (item.itemId) {
+                1 -> binding.map.setTileSource(TileSourceFactory.MAPNIK)
+                2 -> binding.map.setTileSource(TileSourceFactory.PUBLIC_TRANSPORT)
+                3 -> binding.map.setTileSource(TileSourceFactory.OpenTopo)
+            }
+            binding.map.invalidate()
+            true
+        }
+        popup.show()
     }
 
     private fun showRoute() {
@@ -122,9 +174,8 @@ class LocationDetailsFragment : Fragment() {
         
         val myLocation = locationOverlay?.myLocation
         if (myLocation == null) {
-            // If location is not yet available, try to enable it and wait a bit or show a message
+            Toast.makeText(context, "Waiting for GPS location...", Toast.LENGTH_SHORT).show()
             locationOverlay?.enableMyLocation()
-            // For now, we just return if not available
             return
         }
 
@@ -144,13 +195,16 @@ class LocationDetailsFragment : Fragment() {
                 if (road.mStatus == Road.STATUS_OK) {
                     roadOverlay = RoadManager.buildRoadOverlay(road)
                     map.overlays.add(roadOverlay)
-                    
-                    // Zoom out to show the whole route
                     map.zoomToBoundingBox(road.mBoundingBox, true, 150)
-                    
                     map.invalidate()
                     isRouteShown = true
-                    binding.btnRoute.setImageResource(android.R.drawable.ic_menu_close_clear_cancel)
+                    
+                    binding.btnStartNavigation.text = "Stop Navigation"
+                    binding.distanceText.text = String.format(Locale.US, "%.1f km away", road.mLength)
+                    binding.timeText.text = String.format(Locale.US, "%d min driving", (road.mDuration / 60).toInt())
+                    
+                    binding.distanceText.visibility = View.VISIBLE
+                    binding.timeText.visibility = View.VISIBLE
                 }
             }
         }.start()
@@ -167,9 +221,11 @@ class LocationDetailsFragment : Fragment() {
         }
         map.invalidate()
         isRouteShown = false
-        binding.btnRoute.setImageResource(android.R.drawable.ic_menu_directions)
         
-        // Return to car location
+        binding.btnStartNavigation.text = "Start Navigation"
+        binding.distanceText.visibility = View.GONE
+        binding.timeText.visibility = View.GONE
+
         location?.let {
             map.controller.animateTo(GeoPoint(it.latitude, it.longitude))
             map.controller.setZoom(18.0)

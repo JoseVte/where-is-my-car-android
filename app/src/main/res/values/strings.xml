@@ -95,4 +95,17 @@
     <string name="map">Map</string>
     <string name="settings">Settings</string>
     <string name="get_started">Get Started</string>
+    <string name="save_instantly">TAP TO SAVE INSTANTLY</string>
+    <string name="save_current_position">Save Current Position</string>
+    <string name="see_all">See all</string>
+    <string name="recent_locations">Recent Locations</string>
+    <string name="back">Back</string>
+    <string name="walk">Walk</string>
+    <string name="drive">Drive</string>
+    <string name="edit">Edit</string>
+    <string name="share">Share</string>
+    <string name="coordinates">Coordinates</string>
+    <string name="layers">Layers</string>
+    <string name="distance_text">1.2 km away</string>
+    <string name="time_text">3 min driving</string>
 </resources>

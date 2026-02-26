@@ -12,19 +12,21 @@
         android:layout_height="match_parent" />
 
     <com.google.android.material.card.MaterialCardView
+        android:id="@+id/search_bar_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="36dp"
         android:layout_marginHorizontal="16dp"
         app:cardCornerRadius="12dp"
         app:cardElevation="8dp"
-        app:cardBackgroundColor="#151C26">
+        app:cardBackgroundColor="@color/bg_dark">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:padding="12dp"
+            android:paddingHorizontal="12dp"
+            android:paddingVertical="18dp"
             android:gravity="center_vertical">
 
             <ImageView
@@ -34,56 +36,133 @@
                 app:tint="#8E9299" />
 
             <EditText
+                android:id="@+id/et_search"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:hint="Search for locations..."
                 android:background="@null"
                 android:paddingStart="12dp"
-                android:textColor="#FFFFFF"
-                android:textColorHint="#8E9299" />
-
-            <com.google.android.material.imageview.ShapeableImageView
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:src="@drawable/avatar_placeholder"
-                app:shapeAppearanceOverlay="@style/CircleImage" />
+                android:textColor="@color/text_primary"
+                android:textColorHint="#8E9299"
+                android:importantForAutofill="no"
+                android:inputType="text"
+                android:imeOptions="actionSearch" />
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_gravity="bottom"
-        android:layout_width="match_parent"
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/btn_center_location"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp">
+        android:layout_marginEnd="24dp"
+        android:translationY="-38dp"
+        android:contentDescription="@string/current_location"
+        android:src="@android:drawable/ic_menu_mylocation"
+        app:backgroundTint="@color/bg_dark"
+        app:tint="@color/primary_blue"
+        app:fabSize="normal"
+        app:layout_anchor="@id/bottom_sheet"
+        app:layout_anchorGravity="top|end"
+        app:shapeAppearanceOverlay="@style/CircleImage" />
 
-        <com.google.android.material.button.MaterialButton
+    <LinearLayout
+        android:id="@+id/bottom_sheet"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/bg_bottom_container"
+        android:orientation="vertical"
+        android:paddingVertical="10dp"
+        android:paddingHorizontal="24dp"
+        app:behavior_expandedOffset="100dp"
+        app:behavior_fitToContents="false"
+        app:behavior_hideable="false"
+        app:behavior_peekHeight="180dp"
+        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+
+        <View
+            android:layout_width="40dp"
+            android:layout_height="4dp"
+            android:layout_gravity="center_horizontal"
+            android:background="@drawable/bg_drag_handle"
+            android:layout_marginBottom="10dp" />
+
+        <com.google.android.material.card.MaterialCardView
             android:id="@+id/btnSavePosition"
             android:layout_width="match_parent"
-            android:layout_height="80dp"
-            android:textSize="20sp"
-            android:text="Save Current Position"
-            android:textAllCaps="false"
-            app:icon="@drawable/ic_location_plus"
-            app:cornerRadius="16dp"
-            app:backgroundTint="#007AFF"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            android:layout_height="90dp"
+            android:clickable="true"
+            android:focusable="true"
+            app:cardBackgroundColor="@color/primary_blue"
+            app:cardCornerRadius="32dp"
+            app:cardElevation="4dp"
+            app:rippleColor="#4DFFFFFF">
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/btn_center_location"
-            android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_marginEnd="12dp"
+                        android:src="@drawable/ic_location_plus"
+                        app:tint="@color/text_primary" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/save_current_position"
+                        android:textColor="@color/text_primary"
+                        android:textSize="22sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:alpha="0.8"
+                    android:text="@string/save_instantly"
+                    android:textColor="@color/text_primary"
+                    android:textSize="12sp"
+                    android:letterSpacing="0.1" />
+
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:contentDescription="@string/current_location"
-            android:src="@android:drawable/ic_menu_mylocation"
-            android:visibility="gone"
-            app:fabSize="auto"
-            app:layout_constraintBottom_toTopOf="@+id/btnSavePosition"
-            app:layout_constraintEnd_toEndOf="@id/btnSavePosition" />
+            android:layout_marginTop="24dp">
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/recent_locations"
+                android:textColor="@color/text_primary"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+        </RelativeLayout>
 
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/carLocations"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="16dp"
+            android:layout_weight="1"
+            android:clipToPadding="false"
+            android:nestedScrollingEnabled="true"
+            android:paddingBottom="16dp" />
+
+    </LinearLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

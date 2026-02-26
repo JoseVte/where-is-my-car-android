@@ -43,7 +43,7 @@ import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
  */
 class LocationListFragment : Fragment(), LocationListener, SharedPreferences.OnSharedPreferenceChangeListener {
 
-    private lateinit var _db: DBHelper
+    private lateinit var _locationRepository: SavedLocationRepository
     private lateinit var _mapController: IMapController
 
     private var _binding: FragmentLocationListBinding? = null
@@ -124,8 +124,8 @@ class LocationListFragment : Fragment(), LocationListener, SharedPreferences.OnS
             updateLocationServiceStatus()
         }
 
-        // Create database helper instance
-        _db = DBHelper(requireContext(), null)
+        // Initialize repository
+        _locationRepository = SavedLocationRepository(requireContext())
 
         return _binding?.root
     }
@@ -153,9 +153,9 @@ class LocationListFragment : Fragment(), LocationListener, SharedPreferences.OnS
                     }
 
                     if (address != null && address.isNotEmpty()) {
-                        _db.insertLocation(address.first(), location)
+                        _locationRepository.insertLocation(address.first(), location)
                     } else {
-                        _db.insertLocation("Unknown location", location)
+                        _locationRepository.insertLocation("Unknown location", location)
                     }
                     getSavedLocations()
                 }
@@ -176,7 +176,7 @@ class LocationListFragment : Fragment(), LocationListener, SharedPreferences.OnS
     }
 
     private fun getSavedLocations() {
-        binding?.carLocations?.adapter = LocationAdapter(_db.getAllLocations(20), { id ->
+        binding?.carLocations?.adapter = LocationAdapter(_locationRepository.getAllLocations(20), { id ->
             val bundle = Bundle().apply {
                 putInt("locationId", id)
             }
@@ -185,7 +185,7 @@ class LocationListFragment : Fragment(), LocationListener, SharedPreferences.OnS
                 bundle
             )
         }, { id ->
-            _db.deleteLocation(id)
+            _locationRepository.deleteLocation(id)
             getSavedLocations()
         })
     }

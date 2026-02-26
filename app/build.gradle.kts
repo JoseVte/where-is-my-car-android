@@ -23,9 +23,7 @@ android {
         create("mobile") {
             dimension = "device"
         }
-        create("wear") {
-            dimension = "device"
-        }
+        create("wear") { dimension = "device" }
     }
 
     buildTypes {
@@ -46,6 +44,10 @@ android {
         compose = true
     }
     useLibrary("wear-sdk")
+
+    configurations.all {
+        exclude(group = "com.j256.ormlite", module = "ormlite-core")
+    }
 }
 
 dependencies {
@@ -61,6 +63,9 @@ dependencies {
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
     implementation(libs.osmdroid.android)
+    implementation(libs.osmdroid.wms)
+    implementation(libs.osmdroid.mapsforge)
+    implementation(libs.osmdroid.geopackage)
     implementation(libs.osmbonuspack)
     implementation(libs.androidx.datastore)
     implementation(libs.androidx.datastore.preferences)
@@ -79,9 +84,9 @@ dependencies {
     implementation(libs.gson)
     
     // Firebase
-    implementation(platform("com.google.firebase:firebase-bom:34.8.0"))
-    implementation("com.google.firebase:firebase-auth")
-    implementation("com.google.firebase:firebase-database")
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.auth)
+    implementation(libs.firebase.database)
     implementation(libs.androidx.activity)
 
     testImplementation(libs.junit)

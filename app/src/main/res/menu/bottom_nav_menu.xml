@@ -2,14 +2,14 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/nav_history"
-        android:icon="@drawable/ic_nav_history_selector"
+        android:icon="@drawable/ic_history"
         android:title="@string/history" />
     <item
-        android:id="@+id/nav_explore"
+        android:id="@+id/ExploreFragment"
         android:icon="@android:color/transparent"
         android:title="" />
     <item
         android:id="@+id/nav_settings"
-        android:icon="@drawable/ic_nav_settings_selector"
+        android:icon="@drawable/ic_settings"
         android:title="@string/settings" />
 </menu>

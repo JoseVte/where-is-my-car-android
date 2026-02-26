@@ -10,14 +10,17 @@
     <style name="BottomNavigationViewStyle" parent="Widget.Material3.BottomNavigationView">
         <item name="labelVisibilityMode">labeled</item>
         <item name="itemRippleColor">@null</item>
-        <item name="itemIconTint">@null</item>
+        <item name="itemIconSize">24dp</item>
+        <item name="itemIconTint">@color/nav_item_color</item>
         <item name="itemTextColor">@color/nav_item_color</item>
         <item name="itemTextAppearanceActive">@style/NavTextAppearance</item>
         <item name="itemTextAppearanceInactive">@style/NavTextAppearance</item>
     </style>
 
     <style name="NavTextAppearance" parent="TextAppearance.Material3.LabelSmall">
-        <item name="android:textSize">12sp</item>
+        <item name="android:textSize">10sp</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
     </style>
 
     <style name="ShapeAppearance.Circle" parent="">

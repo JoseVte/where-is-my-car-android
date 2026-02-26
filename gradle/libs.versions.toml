@@ -1,5 +1,5 @@
 [versions]
-agp = "9.0.1"
+agp = "9.1.0"
 coreKtx = "1.17.0"
 datastore = "1.2.0"
 junit = "4.13.2"
@@ -9,25 +9,25 @@ appcompat = "1.7.1"
 material = "1.13.0"
 constraintlayout = "2.2.1"
 material3 = "1.4.0"
-material3AdaptiveNavigationSuite = "1.5.0-alpha14"
+material3AdaptiveNavigationSuite = "1.5.0-alpha15"
 navigationFragmentKtx = "2.9.7"
 navigationUiKtx = "2.9.7"
 osmbonuspack = "6.9.0"
 osmdroidAndroid = "6.1.20"
 javaxInject = "1"
 kotlin = "2.3.10"
-composeBom = "2026.01.01"
+composeBom = "2026.02.01"
 composeMaterial = "1.5.6"
 composeFoundation = "1.5.6"
 wearToolingPreview = "1.0.0"
-activityCompose = "1.12.3"
+activityCompose = "1.12.4"
 coreSplashscreen = "1.2.0"
 preference = "1.2.1"
-playServicesAuth = "21.5.0"
+playServicesAuth = "21.5.1"
 gson = "2.13.2"
-firebaseBom = "34.9.0"
+firebaseBom = "34.10.0"
 googleServices = "4.4.4"
-activity = "1.8.0"
+activity = "1.12.4"
 
 [libraries]
 androidx-compose-material3 = { module = "androidx.compose.material3:material3", version.ref = "material3" }
@@ -60,11 +60,14 @@ androidx-wear-tooling-preview = { group = "androidx.wear", name = "wear-tooling-
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
 androidx-core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "coreSplashscreen" }
 androidx-preference = { group = "androidx.preference", name = "preference", version.ref = "preference" }
+osmdroid-geopackage = { module = "org.osmdroid:osmdroid-geopackage", version.ref = "osmdroidAndroid" }
+osmdroid-mapsforge = { module = "org.osmdroid:osmdroid-mapsforge", version.ref = "osmdroidAndroid" }
+osmdroid-wms = { module = "org.osmdroid:osmdroid-wms", version.ref = "osmdroidAndroid" }
 play-services-auth = { group = "com.google.android.gms", name = "play-services-auth", version.ref = "playServicesAuth" }
 gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
-firebase-auth = { group = "com.google.firebase", name = "firebase-auth-ktx" }
-firebase-database = { group = "com.google.firebase", name = "firebase-database-ktx" }
+firebase-auth = { group = "com.google.firebase", name = "firebase-auth" }
+firebase-database = { group = "com.google.firebase", name = "firebase-database" }
 androidx-activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
 
 [plugins]

@@ -7,7 +7,6 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -15,6 +14,7 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
+import androidx.navigation.ui.setupWithNavController
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.common.api.ApiException
 import io.josrom.whereismycar.databinding.ActivityMainBinding
@@ -53,28 +53,21 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        if (savedInstanceState == null) {
-            supportFragmentManager.beginTransaction()
-                .replace(R.id.nav_host_fragment, ExploreFragment())
-                .commit()
-            binding.bottomNavigation.selectedItemId = R.id.nav_explore
-            updateCenterItemBackground(R.id.nav_explore)
+        val navController = getNavController()
+        
+        // Setup BottomNavigationView with NavController
+        binding.bottomNavigation.setupWithNavController(navController)
+
+        // Add listener for UI updates (like the center button background)
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            updateCenterItemBackground(destination.id)
         }
 
-        binding.bottomNavigation.setOnItemSelectedListener { item ->
-            val fragment = when (item.itemId) {
-                R.id.nav_history -> HistoryFragment()
-                R.id.nav_explore -> ExploreFragment()
-                R.id.nav_settings -> SettingsFragment()
-                else -> ExploreFragment()
+        // Set click listener for the center explorer button
+        binding.bgNavCenterView.setOnClickListener {
+            if (navController.currentDestination?.id != R.id.ExploreFragment) {
+                navController.navigate(R.id.ExploreFragment)
             }
-
-            supportFragmentManager.beginTransaction()
-                .replace(R.id.nav_host_fragment, fragment)
-                .commit()
-
-            updateCenterItemBackground(item.itemId)
-            true
         }
 
         syncManager = SyncManager(this)
@@ -82,11 +75,14 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun updateCenterItemBackground(selectedItemId: Int) {
-        val isExploreSelected = selectedItemId == R.id.nav_explore
+        val isExploreSelected = selectedItemId == R.id.ExploreFragment
         binding.bgNavCenterView.setBackgroundResource(
             if (isExploreSelected) R.drawable.bg_nav_center_selected
             else R.drawable.bg_nav_center_unselected
         )
+        
+        // También ajustamos la opacidad del icono para que se vea más "apagado"
+        binding.icNavCenterIcon.alpha = if (isExploreSelected) 1.0f else 0.5f
     }
 
     fun startSignIn() {
@@ -116,9 +112,5 @@ class MainActivity : AppCompatActivity() {
     override fun onSupportNavigateUp(): Boolean {
         return getNavController().navigateUp(appBarConfiguration)
             || super.onSupportNavigateUp()
-    }
-
-    fun goToExplorer(view: View) {
-        getNavController().navigate(R.id.ExploreFragment)
     }
 }

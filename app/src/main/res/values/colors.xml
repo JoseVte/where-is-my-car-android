@@ -9,4 +9,5 @@
     <color name="primary_blue">#007AFF</color>
     <color name="text_secondary">#8E9299</color>
     <color name="primary_gray">#33FFFFFF</color>
+    <color name="text_primary">#ffffff</color>
 </resources>
