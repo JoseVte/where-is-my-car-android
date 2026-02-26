@@ -1,0 +1,13 @@
+<!-- res/drawable/img_onboarding_1.xml (Placeholder) -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="200dp"
+    android:height="200dp"
+    android:viewportWidth="200"
+    android:viewportHeight="200">
+    <path
+        android:fillColor="#1C2633"
+        android:pathData="M0,0h200v200h-200z"/>
+    <path
+        android:fillColor="#007AFF"
+        android:pathData="M100,60l40,80h-80z"/>
+</vector>

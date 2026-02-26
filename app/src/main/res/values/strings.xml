@@ -83,4 +83,16 @@
     <string name="location_service_title">Location Service</string>
     <string name="location_service_summary">Enable/Disable location updates</string>
     <string name="current_location">Go to current location</string>
+    <string name="onboarding_title_1">Find Your Way Back</string>
+    <string name="onboarding_description_1">Get instant walking or driving directions to any of your saved locations. Sync everything with your Google account.</string>
+    <string name="onboarding_description_2">Categorize your spots as favorites, work, or parking. Add photos and details to remember everything.</string>
+    <string name="onboarding_title_2">Organize Your World</string>
+    <string name="onboarding_description_3">Get instant walking or driving directions to any of your saved locations. Sync everything with your Google account.</string>
+    <string name="onboarding_title_3">Find Your Way Back</string>
+    <string name="todo">TODO</string>
+    <string name="skip">Skip</string>
+    <string name="history">History</string>
+    <string name="map">Map</string>
+    <string name="settings">Settings</string>
+    <string name="get_started">Get Started</string>
 </resources>

@@ -1,5 +1,5 @@
 [versions]
-agp = "9.0.0"
+agp = "9.0.1"
 coreKtx = "1.17.0"
 datastore = "1.2.0"
 junit = "4.13.2"
@@ -8,6 +8,8 @@ espressoCore = "3.7.0"
 appcompat = "1.7.1"
 material = "1.13.0"
 constraintlayout = "2.2.1"
+material3 = "1.4.0"
+material3AdaptiveNavigationSuite = "1.5.0-alpha14"
 navigationFragmentKtx = "2.9.7"
 navigationUiKtx = "2.9.7"
 osmbonuspack = "6.9.0"
@@ -25,8 +27,12 @@ playServicesAuth = "21.5.0"
 gson = "2.13.2"
 firebaseBom = "34.9.0"
 googleServices = "4.4.4"
+activity = "1.8.0"
 
 [libraries]
+androidx-compose-material3 = { module = "androidx.compose.material3:material3", version.ref = "material3" }
+androidx-compose-material3-adaptive-navigation-suite = { module = "androidx.compose.material3:material3-adaptive-navigation-suite", version.ref = "material3AdaptiveNavigationSuite" }
+androidx-compose-material3-window-size-class1 = { module = "androidx.compose.material3:material3-window-size-class", version.ref = "material3" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-datastore = { module = "androidx.datastore:datastore", version.ref = "datastore" }
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
@@ -59,6 +65,7 @@ gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
 firebase-auth = { group = "com.google.firebase", name = "firebase-auth-ktx" }
 firebase-database = { group = "com.google.firebase", name = "firebase-database-ktx" }
+androidx-activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
