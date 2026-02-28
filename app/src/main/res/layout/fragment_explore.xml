@@ -47,6 +47,8 @@
                 android:textColorHint="#8E9299"
                 android:importantForAutofill="no"
                 android:inputType="text"
+                android:gravity="center_vertical"
+                android:includeFontPadding="false"
                 android:imeOptions="actionSearch" />
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
@@ -120,6 +122,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:includeFontPadding="false"
                         android:text="@string/save_current_position"
                         android:textColor="@color/text_primary"
                         android:textSize="22sp"
@@ -131,6 +134,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
                     android:alpha="0.8"
+                    android:includeFontPadding="false"
                     android:text="@string/save_instantly"
                     android:textColor="@color/text_primary"
                     android:textSize="12sp"
@@ -147,6 +151,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:includeFontPadding="false"
                 android:text="@string/recent_locations"
                 android:textColor="@color/text_primary"
                 android:textSize="20sp"

@@ -10,6 +10,7 @@ import android.view.MenuItem
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
@@ -18,6 +19,11 @@ import androidx.navigation.ui.setupWithNavController
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.common.api.ApiException
 import io.josrom.whereismycar.databinding.ActivityMainBinding
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import org.osmdroid.bonuspack.location.GeocoderNominatim
+import org.osmdroid.util.GeoPoint
 
 class MainActivity : AppCompatActivity() {
 
@@ -72,6 +78,47 @@ class MainActivity : AppCompatActivity() {
 
         syncManager = SyncManager(this)
         syncManager.sync()
+
+        // TODO: Only during development, allow enter directly on the first location 
+        // on the LocationDetailsFragment, and re-generate on each start.
+        if (savedInstanceState == null && BuildConfig.DEBUG) {
+            lifecycleScope.launch {
+                val repository = SavedLocationRepository(this@MainActivity)
+                withContext(Dispatchers.IO) {
+                    val locations = repository.getAllLocations()
+                    // Delete existing to re-generate as requested
+                    locations.forEach { repository.deleteLocation(it.id) }
+
+                    val location = GeoPoint(40.4168, -3.7038)
+                    val address = withContext(Dispatchers.IO) {
+                        try {
+                            GeocoderNominatim(packageName)
+                                .getFromLocation(location.latitude, location.longitude, 1)
+                        } catch (e: Exception) {
+                            Log.e("ExploreFragment", "Error getting address", e)
+                            null
+                        }
+                    }
+
+                    // Generate a new test location
+                    if (!address.isNullOrEmpty()) {
+                        repository.insertLocation(address.first(), location, 1, "Test node")
+                    } else {
+                        repository.insertLocation("Unknown location", location, 1, "Test node")
+                    }
+                    
+                    val newLocations = repository.getAllLocations(1)
+                    if (newLocations.isNotEmpty()) {
+                        withContext(Dispatchers.Main) {
+                            val bundle = Bundle().apply {
+                                putInt("locationId", newLocations[0].id)
+                            }
+                            navController.navigate(R.id.LocationDetailsFragment, bundle)
+                        }
+                    }
+                }
+            }
+        }
     }
 
     private fun updateCenterItemBackground(selectedItemId: Int) {

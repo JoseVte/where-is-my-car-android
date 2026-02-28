@@ -22,10 +22,8 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.findNavController
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -44,7 +42,8 @@ import org.osmdroid.views.overlay.compass.CompassOverlay
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
 
-class ExploreFragment : Fragment(), LocationListener, SharedPreferences.OnSharedPreferenceChangeListener {
+class ExploreFragment : Fragment(), LocationListener,
+    SharedPreferences.OnSharedPreferenceChangeListener {
     private lateinit var _locationRepository: SavedLocationRepository
     private lateinit var _mapController: IMapController
     private var _binding: FragmentExploreBinding? = null
@@ -86,11 +85,13 @@ class ExploreFragment : Fragment(), LocationListener, SharedPreferences.OnShared
                 _lastMapCenterLon = it.getDouble("last_lon")
                 _firstLoad = it.getBoolean("first_load", true)
             }
-            _lastZoomLevel = it.getDouble("last_zoom", 20.0)
+            _lastZoomLevel = it.getDouble("last_zoom", 18.0)
         }
 
         // 1. Initialize OSMDroid configuration before inflating the layout
         getInstance().load(context, _prefs)
+        // Set a unique User-Agent to avoid 403 Forbidden errors
+        getInstance().userAgentValue = "WhereIsMyCar/1.0 (Android; ${requireContext().packageName})"
         _binding = FragmentExploreBinding.inflate(inflater, container, false)
 
         // 2. Setup the map
@@ -110,7 +111,8 @@ class ExploreFragment : Fragment(), LocationListener, SharedPreferences.OnShared
                 _mapController.setZoom(20.0)
             }
 
-            _myLocationNewOverlay = MyLocationNewOverlay(GpsMyLocationProvider(requireContext()), map)
+            _myLocationNewOverlay =
+                MyLocationNewOverlay(GpsMyLocationProvider(requireContext()), map)
             _compassOverlay = CompassOverlay(requireContext(), map)
             _compassOverlay?.setCompassCenter(36.0F, 140.0F)
 
@@ -132,11 +134,13 @@ class ExploreFragment : Fragment(), LocationListener, SharedPreferences.OnShared
         (activity as? AppCompatActivity)?.supportActionBar?.title = ""
 
         _bottomSheetBehavior = BottomSheetBehavior.from(binding!!.bottomSheet)
-        _bottomSheetBehavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+        _bottomSheetBehavior.addBottomSheetCallback(object :
+            BottomSheetBehavior.BottomSheetCallback() {
             override fun onStateChanged(bottomSheet: View, newState: Int) {
                 if (newState == BottomSheetBehavior.STATE_HALF_EXPANDED ||
                     newState == BottomSheetBehavior.STATE_COLLAPSED ||
-                    newState == BottomSheetBehavior.STATE_EXPANDED) {
+                    newState == BottomSheetBehavior.STATE_EXPANDED
+                ) {
                     _location?.let {
                         _mapController.animateTo(GeoPoint(it.latitude, it.longitude))
                     }
@@ -152,7 +156,6 @@ class ExploreFragment : Fragment(), LocationListener, SharedPreferences.OnShared
                     peekHeight * (1 + slideOffset)
                 }
 
-                // Allow the map to extend slightly under the rounded corners of the bottom sheet
                 val cornerOverlap = (144 * resources.displayMetrics.density).toInt()
                 val params = binding?.map?.layoutParams as? ViewGroup.MarginLayoutParams
                 params?.let {
@@ -162,7 +165,6 @@ class ExploreFragment : Fragment(), LocationListener, SharedPreferences.OnShared
             }
         })
 
-        // Initial map adjustment to match the collapsed bottom sheet
         binding?.map?.post {
             val params = binding?.map?.layoutParams as? ViewGroup.MarginLayoutParams
             params?.let {
@@ -173,8 +175,12 @@ class ExploreFragment : Fragment(), LocationListener, SharedPreferences.OnShared
         }
 
         binding?.btnSavePosition?.setOnClickListener {
-            // Save the current location to database
-            val location = _currentCarOverlay?.position ?: _location?.let { GeoPoint(it.latitude, it.longitude) }
+            val location = _currentCarOverlay?.position ?: _location?.let {
+                GeoPoint(
+                    it.latitude,
+                    it.longitude
+                )
+            }
             if (location != null) {
                 lifecycleScope.launch {
                     val address = withContext(Dispatchers.IO) {
@@ -234,42 +240,40 @@ class ExploreFragment : Fragment(), LocationListener, SharedPreferences.OnShared
                 _locationAdapter?.setSearchQuery(_searchQuery ?: "")
                 resetAndLoadLocations()
             }
+
             override fun afterTextChanged(s: Editable?) {}
         })
     }
 
     private fun hideKeyboard(view: View) {
-        val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        val imm =
+            requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(view.windowToken, 0)
     }
 
     private fun setupRecyclerView() {
-        _locationAdapter = LocationAdapter(mutableListOf(), { id ->
-            val bundle = Bundle().apply { putInt("locationId", id) }
-            findNavController().navigate(R.id.action_ExploreFragment_to_LocationDetailsFragment, bundle)
-        }, { id ->
-            val bundle = Bundle().apply { putInt("locationId", id) }
-            findNavController().navigate(R.id.action_ExploreFragment_to_LocationDetailsFragment, bundle)
+        _locationAdapter = LocationAdapter(mutableListOf(), { location ->
+            _mapController.animateTo(GeoPoint(location.latitude, location.longitude))
+            _bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+        }, { location ->
+            lifecycleScope.launch {
+                _locationRepository.deleteLocation(location.id)
+                resetAndLoadLocations()
+            }
         })
 
         binding?.carLocations?.apply {
-            val layoutManager = LinearLayoutManager(context)
-            this.layoutManager = layoutManager
-            this.adapter = _locationAdapter
-
+            layoutManager = LinearLayoutManager(context)
+            adapter = _locationAdapter
             addOnScrollListener(object : RecyclerView.OnScrollListener() {
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                     super.onScrolled(recyclerView, dx, dy)
-                    if (dy > 0) { // Scrolling down
-                        val visibleItemCount = layoutManager.childCount
-                        val totalItemCount = layoutManager.itemCount
-                        val pastVisibleItems = layoutManager.findFirstVisibleItemPosition()
+                    val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+                    val totalItemCount = layoutManager.itemCount
+                    val lastVisibleItem = layoutManager.findFirstVisibleItemPosition()
 
-                        if (!_isLoading && _hasMoreData) {
-                            if ((visibleItemCount + pastVisibleItems) >= totalItemCount) {
-                                loadMoreLocations()
-                            }
-                        }
+                    if (!_isLoading && _hasMoreData && totalItemCount <= (lastVisibleItem + 2)) {
+                        loadMoreLocations()
                     }
                 }
             })
@@ -279,60 +283,56 @@ class ExploreFragment : Fragment(), LocationListener, SharedPreferences.OnShared
     private fun resetAndLoadLocations() {
         _offset = 0
         _hasMoreData = true
-        _isLoading = false
-        loadMoreLocations(reset = true)
+        _locationAdapter?.clear()
+        loadMoreLocations()
     }
 
-    private fun loadMoreLocations(reset: Boolean = false) {
-        if (_isLoading || (!_hasMoreData && !reset)) return
+    private fun loadMoreLocations() {
+        if (_isLoading || !_hasMoreData) return
         _isLoading = true
 
-        lifecycleScope.launch(Dispatchers.IO) {
-            val locations = _locationRepository.getAllLocations(_limit, _offset, _searchQuery)
-            withContext(Dispatchers.Main) {
-                if (locations.isEmpty() && !reset) {
-                    _hasMoreData = false
-                } else {
-                    if (reset) {
-                        _locationAdapter?.clearAndAdd(locations)
-                    } else {
-                        _locationAdapter?.addLocations(locations)
-                    }
-                    _offset += locations.size
-                    if (locations.size < _limit) {
-                        _hasMoreData = false
-                    }
-                }
-                _isLoading = false
+        lifecycleScope.launch {
+            val locations = withContext(Dispatchers.IO) {
+                _locationRepository.getAllLocations(_limit, _offset, _searchQuery)
             }
+
+            if (locations.isEmpty()) {
+                _hasMoreData = false
+            } else {
+                _locationAdapter?.addLocations(locations)
+                _offset += _limit
+            }
+            _isLoading = false
         }
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _prefs.unregisterOnSharedPreferenceChangeListener(this)
-        _binding = null
+    override fun onLocationChanged(location: Location) {
+        _location = location
+        if (_firstLoad) {
+            val startPoint = GeoPoint(location.latitude, location.longitude)
+            _mapController.setCenter(startPoint)
+            _firstLoad = false
+        }
     }
 
     override fun onResume() {
         super.onResume()
-        (activity as? AppCompatActivity)?.supportActionBar?.title = ""
-        _binding?.map?.onResume()
+        binding?.map?.onResume()
         updateLocationServiceStatus()
-        resetAndLoadLocations()
     }
 
     override fun onPause() {
         super.onPause()
-        _binding?.map?.let { map ->
-            _lastMapCenterLat = map.mapCenter.latitude
-            _lastMapCenterLon = map.mapCenter.longitude
-            _lastZoomLevel = map.zoomLevelDouble
-        }
-        _compassOverlay?.disableCompass()
+        binding?.map?.onPause()
+        val locationManager = requireContext().getSystemService(LOCATION_SERVICE) as LocationManager
+        locationManager.removeUpdates(this)
         _myLocationNewOverlay?.disableMyLocation()
-        unregisterLocationListener()
-        _binding?.map?.onPause()
+
+        binding?.map?.let {
+            _lastMapCenterLat = it.mapCenter.latitude
+            _lastMapCenterLon = it.mapCenter.longitude
+            _lastZoomLevel = it.zoomLevelDouble
+        }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -343,20 +343,18 @@ class ExploreFragment : Fragment(), LocationListener, SharedPreferences.OnShared
         outState.putBoolean("first_load", _firstLoad)
     }
 
-    override fun onLocationChanged(location: Location) {
-        if (location.provider == null) return
-        _location = location
-        if (_firstLoad) {
-            val startPoint = GeoPoint(location.latitude, location.longitude)
-            _mapController.setCenter(startPoint)
-            _currentCarOverlay = IconOverlay(startPoint, ResourcesCompat.getDrawable(resources, R.drawable.car, null))
-            _binding?.map?.overlays?.add(_currentCarOverlay)
-            _firstLoad = false
-        }
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+        _prefs.unregisterOnSharedPreferenceChangeListener(this)
     }
 
     fun checkPermission(context: Context, activity: MainActivity): Boolean {
-        return if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+        return if (ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
             true
         } else {
             requestPermissions(activity)
@@ -365,10 +363,30 @@ class ExploreFragment : Fragment(), LocationListener, SharedPreferences.OnShared
     }
 
     fun requestPermissions(activity: MainActivity) {
-        ActivityCompat.requestPermissions(activity, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 1)
+        ActivityCompat.requestPermissions(
+            activity,
+            arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+            1
+        )
     }
 
     private fun updateLocationServiceStatus() {
+        if (ActivityCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED &&
+            ActivityCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            return
+        }
+
+        val locationManager = requireContext().getSystemService(LOCATION_SERVICE) as LocationManager
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0L, 0f, this)
+        _myLocationNewOverlay?.enableMyLocation()
+
         val isEnabled = _prefs.getBoolean("location_service", true)
         if (isEnabled) {
             if (checkPermission(requireContext(), activity as MainActivity)) {
@@ -388,22 +406,30 @@ class ExploreFragment : Fragment(), LocationListener, SharedPreferences.OnShared
     }
 
     private fun registerLocationListener() {
-        val mLocationManager: LocationManager = context?.getSystemService(LOCATION_SERVICE) as LocationManager
+        val mLocationManager: LocationManager =
+            context?.getSystemService(LOCATION_SERVICE) as LocationManager
         val providers = mLocationManager.getProviders(true)
         for (provider in providers) {
             try {
-                mLocationManager.requestLocationUpdates(provider, _locationUpdateMinTime, _locationUpdateMinDistance, this)
+                mLocationManager.requestLocationUpdates(
+                    provider,
+                    _locationUpdateMinTime,
+                    _locationUpdateMinDistance,
+                    this
+                )
                 val location = mLocationManager.getLastKnownLocation(provider)
                 if (location != null) {
                     onLocationChanged(location)
                     break
                 }
-            } catch (e: SecurityException) {}
+            } catch (e: SecurityException) {
+            }
         }
     }
 
     private fun unregisterLocationListener() {
-        val mLocationManager: LocationManager = context?.getSystemService(LOCATION_SERVICE) as LocationManager
+        val mLocationManager: LocationManager =
+            context?.getSystemService(LOCATION_SERVICE) as LocationManager
         mLocationManager.removeUpdates(this)
     }
 

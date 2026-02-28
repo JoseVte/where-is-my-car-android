@@ -13,8 +13,8 @@ import java.util.Locale
 
 class LocationAdapter(
     private val locations: MutableList<SavedLocation>,
-    private val onItemClick: (Int) -> Unit,
-    private val onEditClick: (Int) -> Unit
+    private val onItemClick: (SavedLocation) -> Unit,
+    private val onEditClick: (SavedLocation) -> Unit
 ) : RecyclerView.Adapter<LocationAdapter.ViewHolder>() {
 
     private var searchQuery: String = ""
@@ -40,11 +40,11 @@ class LocationAdapter(
         holder.binding.imageViewIcon.setImageResource(R.drawable.ic_coffee)
 
         holder.itemView.setOnClickListener {
-            onItemClick(location.id)
+            onItemClick(location)
         }
 
         holder.binding.buttonEdit.setOnClickListener {
-            onEditClick(location.id)
+            onEditClick(location)
         }
     }
 
@@ -76,6 +76,11 @@ class LocationAdapter(
         val startPosition = locations.size
         locations.addAll(newLocations)
         notifyItemRangeInserted(startPosition, newLocations.size)
+    }
+
+    fun clear() {
+        locations.clear()
+        notifyDataSetChanged()
     }
 
     fun clearAndAdd(newLocations: List<SavedLocation>) {

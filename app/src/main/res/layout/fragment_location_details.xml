@@ -5,14 +5,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/bg_dark"
-    android:paddingTop="24dp"
+    android:paddingTop="48dp"
     tools:context=".LocationDetailsFragment">
 
-    <!-- Top Toolbar Simulation -->
+    <!-- Header / Toolbar -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
+        android:elevation="12dp"
         android:paddingHorizontal="16dp"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -31,6 +32,7 @@
             android:id="@+id/locationNameTop"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:includeFontPadding="false"
             android:text="@string/app_name"
             android:textColor="@color/white"
             android:textSize="18sp"
@@ -58,12 +60,14 @@
         android:layout_height="400dp"
         app:layout_constraintTop_toBottomOf="@id/toolbar">
 
+        <!-- Map Overlays -->
         <org.osmdroid.views.MapView
             android:id="@+id/map"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            tools:layout_editor_absoluteX="0dp"
+            tools:layout_editor_absoluteY="0dp" />
 
-        <!-- Map Overlays -->
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -78,12 +82,16 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/rounded_pill_dark"
                 android:drawablePadding="8dp"
+                android:gravity="center_vertical"
+                android:includeFontPadding="false"
                 android:paddingHorizontal="12dp"
                 android:paddingVertical="6dp"
                 android:text="@string/distance_text"
-                android:textColor="@color/white"
+                android:textColor="@color/text_primary"
                 android:textSize="12sp"
-                app:drawableStartCompat="@drawable/ic_navigation" />
+                android:visibility="gone"
+                app:drawableStartCompat="@drawable/ic_navigation"
+                app:drawableTint="@color/text_primary" />
 
             <TextView
                 android:id="@+id/timeText"
@@ -92,117 +100,115 @@
                 android:layout_marginTop="8dp"
                 android:background="@drawable/rounded_pill_blue"
                 android:drawablePadding="8dp"
+                android:gravity="center_vertical"
+                android:includeFontPadding="false"
                 android:paddingHorizontal="12dp"
                 android:paddingVertical="6dp"
                 android:text="@string/time_text"
                 android:textColor="@color/white"
                 android:textSize="12sp"
-                app:drawableStartCompat="@drawable/ic_time" />
+                android:visibility="gone"
+                app:drawableStartCompat="@drawable/ic_time"
+                app:drawableTint="@color/text_primary" />
         </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            android:orientation="vertical"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <ImageView
-                android:id="@+id/btn_layers"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:background="@drawable/rounded_pill_dark"
-                android:contentDescription="@string/layers"
-                android:padding="8dp"
-                android:src="@drawable/ic_layers"
-                app:tint="@color/white" />
-
-            <ImageView
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_marginTop="8dp"
-                android:background="@drawable/rounded_pill_dark"
-                android:contentDescription="@string/my_location"
-                android:padding="8dp"
-                android:src="@drawable/ic_my_location"
-                app:tint="@color/white" />
-        </LinearLayout>
-
-        <!-- Transport Selector -->
-        <LinearLayout
-            android:id="@+id/transportSelector"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="80dp"
-            android:background="@drawable/bg_gradient_fade"
-            android:orientation="horizontal"
-            android:padding="4dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent">
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:paddingHorizontal="16dp"
-                android:paddingVertical="8dp">
-                <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:contentDescription="@string/walk"
-                    android:src="@drawable/ic_walk"
-                    app:tint="@color/text_secondary" />
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:text="@string/walk"
-                    android:textColor="@color/text_secondary" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/rounded_pill_blue"
-                android:gravity="center"
-                android:paddingHorizontal="16dp"
-                android:paddingVertical="8dp">
-                <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:contentDescription="@string/drive"
-                    android:src="@drawable/ic_drive"
-                    app:tint="@color/white" />
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:text="@string/drive"
-                    android:textColor="@color/white" />
-            </LinearLayout>
-        </LinearLayout>
-
-        <Button
-            android:id="@+id/btn_start_navigation"
-            android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:layout_marginHorizontal="16dp"
-            android:layout_marginBottom="16dp"
-            android:backgroundTint="@color/primary_blue"
-            android:text="Start Navigation"
-            android:textAllCaps="false"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            app:icon="@drawable/ic_navigation"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.MediumComponent" />
-
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- Bottom Gradient Overlay -->
+    <View
+        android:id="@+id/bottom_gradient_overlay"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:background="@drawable/bg_gradient_fade"
+        android:clickable="false"
+        android:focusable="false"
+        app:layout_constraintBottom_toTopOf="@id/locationScrollView" />
+
+    <ImageView
+        android:id="@+id/center_location"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_margin="16dp"
+        android:background="@drawable/rounded_pill_dark"
+        android:contentDescription="@string/my_location"
+        android:padding="8dp"
+        android:src="@drawable/ic_my_location"
+        app:layout_constraintBottom_toTopOf="@id/locationScrollView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:tint="@color/white" />
+
+    <!-- Transport Selector (Material 3 Segmented Button) -->
+    <com.google.android.material.button.MaterialButtonToggleGroup
+        android:id="@+id/transportToggleGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="80dp"
+        android:visibility="gone"
+        app:checkedButton="@id/btn_walk"
+        app:layout_constraintBottom_toTopOf="@id/locationScrollView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:selectionRequired="true"
+        app:singleSelection="true">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_walk"
+            style="@style/ToggleButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/walk"
+            app:icon="@drawable/ic_walk" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_drive"
+            style="@style/ToggleButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/drive"
+            app:icon="@drawable/ic_drive" />
+
+    </com.google.android.material.button.MaterialButtonToggleGroup>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_start_navigation"
+        android:layout_width="wrap_content"
+        android:layout_height="56dp"
+        android:layout_marginBottom="16dp"
+        android:backgroundTint="@color/primary_blue"
+        android:text="@string/start_navigation"
+        android:textAllCaps="false"
+        android:textColor="@color/text_primary"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:cornerRadius="56dp"
+        android:visibility="visible"
+        app:icon="@drawable/ic_navigation"
+        app:iconTint="@color/text_primary"
+        app:layout_constraintBottom_toTopOf="@id/locationScrollView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:padding="10dp"
+        app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.MediumComponent" />
+
+    <com.google.android.material.progressindicator.CircularProgressIndicator
+        android:id="@+id/progress_navigation"
+        style="@style/Widget.Material3Expressive.CircularProgressIndicator.Wavy"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:indicatorSize="36dp"
+        android:elevation="10dp"
+        android:indeterminate="true"
+        android:indeterminateTint="@color/text_secondary"
+        android:visibility="gone"
+        app:indicatorColor="@color/text_primary"
+        app:layout_constraintBottom_toBottomOf="@id/btn_start_navigation"
+        app:layout_constraintEnd_toEndOf="@id/btn_start_navigation"
+        app:layout_constraintStart_toStartOf="@id/btn_start_navigation"
+        app:layout_constraintTop_toTopOf="@id/btn_start_navigation"
+        app:trackColor="@color/text_secondary" />
 
     <!-- Scrollable Content -->
     <ScrollView
+        android:id="@+id/locationScrollView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -211,16 +217,20 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="20dp">
+            android:elevation="8dp"
+            android:padding="20dp"
+            android:paddingTop="24dp">
 
             <TextView
                 android:id="@+id/locationName"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="Favorite Cafe"
+                android:includeFontPadding="false"
+                android:text="@string/address_line"
                 android:textColor="@color/white"
                 android:textSize="24sp"
                 android:textStyle="bold"
+                android:layout_marginTop="8dp"
                 app:layout_constraintEnd_toStartOf="@+id/actionButtons"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -229,6 +239,9 @@
                 android:id="@+id/actionButtons"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:clipChildren="false"
+                android:clipToPadding="false"
                 android:orientation="horizontal"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
@@ -261,7 +274,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:drawablePadding="8dp"
-                android:text="San Francisco City Center"
+                android:gravity="center_vertical"
+                android:includeFontPadding="false"
+                android:text="@string/address_format"
                 android:textColor="@color/text_secondary"
                 app:drawableStartCompat="@drawable/ic_location"
                 app:drawableTint="@color/text_secondary"
@@ -272,7 +287,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
-                android:text="NOTES"
+                android:includeFontPadding="false"
+                android:text="@string/notes"
+                android:textAllCaps="true"
                 android:textColor="@color/text_secondary"
                 android:textSize="12sp"
                 android:textStyle="bold"
@@ -285,8 +302,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:background="@drawable/rounded_card_dark"
+                android:includeFontPadding="false"
                 android:padding="16dp"
-                android:text="The best cold brew in the city. Usually quiet on weekday mornings."
+                android:text="@string/no_notes_added"
                 android:textColor="@color/white"
                 app:layout_constraintTop_toBottomOf="@id/notesLabel" />
 
@@ -302,96 +320,138 @@
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="8dp"
                     android:layout_weight="1"
                     android:background="@drawable/rounded_card_dark"
                     android:orientation="vertical"
                     android:padding="16dp">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="CATEGORY"
-                        android:textColor="@color/text_secondary"
-                        android:textSize="11sp" />
-                    <TextView
-                        android:id="@+id/categoryText"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
-                        android:drawablePadding="8dp"
-                        android:text="Leisure"
-                        android:textColor="@color/white"
-                        android:textStyle="bold"
-                        app:drawableStartCompat="@drawable/ic_dot" />
-                </LinearLayout>
 
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:layout_weight="1"
-                    android:background="@drawable/rounded_card_dark"
-                    android:orientation="vertical"
-                    android:padding="16dp">
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="SAVED ON"
+                        android:includeFontPadding="false"
+                        android:text="@string/date"
+                        android:textAllCaps="true"
                         android:textColor="@color/text_secondary"
-                        android:textSize="11sp" />
+                        android:textSize="11sp"
+                        android:textStyle="bold" />
+
                     <TextView
                         android:id="@+id/dateText"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
-                        android:text="Oct 24, 2023"
+                        android:includeFontPadding="false"
+                        android:text="@string/date_value"
                         android:textColor="@color/white"
+                        android:textSize="14sp" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="12dp"
+                    android:layout_height="0dp" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@drawable/rounded_card_dark"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:includeFontPadding="false"
+                        android:text="@string/category"
+                        android:textAllCaps="true"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="11sp"
                         android:textStyle="bold" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="4dp"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        >
+                        <ImageView
+                            android:id="@+id/categoryIconDrawable"
+                            android:layout_width="16dp"
+                            android:layout_height="16dp"
+                            android:background="@drawable/rounded_pill_dark"
+                            android:contentDescription="@string/category"
+                            android:src="@drawable/home"
+                            app:tint="@color/primary_pink"
+                            />
+                        <TextView
+                            android:id="@+id/categoryIconEmoji"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="16sp"
+                            android:text="@string/default_category_emoji"
+                            android:textColor="@color/white"
+                            />
+
+                        <TextView
+                            android:id="@+id/categoryText"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:includeFontPadding="false"
+                            android:layout_marginStart="4dp"
+                            android:text="@string/category"
+                            android:textColor="@color/white"
+                            android:textSize="14sp" />
+                    </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
 
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <LinearLayout
+                android:id="@+id/coordsContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:background="@drawable/dashed_border_dark"
+                android:layout_marginTop="12dp"
+                android:background="@drawable/rounded_card_dark"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
                 android:padding="16dp"
                 app:layout_constraintTop_toBottomOf="@id/infoBoxes">
 
-                <ImageView
-                    android:id="@+id/ic_coords"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:contentDescription="@string/coordinates"
-                    android:src="@drawable/ic_coords"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:tint="@color/text_secondary" />
-
-                <TextView
-                    android:id="@+id/coordsText"
+                <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="12dp"
-                    android:text="37.7749° N, 122.4194° W"
-                    android:textColor="@color/text_secondary"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@+id/btn_copy"
-                    app:layout_constraintStart_toEndOf="@id/ic_coords"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    android:layout_weight="1"
+                    android:orientation="vertical">
 
-                <TextView
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:includeFontPadding="false"
+                        android:text="@string/coordinates"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="11sp"
+                        android:textAllCaps="true"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/coordsText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:includeFontPadding="false"
+                        android:text="@string/coords_format"
+                        android:textColor="@color/white"
+                        android:textSize="14sp" />
+                </LinearLayout>
+
+                <ImageView
                     android:id="@+id/btn_copy"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Copy"
-                    android:textColor="@color/primary_blue"
-                    android:textStyle="bold"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:contentDescription="@string/copy_coordinates"
+                    android:src="@drawable/ic_layers"
+                    app:tint="@color/primary_blue" />
+            </LinearLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>

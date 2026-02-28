@@ -1,4 +1,5 @@
-<!-- res/layout/item_onboarding_3.xml -->
+<?xml version="1.0" encoding="utf-8"?>
+<!-- res/layout/item_onboarding_1.xml -->
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -11,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:contentDescription="@string/todo"
-        android:src="@drawable/img_onboarding_3"
+        android:src="@drawable/img_onboarding_1"
         android:scaleType="centerCrop"
         android:alpha="0.4"
         app:layout_constraintHeight_percent="0.5"
@@ -34,6 +35,7 @@
         android:textSize="16sp"
         android:fontFamily="sans-serif-medium"
         android:padding="8dp"
+        android:includeFontPadding="false"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
@@ -48,6 +50,7 @@
         android:textSize="32sp"
         android:fontFamily="sans-serif-black"
         android:gravity="center"
+        android:includeFontPadding="false"
         app:layout_constraintTop_toBottomOf="@id/onboarding_image"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
@@ -62,6 +65,7 @@
         android:textColor="#8E9299"
         android:textSize="18sp"
         android:gravity="center"
+        android:includeFontPadding="false"
         app:layout_constraintTop_toBottomOf="@id/onboarding_text"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />

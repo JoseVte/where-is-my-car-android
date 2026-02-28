@@ -10,7 +10,7 @@ android {
 
     defaultConfig {
         applicationId = "io.josrom.whereismycar"
-        minSdk = 26
+        minSdk = 28
         targetSdk = 36
         versionCode = 1
         versionName = "1.0"
@@ -42,6 +42,12 @@ android {
     buildFeatures {
         viewBinding = true
         compose = true
+        buildConfig = true
+    }
+    packaging {
+        jniLibs {
+            useLegacyPackaging = true
+        }
     }
     useLibrary("wear-sdk")
 
@@ -88,6 +94,7 @@ dependencies {
     implementation(libs.firebase.auth)
     implementation(libs.firebase.database)
     implementation(libs.androidx.activity)
+    implementation(libs.androidx.recyclerview)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

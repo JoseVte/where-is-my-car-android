@@ -12,18 +12,28 @@
         tools:layout="@layout/fragment_explore">
 
         <action
-            android:id="@+id/action_LocationListFragment_to_LocationDetailsFragment"
-            app:destination="@id/LocationDetailsFragment" />
-        <action
             android:id="@+id/action_ExploreFragment_to_SettingsFragment"
             app:destination="@id/SettingsFragment" />
+        <action
+            android:id="@+id/action_ExploreFragment_to_LocationDetailsFragment"
+            app:destination="@id/LocationDetailsFragment" />
+        <action
+            android:id="@+id/action_ExploreFragment_to_LocationHistoryFragment"
+            app:destination="@id/LocationHistoryFragment" />
     </fragment>
 
     <fragment
-        android:id="@+id/nav_history"
+        android:id="@+id/LocationHistoryFragment"
         android:name="io.josrom.whereismycar.HistoryFragment"
         android:label="History"
-        tools:layout="@layout/fragment_history" />
+        tools:layout="@layout/fragment_history" >
+        <action
+            android:id="@+id/action_LocationHistoryFragment_to_ExploreFragment"
+            app:destination="@id/ExploreFragment" />
+        <action
+            android:id="@+id/action_LocationHistoryFragment_to_LocationDetailsFragment"
+            app:destination="@id/LocationDetailsFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/nav_settings"

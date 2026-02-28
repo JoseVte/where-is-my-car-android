@@ -44,6 +44,7 @@
                 android:id="@+id/text_view_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:includeFontPadding="false"
                 android:text="Coffee Shop"
                 android:textColor="#FFFFFF"
                 android:textSize="18sp"
@@ -54,6 +55,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
+                android:includeFontPadding="false"
                 android:text="24 mins ago • 0.3 miles"
                 android:textColor="#8E9299"
                 android:textSize="14sp" />

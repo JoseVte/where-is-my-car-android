@@ -65,7 +65,7 @@ class LocationListFragment : Fragment(), LocationListener, SharedPreferences.OnS
 
     private var _lastMapCenterLat: Double? = null
     private var _lastMapCenterLon: Double? = null
-    private var _lastZoomLevel: Double = 20.0
+    private var _lastZoomLevel: Double = 18.0
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -86,11 +86,13 @@ class LocationListFragment : Fragment(), LocationListener, SharedPreferences.OnS
                 _lastMapCenterLon = it.getDouble("last_lon")
                 _firstLoad = it.getBoolean("first_load", true)
             }
-            _lastZoomLevel = it.getDouble("last_zoom", 20.0)
+            _lastZoomLevel = it.getDouble("last_zoom", 18.0)
         }
 
         // 1. Initialize OSMDroid configuration before inflating the layout
         getInstance().load(context, _prefs)
+        // Crucial: Set a unique and descriptive User-Agent to prevent 403 Forbidden errors
+        getInstance().userAgentValue = "WhereIsMyCar/1.0 (Android; ${requireContext().packageName})"
 
         _binding = FragmentLocationListBinding.inflate(inflater, container, false)
 
@@ -99,6 +101,7 @@ class LocationListFragment : Fragment(), LocationListener, SharedPreferences.OnS
         if (map != null) {
             map.setTileSource(TileSourceFactory.MAPNIK)
             map.setMultiTouchControls(true)
+            map.maxZoomLevel = 19.0 // Mapnik limit
 
             _mapController = map.controller
             
@@ -176,16 +179,16 @@ class LocationListFragment : Fragment(), LocationListener, SharedPreferences.OnS
     }
 
     private fun getSavedLocations() {
-        binding?.carLocations?.adapter = LocationAdapter(_locationRepository.getAllLocations(20), { id ->
+        binding?.carLocations?.adapter = LocationAdapter(_locationRepository.getAllLocations(20), { location ->
             val bundle = Bundle().apply {
-                putInt("locationId", id)
+                putInt("locationId", location.id)
             }
             findNavController().navigate(
-                R.id.action_LocationListFragment_to_LocationDetailsFragment,
+                R.id.action_LocationHistoryFragment_to_LocationDetailsFragment,
                 bundle
             )
-        }, { id ->
-            _locationRepository.deleteLocation(id)
+        }, { location ->
+            _locationRepository.deleteLocation(location.id)
             getSavedLocations()
         })
     }

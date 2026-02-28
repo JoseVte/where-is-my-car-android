@@ -17,6 +17,13 @@
         <item name="itemTextAppearanceInactive">@style/NavTextAppearance</item>
     </style>
 
+    <style name="ToggleButton" parent="Widget.Material3.Button">
+        <item name="backgroundTint">@color/toggle_btn_color</item>
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="iconTint">@color/text_primary</item>
+        <item name="strokeColor">@color/toggle_btn_color</item>
+    </style>
+
     <style name="NavTextAppearance" parent="TextAppearance.Material3.LabelSmall">
         <item name="android:textSize">10sp</item>
         <item name="android:textAllCaps">true</item>

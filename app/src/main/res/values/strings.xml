@@ -53,11 +53,10 @@
     <string name="title_activity_watch">WatchActivity</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="date">2026–02–12 12:31:31</string>
     <string name="city_country">City\nCountry</string>
     <string name="latitude">0.0123</string>
     <string name="longitude">4.567</string>
-    <string name="address_line">Address Line 1\nAddress Line 2</string>
+    <string name="address_line">Address Line 0</string>
     <string name="locationAddress">%1$s, %2$s, %3$s</string>
     <string name="locationCoordinates">%1$s, %2$s - %3$s</string>
     <string name="show_route">Show route</string>
@@ -108,4 +107,32 @@
     <string name="layers">Layers</string>
     <string name="distance_text">1.2 km away</string>
     <string name="time_text">3 min driving</string>
+
+    <!-- Added missing strings -->
+    <string name="saved_location_default">Saved Location</string>
+    <string name="no_notes_added">No notes added for this location.</string>
+    <string name="category_leisure">Leisure</string>
+    <string name="coords_copied">Coordinates copied to clipboard</string>
+    <string name="waiting_for_gps">Waiting for GPS location…</string>
+    <string name="stop_navigation">Stop Navigation</string>
+    <string name="start_navigation">Start Navigation</string>
+    <string name="distance_km_away">%.1f km away</string>
+    <string name="distance_m_away">%d m away</string>
+    <string name="time_min_driving">%d min driving</string>
+    <string name="time_min_walking">%d min walking</string>
+    <string name="time_hr_min_driving">%1$d h %2$d min driving</string>
+    <string name="time_hr_min_walking">%1$d h %2$d min walking</string>
+    <string name="layer_standard">Standard (OSM)</string>
+    <string name="layer_topographic">Topographic (USGS)</string>
+    <string name="layer_satellite">Satellite (USGS)</string>
+    <string name="edit_coming_soon">Edit functionality coming soon</string>
+    <string name="address_format">%1$s, %2$s</string>
+    <string name="coords_format">%1$s° %2$s, %3$s° %4$s</string>
+    <string name="my_location">My Location</string>
+    <string name="category">Category</string>
+    <string name="notes">Notes</string>
+    <string name="date">Saved on</string>
+    <string name="date_value">24 May 2023</string>
+    <string name="default_category_emoji">😋</string>
+    <string name="copy_coordinates">Copy coordinates</string>
 </resources>
