@@ -3,6 +3,7 @@ package io.josrom.whereismycar
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import android.content.Intent
 import android.graphics.Color
 import android.location.LocationManager
 import android.os.Build
@@ -181,6 +182,25 @@ class LocationDetailsFragment : Fragment() {
         
         binding.btnEdit.setOnClickListener {
             Toast.makeText(context, getString(R.string.edit_coming_soon), Toast.LENGTH_SHORT).show()
+        }
+
+        binding.btnShare.setOnClickListener {
+            location?.let { loc ->
+                val uri = "https://maps.google.com/?q=${loc.latitude},${loc.longitude}"
+                val shareText = if (loc.displayName.isNotEmpty()) {
+                    "${loc.displayName}\n$uri"
+                } else {
+                    uri
+                }
+                
+                val sendIntent: Intent = Intent().apply {
+                    action = Intent.ACTION_SEND
+                    putExtra(Intent.EXTRA_TEXT, shareText)
+                    type = "text/plain"
+                }
+                val shareIntent = Intent.createChooser(sendIntent, null)
+                startActivity(shareIntent)
+            }
         }
     }
 
