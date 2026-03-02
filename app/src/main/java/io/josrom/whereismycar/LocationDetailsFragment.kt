@@ -98,13 +98,13 @@ class LocationDetailsFragment : Fragment() {
     }
 
     private fun loadLocationData() {
-        location = _locationRepository.getLocation(locationId)
+        location = _locationRepository.getLocation(locationId, true)
         location?.let { loc ->
             binding.locationNameTop.text = loc.displayName.ifEmpty { getString(R.string.app_name) }
             binding.locationName.text = loc.displayName.ifEmpty { getString(R.string.saved_location_default) }
             binding.addressSubtext.text = loc.address.ifEmpty { getString(R.string.address_format, loc.city, loc.country) }
             binding.noteText.text = loc.note?.ifEmpty { getString(R.string.no_notes_added) } ?: getString(R.string.no_notes_added)
-            binding.dateText.text = loc.date
+            binding.dateText.text = loc.formattedDate
 
             if (loc.categoryId == null) {
                 binding.categoryText.visibility = View.GONE
@@ -185,22 +185,7 @@ class LocationDetailsFragment : Fragment() {
         }
 
         binding.btnShare.setOnClickListener {
-            location?.let { loc ->
-                val uri = "https://maps.google.com/?q=${loc.latitude},${loc.longitude}"
-                val shareText = if (loc.displayName.isNotEmpty()) {
-                    "${loc.displayName}\n$uri"
-                } else {
-                    uri
-                }
-                
-                val sendIntent: Intent = Intent().apply {
-                    action = Intent.ACTION_SEND
-                    putExtra(Intent.EXTRA_TEXT, shareText)
-                    type = "text/plain"
-                }
-                val shareIntent = Intent.createChooser(sendIntent, null)
-                startActivity(shareIntent)
-            }
+            location?.share(requireContext())
         }
     }
 

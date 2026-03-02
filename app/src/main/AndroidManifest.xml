@@ -21,7 +21,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.WhereIsMyCar"
-        android:usesCleartextTraffic="true">
+        android:usesCleartextTraffic="true"
+        android:extractNativeLibs="false">
         <activity
             android:name=".OnboardingActivity"
             android:exported="false" />

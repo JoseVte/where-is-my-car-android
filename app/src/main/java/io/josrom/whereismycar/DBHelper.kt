@@ -54,7 +54,7 @@ class DBHelper(private val context: Context, factory: SQLiteDatabase.CursorFacto
         val defaults = listOf(
             Triple("Home", "@drawable/home", colorToHex(ContextCompat.getColor(context, R.color.primary_blue))),
             Triple("Favorites", "@drawable/favorite", colorToHex(ContextCompat.getColor(context, R.color.primary_pink))),
-            Triple("Others", "@drawable/route", colorToHex(ContextCompat.getColor(context, R.color.bg_dark)))
+            Triple("Others", "@drawable/route", colorToHex(ContextCompat.getColor(context, R.color.text_secondary)))
         )
 
         defaults.forEach { (label, icon, color) ->

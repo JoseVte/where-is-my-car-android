@@ -103,6 +103,7 @@
     <string name="drive">Drive</string>
     <string name="edit">Edit</string>
     <string name="share">Share</string>
+    <string name="delete">Delete</string>
     <string name="coordinates">Coordinates</string>
     <string name="layers">Layers</string>
     <string name="distance_text">1.2 km away</string>
@@ -135,4 +136,9 @@
     <string name="date_value">24 May 2023</string>
     <string name="default_category_emoji">😋</string>
     <string name="copy_coordinates">Copy coordinates</string>
+    <string name="search">Search</string>
+    <string name="search_saved_places">Search saved places</string>
+    <string name="more_options">More Options</string>
+    <string name="filters">Filters</string>
+    <string name="all">All</string>
 </resources>

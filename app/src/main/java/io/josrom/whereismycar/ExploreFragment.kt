@@ -293,7 +293,7 @@ class ExploreFragment : Fragment(), LocationListener,
 
         lifecycleScope.launch {
             val locations = withContext(Dispatchers.IO) {
-                _locationRepository.getAllLocations(_limit, _offset, _searchQuery)
+                _locationRepository.getAllLocations(_limit, _offset, _searchQuery, withCategory = true)
             }
 
             if (locations.isEmpty()) {

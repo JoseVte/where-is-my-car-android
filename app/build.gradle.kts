@@ -46,7 +46,7 @@ android {
     }
     packaging {
         jniLibs {
-            useLegacyPackaging = true
+            useLegacyPackaging = false
         }
     }
     useLibrary("wear-sdk")
@@ -69,9 +69,6 @@ dependencies {
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
     implementation(libs.osmdroid.android)
-    implementation(libs.osmdroid.wms)
-    implementation(libs.osmdroid.mapsforge)
-    implementation(libs.osmdroid.geopackage)
     implementation(libs.osmbonuspack)
     implementation(libs.androidx.datastore)
     implementation(libs.androidx.datastore.preferences)

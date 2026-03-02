@@ -16,21 +16,33 @@ class SavedLocationRepository(context: Context) {
     private val dbHelper = DBHelper(context, null)
     private val gson = Gson()
 
-    fun getAllLocations(limit: Int? = null, offset: Int? = null, searchQuery: String? = null): MutableList<SavedLocation> {
+    fun getAllLocations(
+        limit: Int? = null,
+        offset: Int? = null,
+        searchQuery: String? = null,
+        categoryIds: List<Int>? = null,
+        withCategory: Boolean = false
+    ): MutableList<SavedLocation> {
         val savedLocations = mutableListOf<SavedLocation>()
         val db = dbHelper.readableDatabase
 
-        val selection = if (!searchQuery.isNullOrBlank()) {
-            "${SavedLocation.COLUMN_DISPLAY_NAME} LIKE ? OR ${SavedLocation.COLUMN_ADDRESS} LIKE ?"
-        } else {
-            null
+        val selectionParts = mutableListOf<String>()
+        val selectionArgsList = mutableListOf<String>()
+
+        if (!searchQuery.isNullOrBlank()) {
+            selectionParts.add("(${SavedLocation.COLUMN_DISPLAY_NAME} LIKE ? OR ${SavedLocation.COLUMN_ADDRESS} LIKE ?)")
+            selectionArgsList.add("%$searchQuery%")
+            selectionArgsList.add("%$searchQuery%")
         }
 
-        val selectionArgs = if (!searchQuery.isNullOrBlank()) {
-            arrayOf("%$searchQuery%", "%$searchQuery%")
-        } else {
-            null
+        if (!categoryIds.isNullOrEmpty()) {
+            val placeholders = categoryIds.joinToString(",") { "?" }
+            selectionParts.add("${SavedLocation.COLUMN_CATEGORY_ID} IN ($placeholders)")
+            categoryIds.forEach { selectionArgsList.add(it.toString()) }
         }
+
+        val selection = if (selectionParts.isNotEmpty()) selectionParts.joinToString(" AND ") else null
+        val selectionArgs = if (selectionArgsList.isNotEmpty()) selectionArgsList.toTypedArray() else null
 
         val limitStr = if (limit != null) {
             if (offset != null) "$offset, $limit" else "$limit"
@@ -38,9 +50,34 @@ class SavedLocationRepository(context: Context) {
             null
         }
 
+        val tableName = if (withCategory) {
+            "${SavedLocation.TABLE_NAME} LEFT JOIN ${Category.TABLE_NAME} ON ${SavedLocation.TABLE_NAME}.${SavedLocation.COLUMN_CATEGORY_ID} = ${Category.TABLE_NAME}.${Category.COLUMN_ID}"
+        } else {
+            SavedLocation.TABLE_NAME
+        }
+
+        val columns = if (withCategory) {
+            arrayOf(
+                "${SavedLocation.TABLE_NAME}.${SavedLocation.COLUMN_ID}",
+                "${SavedLocation.TABLE_NAME}.${SavedLocation.COLUMN_DISPLAY_NAME}",
+                "${SavedLocation.TABLE_NAME}.${SavedLocation.COLUMN_COUNTRY}",
+                "${SavedLocation.TABLE_NAME}.${SavedLocation.COLUMN_CITY}",
+                "${SavedLocation.TABLE_NAME}.${SavedLocation.COLUMN_ADDRESS}",
+                "${SavedLocation.TABLE_NAME}.${SavedLocation.COLUMN_ADDRESS_DATA}",
+                "${SavedLocation.TABLE_NAME}.${SavedLocation.COLUMN_LATITUDE}",
+                "${SavedLocation.TABLE_NAME}.${SavedLocation.COLUMN_LONGITUDE}",
+                "${SavedLocation.TABLE_NAME}.${SavedLocation.COLUMN_DATE}",
+                "${SavedLocation.TABLE_NAME}.${SavedLocation.COLUMN_CATEGORY_ID}",
+                "${SavedLocation.TABLE_NAME}.${SavedLocation.COLUMN_NOTE}",
+                Category.COLUMN_LABEL,
+                Category.COLUMN_COLOR,
+                Category.COLUMN_ICON
+            )
+        } else null
+
         val cursor = db.query(
-            SavedLocation.TABLE_NAME,
-            null,
+            tableName,
+            columns,
             selection,
             selectionArgs,
             null,
@@ -53,7 +90,7 @@ class SavedLocationRepository(context: Context) {
             if (moveToFirst()) {
                 do {
                     try {
-                        savedLocations.add(mapDataToSavedLocation(this))
+                        savedLocations.add(mapDataToSavedLocation(this, withCategory))
                     } catch (e: Exception) {
                         e.printStackTrace()
                     }
@@ -65,12 +102,37 @@ class SavedLocationRepository(context: Context) {
         return savedLocations
     }
 
-    fun getLocation(id: Int): SavedLocation? {
+    fun getLocation(id: Int, withCategory: Boolean = false): SavedLocation? {
         val db = dbHelper.readableDatabase
+        val tableName = if (withCategory) {
+            "${SavedLocation.TABLE_NAME} LEFT JOIN ${Category.TABLE_NAME} ON ${SavedLocation.TABLE_NAME}.${SavedLocation.COLUMN_CATEGORY_ID} = ${Category.TABLE_NAME}.${Category.COLUMN_ID}"
+        } else {
+            SavedLocation.TABLE_NAME
+        }
+
+        val columns = if (withCategory) {
+            arrayOf(
+                "${SavedLocation.TABLE_NAME}.${SavedLocation.COLUMN_ID}",
+                "${SavedLocation.TABLE_NAME}.${SavedLocation.COLUMN_DISPLAY_NAME}",
+                "${SavedLocation.TABLE_NAME}.${SavedLocation.COLUMN_COUNTRY}",
+                "${SavedLocation.TABLE_NAME}.${SavedLocation.COLUMN_CITY}",
+                "${SavedLocation.TABLE_NAME}.${SavedLocation.COLUMN_ADDRESS}",
+                "${SavedLocation.TABLE_NAME}.${SavedLocation.COLUMN_ADDRESS_DATA}",
+                "${SavedLocation.TABLE_NAME}.${SavedLocation.COLUMN_LATITUDE}",
+                "${SavedLocation.TABLE_NAME}.${SavedLocation.COLUMN_LONGITUDE}",
+                "${SavedLocation.TABLE_NAME}.${SavedLocation.COLUMN_DATE}",
+                "${SavedLocation.TABLE_NAME}.${SavedLocation.COLUMN_CATEGORY_ID}",
+                "${SavedLocation.TABLE_NAME}.${SavedLocation.COLUMN_NOTE}",
+                Category.COLUMN_LABEL,
+                Category.COLUMN_COLOR,
+                Category.COLUMN_ICON
+            )
+        } else null
+
         val cursor = db.query(
-            SavedLocation.TABLE_NAME,
-            null,
-            "${SavedLocation.COLUMN_ID} = ?",
+            tableName,
+            columns,
+            "${SavedLocation.TABLE_NAME}.${SavedLocation.COLUMN_ID} = ?",
             arrayOf(id.toString()),
             null,
             null,
@@ -79,13 +141,13 @@ class SavedLocationRepository(context: Context) {
 
         var savedLocation: SavedLocation? = null
         if (cursor.moveToFirst()) {
-            savedLocation = mapDataToSavedLocation(cursor)
+            savedLocation = mapDataToSavedLocation(cursor, withCategory)
         }
         cursor.close()
         return savedLocation
     }
 
-    private fun mapDataToSavedLocation(cursor: Cursor): SavedLocation {
+    private fun mapDataToSavedLocation(cursor: Cursor, withCategory: Boolean): SavedLocation {
         val id = cursor.getInt(cursor.getColumnIndexOrThrow(SavedLocation.COLUMN_ID))
         val displayName = cursor.getString(cursor.getColumnIndexOrThrow(SavedLocation.COLUMN_DISPLAY_NAME)) ?: ""
         val address = cursor.getString(cursor.getColumnIndexOrThrow(SavedLocation.COLUMN_ADDRESS)) ?: ""
@@ -105,7 +167,17 @@ class SavedLocationRepository(context: Context) {
             hashMapOf()
         }
 
-        return SavedLocation(id, displayName, address, city, country, latitude, longitude, date, categoryId, note, addressData)
+        var category: Category? = null
+        if (withCategory && categoryId != null) {
+            category = Category(
+                id = categoryId,
+                label = cursor.getString(cursor.getColumnIndexOrThrow(Category.COLUMN_LABEL)) ?: "",
+                icon = cursor.getString(cursor.getColumnIndexOrThrow(Category.COLUMN_ICON)) ?: "",
+                color = cursor.getString(cursor.getColumnIndexOrThrow(Category.COLUMN_COLOR)) ?: ""
+            )
+        }
+
+        return SavedLocation(id, displayName, address, city, country, latitude, longitude, date, categoryId, note, addressData, category)
     }
 
     fun insertLocation(location: IGeoPoint, categoryId: Int? = null, note: String? = null) {
@@ -158,9 +230,6 @@ class SavedLocationRepository(context: Context) {
 
         address.extras?.let { extras ->
             for (key in extras.keySet()) {
-                // Fix: Attempt to cast generated internal exception:
-                // java.lang.ClassCastException: org.osmdroid.util.BoundingBox cannot be cast to java.lang.String
-                // Use value.toString() instead of extras.getString(key) to avoid ClassCastException
                 @Suppress("DEPRECATION")
                 val value = extras.get(key)
                 if (value != null) {
@@ -194,11 +263,6 @@ class SavedLocationRepository(context: Context) {
         db.insert(SavedLocation.TABLE_NAME, null, values)
     }
 
-    fun deleteLocation(id: Int) {
-        val db = dbHelper.writableDatabase
-        db.delete(SavedLocation.TABLE_NAME, "${SavedLocation.COLUMN_ID} = ?", arrayOf(id.toString()))
-    }
-
     fun updateLocation(id: Int, displayName: String, categoryId: Int?, note: String?) {
         val values = ContentValues().apply {
             put(SavedLocation.COLUMN_DISPLAY_NAME, displayName)
@@ -208,5 +272,10 @@ class SavedLocationRepository(context: Context) {
 
         val db = dbHelper.writableDatabase
         db.update(SavedLocation.TABLE_NAME, values, "${SavedLocation.COLUMN_ID} = ?", arrayOf(id.toString()))
+    }
+
+    fun deleteLocation(id: Int) {
+        val db = dbHelper.writableDatabase
+        db.delete(SavedLocation.TABLE_NAME, "${SavedLocation.COLUMN_ID} = ?", arrayOf(id.toString()))
     }
 }

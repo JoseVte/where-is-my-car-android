@@ -11,7 +11,8 @@ data class SavedLocation(
     val date: String = "",
     val categoryId: Int? = null,
     val note: String? = null,
-    val addressData: HashMap<String, String> = hashMapOf()
+    val addressData: HashMap<String, String> = hashMapOf(),
+    val category: Category? = null
 ) {
     companion object {
         const val TABLE_NAME = "locations"

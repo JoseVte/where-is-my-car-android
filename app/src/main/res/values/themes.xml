@@ -3,9 +3,41 @@
     <style name="Base.Theme.WhereIsMyCar" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+
+        <!-- Material 3 Menu Styling -->
+        <item name="android:popupMenuStyle">@style/Widget.Material3.PopupMenu.Custom</item>
+        <item name="popupMenuStyle">@style/Widget.Material3.PopupMenu.Custom</item>
+        <item name="android:textAppearanceLargePopupMenu">@style/TextAppearance.Material3.BodyLarge</item>
+        <item name="android:textAppearanceSmallPopupMenu">@style/TextAppearance.Material3.BodyMedium</item>
     </style>
 
     <style name="Theme.WhereIsMyCar" parent="Base.Theme.WhereIsMyCar" />
+
+    <!-- Theme overlay specifically for Popups to ensure the custom style is applied -->
+    <style name="Theme.WhereIsMyCar.PopupMenuOverlay" parent="">
+        <item name="android:popupMenuStyle">@style/Widget.Material3.PopupMenu.Custom</item>
+        <item name="popupMenuStyle">@style/Widget.Material3.PopupMenu.Custom</item>
+        <item name="android:dropDownListViewStyle">@style/Widget.WhereIsMyCar.ListView.DropDown</item>
+        <item name="android:listChoiceBackgroundIndicator">@drawable/bg_menu_item_ripple</item>
+    </style>
+
+    <style name="Widget.WhereIsMyCar.ListView.DropDown" parent="Widget.AppCompat.ListView.DropDown">
+        <item name="android:padding">8dp</item>
+        <item name="android:divider">@null</item>
+        <item name="android:dividerHeight">0dp</item>
+        <item name="android:scrollbars">none</item>
+        <item name="android:overScrollMode">never</item>
+        <item name="android:listSelector">@drawable/bg_menu_item_ripple</item>
+        <item name="android:clipToPadding">true</item>
+    </style>
+
+    <style name="Widget.Material3.PopupMenu.Custom" parent="Widget.Material3.PopupMenu">
+        <item name="android:textAllCaps">false</item>
+        <item name="android:popupBackground">@drawable/bg_popup_menu</item>
+        <item name="android:popupElevation">16dp</item>
+        <item name="android:dropDownHeight">wrap_content</item>
+        <item name="android:overlapAnchor">false</item>
+    </style>
 
     <style name="BottomNavigationViewStyle" parent="Widget.Material3.BottomNavigationView">
         <item name="labelVisibilityMode">labeled</item>

@@ -12,4 +12,6 @@
     <color name="primary_gray">#33FFFFFF</color>
     <color name="primary_gray_full">#FF3A3A3C</color>
     <color name="text_primary">#ffffff</color>
+    <color name="bg_gray">#1A222C</color>
+    <color name="border_gray">#2A323C</color>
 </resources>

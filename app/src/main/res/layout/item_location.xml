@@ -4,69 +4,108 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="12dp"
-    app:cardBackgroundColor="#1A222C"
+    app:cardBackgroundColor="@color/bg_gray"
     app:cardCornerRadius="24dp"
     app:cardElevation="0dp"
-    app:strokeColor="#2A323C"
+    app:strokeColor="@color/border_gray"
     app:strokeWidth="1dp">
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:padding="16dp">
+        android:padding="12dp">
 
         <com.google.android.material.card.MaterialCardView
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            app:cardBackgroundColor="#151C26"
+            android:id="@+id/map_container"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
             app:cardCornerRadius="12dp"
-            app:cardElevation="0dp">
+            app:cardElevation="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <org.osmdroid.views.MapView
+                android:id="@+id/map_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
 
             <ImageView
-                android:id="@+id/image_view_icon"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:layout_gravity="center"
-                android:src="@drawable/ic_coffee"
-                app:tint="#007AFF" />
+                android:contentDescription="@string/my_location"
+                android:src="@drawable/ic_location"
+                app:tint="@color/primary_blue" />
         </com.google.android.material.card.MaterialCardView>
 
-        <LinearLayout
-            android:layout_width="0dp"
+        <TextView
+            android:id="@+id/text_view_category"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_weight="1"
-            android:orientation="vertical">
+            android:background="@drawable/bg_category_tag"
+            android:paddingHorizontal="8dp"
+            android:paddingVertical="2dp"
+            android:text="@string/category"
+            android:textColor="@color/primary_blue"
+            android:textSize="11sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toEndOf="@id/map_container"
+            app:layout_constraintTop_toTopOf="@id/map_container" />
 
-            <TextView
-                android:id="@+id/text_view_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:includeFontPadding="false"
-                android:text="Coffee Shop"
-                android:textColor="#FFFFFF"
-                android:textSize="18sp"
-                android:textStyle="bold" />
+        <TextView
+            android:id="@+id/text_view_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="@string/date_value"
+            android:textColor="@color/text_secondary"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toBottomOf="@id/text_view_category"
+            app:layout_constraintStart_toEndOf="@id/text_view_category"
+            app:layout_constraintTop_toTopOf="@id/text_view_category" />
 
-            <TextView
-                android:id="@+id/text_view_subtitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
-                android:includeFontPadding="false"
-                android:text="24 mins ago • 0.3 miles"
-                android:textColor="#8E9299"
-                android:textSize="14sp" />
-        </LinearLayout>
+        <TextView
+            android:id="@+id/text_view_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="@string/address_line"
+            android:textColor="@color/text_primary"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@id/button_more"
+            app:layout_constraintStart_toStartOf="@id/text_view_category"
+            app:layout_constraintTop_toBottomOf="@id/text_view_category" />
 
-        <ImageView
-            android:id="@+id/button_edit"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:src="@drawable/ic_edit"
-            app:tint="#8E9299" />
+        <TextView
+            android:id="@+id/text_view_subtitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="@string/city_country"
+            android:textColor="@color/text_secondary"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toStartOf="@id/button_more"
+            app:layout_constraintStart_toStartOf="@id/text_view_category"
+            app:layout_constraintTop_toBottomOf="@id/text_view_title" />
 
-    </LinearLayout>
+        <ImageButton
+            android:id="@+id/button_more"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/more_options"
+            android:src="@drawable/ic_more"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/text_secondary" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>

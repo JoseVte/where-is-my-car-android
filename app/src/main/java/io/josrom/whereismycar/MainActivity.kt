@@ -24,6 +24,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.osmdroid.bonuspack.location.GeocoderNominatim
 import org.osmdroid.util.GeoPoint
+import kotlin.random.Random
 
 class MainActivity : AppCompatActivity() {
 
@@ -85,36 +86,34 @@ class MainActivity : AppCompatActivity() {
             lifecycleScope.launch {
                 val repository = SavedLocationRepository(this@MainActivity)
                 withContext(Dispatchers.IO) {
-                    val locations = repository.getAllLocations()
-                    // Delete existing to re-generate as requested
-                    locations.forEach { repository.deleteLocation(it.id) }
+//                    val locations = repository.getAllLocations()
+//                    // Delete existing to re-generate as requested
+//                    locations.forEach { repository.deleteLocation(it.id) }
+//
+//                    for (i in 1..10) {
+//                        val plusMinus = Random.nextBoolean()
+//                        val tolerance = i * 0.1 * (if (plusMinus) 1 else -1)
+//                        val location = GeoPoint(40.4168 + tolerance, -3.7038 + tolerance)
+//                        val address = withContext(Dispatchers.IO) {
+//                            try {
+//                                GeocoderNominatim(packageName)
+//                                    .getFromLocation(location.latitude, location.longitude, 1)
+//                            } catch (e: Exception) {
+//                                Log.e("ExploreFragment", "Error getting address", e)
+//                                null
+//                            }
+//                        }
+//
+//                        // Generate a new test location
+//                        if (!address.isNullOrEmpty()) {
+//                            repository.insertLocation(address.first(), location, 1, "Test node")
+//                        } else {
+//                            repository.insertLocation("Unknown location", location, 1, "Test node")
+//                        }
+//                    }
 
-                    val location = GeoPoint(40.4168, -3.7038)
-                    val address = withContext(Dispatchers.IO) {
-                        try {
-                            GeocoderNominatim(packageName)
-                                .getFromLocation(location.latitude, location.longitude, 1)
-                        } catch (e: Exception) {
-                            Log.e("ExploreFragment", "Error getting address", e)
-                            null
-                        }
-                    }
-
-                    // Generate a new test location
-                    if (!address.isNullOrEmpty()) {
-                        repository.insertLocation(address.first(), location, 1, "Test node")
-                    } else {
-                        repository.insertLocation("Unknown location", location, 1, "Test node")
-                    }
-                    
-                    val newLocations = repository.getAllLocations(1)
-                    if (newLocations.isNotEmpty()) {
-                        withContext(Dispatchers.Main) {
-                            val bundle = Bundle().apply {
-                                putInt("locationId", newLocations[0].id)
-                            }
-                            navController.navigate(R.id.LocationDetailsFragment, bundle)
-                        }
+                    withContext(Dispatchers.Main) {
+                        navController.navigate(R.id.LocationHistoryFragment)
                     }
                 }
             }
