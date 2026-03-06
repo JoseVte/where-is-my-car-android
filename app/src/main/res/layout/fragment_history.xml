@@ -107,7 +107,7 @@
     </androidx.cardview.widget.CardView>
 
     <HorizontalScrollView
-        android:id="@+id/categories_scroll"
+        android:id="@+id/active_filters_scroll"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
@@ -117,16 +117,60 @@
         android:visibility="gone"
         app:layout_constraintTop_toBottomOf="@id/search_container">
 
-        <LinearLayout
-            android:id="@+id/categories_container"
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/active_filters_group"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <!-- Category items will be added dynamically here -->
-
-        </LinearLayout>
+            app:chipSpacingHorizontal="8dp"
+            app:singleLine="true">
+            <!-- Active filter chips will be added here -->
+        </com.google.android.material.chip.ChipGroup>
     </HorizontalScrollView>
+
+    <LinearLayout
+        android:id="@+id/filters_wrapper"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/active_filters_scroll">
+
+        <HorizontalScrollView
+            android:id="@+id/date_filters_scroll"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:clipToPadding="false"
+            android:paddingHorizontal="16dp"
+            android:scrollbars="none">
+
+            <LinearLayout
+                android:id="@+id/date_filters_container"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <!-- Date presets will be added here -->
+            </LinearLayout>
+        </HorizontalScrollView>
+
+        <HorizontalScrollView
+            android:id="@+id/categories_scroll"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:clipToPadding="false"
+            android:paddingHorizontal="16dp"
+            android:scrollbars="none">
+
+            <LinearLayout
+                android:id="@+id/categories_container"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <!-- Category items -->
+            </LinearLayout>
+        </HorizontalScrollView>
+    </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view_locations"
@@ -135,7 +179,7 @@
         android:layout_marginTop="16dp"
         android:paddingHorizontal="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/categories_scroll"
+        app:layout_constraintTop_toBottomOf="@id/filters_wrapper"
         tools:listitem="@layout/item_location" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

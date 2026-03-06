@@ -21,6 +21,8 @@ class SavedLocationRepository(context: Context) {
         offset: Int? = null,
         searchQuery: String? = null,
         categoryIds: List<Int>? = null,
+        startDate: String? = null,
+        endDate: String? = null,
         withCategory: Boolean = false
     ): MutableList<SavedLocation> {
         val savedLocations = mutableListOf<SavedLocation>()
@@ -39,6 +41,16 @@ class SavedLocationRepository(context: Context) {
             val placeholders = categoryIds.joinToString(",") { "?" }
             selectionParts.add("${SavedLocation.COLUMN_CATEGORY_ID} IN ($placeholders)")
             categoryIds.forEach { selectionArgsList.add(it.toString()) }
+        }
+
+        if (!startDate.isNullOrBlank()) {
+            selectionParts.add("${SavedLocation.COLUMN_DATE} >= ?")
+            selectionArgsList.add(startDate)
+        }
+
+        if (!endDate.isNullOrBlank()) {
+            selectionParts.add("${SavedLocation.COLUMN_DATE} <= ?")
+            selectionArgsList.add(endDate)
         }
 
         val selection = if (selectionParts.isNotEmpty()) selectionParts.joinToString(" AND ") else null
