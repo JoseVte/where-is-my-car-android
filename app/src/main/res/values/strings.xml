@@ -147,4 +147,33 @@
     <string name="yesterday">Yesterday</string>
     <string name="last_7_days">Last 7 Days</string>
     <string name="custom">Custom</string>
+
+    <string name="edit_location">Edit Location</string>
+    <string name="display_name">Display Name</string>
+    <string name="save_changes">Save Changes</string>
+    <string name="delete_location">Delete Location</string>
+    <string name="delete_confirmation_title">Delete Location?</string>
+    <string name="delete_confirmation_message">Are you sure you want to delete this location?</string>
+    <string name="dont_ask_again">Don\'t ask again</string>
+    <string name="cancel">Cancel</string>
+    <string name="location_updated">Location updated successfully</string>
+    <string name="location_deleted">Location deleted</string>
+    <string name="north_char">N</string>
+    <string name="south_char">S</string>
+    <string name="east_char">E</string>
+    <string name="wester_char">W</string>
+
+    <string name="appearance">APPEARANCE</string>
+    <string name="theme_mode">Theme Mode</string>
+    <string name="light">Light</string>
+    <string name="dark">Dark</string>
+    <string name="system">System</string>
+    <string name="app_settings_header">APP SETTINGS</string>
+    <string name="manage_categories">Manage Categories</string>
+    <string name="arrival_alerts">Arrival Alerts</string>
+    <string name="cloud_sync">CLOUD SYNC</string>
+    <string name="backup_title">Backup your locations</string>
+    <string name="backup_summary">Sync your saved places across all your devices and never lose your data.</string>
+    <string name="sign_in_google">Sign in with Google</string>
+    <string name="help_support">Help &amp; Support</string>
 </resources>

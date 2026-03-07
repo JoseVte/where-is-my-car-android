@@ -86,7 +86,7 @@ class MainActivity : AppCompatActivity() {
             lifecycleScope.launch {
                 val repository = SavedLocationRepository(this@MainActivity)
                 withContext(Dispatchers.IO) {
-//                    val locations = repository.getAllLocations()
+                    val locations = repository.getAllLocations()
 //                    // Delete existing to re-generate as requested
 //                    locations.forEach { repository.deleteLocation(it.id) }
 //
@@ -113,7 +113,10 @@ class MainActivity : AppCompatActivity() {
 //                    }
 
                     withContext(Dispatchers.Main) {
-                        navController.navigate(R.id.LocationHistoryFragment)
+                        val bundle = Bundle().apply {
+                            putInt("locationId", locations.random().id)
+                        }
+                        navController.navigate(R.id.EditLocationFragment, bundle)
                     }
                 }
             }

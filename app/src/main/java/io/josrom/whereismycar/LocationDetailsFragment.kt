@@ -3,10 +3,7 @@ package io.josrom.whereismycar
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
-import android.content.Intent
-import android.graphics.Color
 import android.location.LocationManager
-import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -16,6 +13,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.preference.PreferenceManager
 import io.josrom.whereismycar.databinding.FragmentLocationDetailsBinding
 import org.osmdroid.bonuspack.routing.OSRMRoadManager
@@ -138,11 +136,7 @@ class LocationDetailsFragment : Fragment() {
                 }
             }
 
-            val lat = String.format(Locale.US, "%.4f", abs(loc.latitude))
-            val lon = String.format(Locale.US, "%.4f", abs(loc.longitude))
-            val latDir = if (loc.latitude >= 0) "N" else "S"
-            val lonDir = if (loc.longitude >= 0) "E" else "W"
-            binding.coordsText.text = getString(R.string.coords_format, lat, latDir, lon, lonDir)
+            binding.coordsText.text = loc.formattedCoordinates(requireContext())
 
             val map = binding.map
             map.setTileSource(TileSourceFactory.MAPNIK)
@@ -181,7 +175,10 @@ class LocationDetailsFragment : Fragment() {
         }
         
         binding.btnEdit.setOnClickListener {
-            Toast.makeText(context, getString(R.string.edit_coming_soon), Toast.LENGTH_SHORT).show()
+            val bundle = Bundle().apply {
+                putInt("locationId", locationId)
+            }
+            findNavController().navigate(R.id.action_LocationDetailsFragment_to_EditLocationFragment, bundle)
         }
 
         binding.btnShare.setOnClickListener {

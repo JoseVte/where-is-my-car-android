@@ -33,6 +33,9 @@
         <action
             android:id="@+id/action_LocationHistoryFragment_to_LocationDetailsFragment"
             app:destination="@id/LocationDetailsFragment" />
+        <action
+            android:id="@+id/action_LocationHistoryFragment_to_EditLocationFragment"
+            app:destination="@id/EditLocationFragment" />
     </fragment>
 
     <fragment
@@ -51,9 +54,21 @@
         <argument
             android:name="locationId"
             app:argType="integer" />
+        <action
+            android:id="@+id/action_LocationDetailsFragment_to_EditLocationFragment"
+            app:destination="@id/EditLocationFragment" />
     </fragment>
     <fragment
         android:id="@+id/SettingsFragment"
         android:name="io.josrom.whereismycar.SettingsFragment"
         android:label="Settings" />
+    <fragment
+        android:id="@+id/EditLocationFragment"
+        android:name="io.josrom.whereismycar.EditLocationFragment"
+        android:label="EditLocationFragment"
+        tools:layout="@layout/fragment_edit_location" >
+        <argument
+            android:name="locationId"
+            app:argType="integer" />
+    </fragment>
 </navigation>
