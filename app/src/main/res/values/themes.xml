@@ -9,9 +9,28 @@
         <item name="popupMenuStyle">@style/Widget.Material3.PopupMenu.Custom</item>
         <item name="android:textAppearanceLargePopupMenu">@style/TextAppearance.Material3.BodyLarge</item>
         <item name="android:textAppearanceSmallPopupMenu">@style/TextAppearance.Material3.BodyMedium</item>
+        <item name="materialSwitchStyle">@style/Widget.App.Switch</item>
+
+        <!-- Preference Styles -->
+        <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
+
+        <!-- Custom Attribute -->
+        <item name="iconColor">@android:color/black</item>
     </style>
 
     <style name="Theme.WhereIsMyCar" parent="Base.Theme.WhereIsMyCar" />
+
+    <style name="PreferenceThemeOverlay" parent="PreferenceThemeOverlay.v14.Material">
+        <item name="preferenceCategoryStyle">@style/PreferenceCategoryStyle</item>
+    </style>
+
+    <!-- Custom Preference Category Style -->
+    <style name="PreferenceCategoryStyle" parent="Preference.Category.Material">
+        <item name="android:layout">@layout/custom_preference_category</item>
+        <item name="allowDividerAbove">false</item>
+        <item name="allowDividerBelow">false</item>
+        <item name="iconSpaceReserved">false</item>
+    </style>
 
     <!-- Theme overlay specifically for Popups to ensure the custom style is applied -->
     <style name="Theme.WhereIsMyCar.PopupMenuOverlay" parent="">
@@ -49,9 +68,24 @@
         <item name="itemTextAppearanceInactive">@style/NavTextAppearance</item>
     </style>
 
+    <style name="Widget.App.Switch" parent="Widget.Material3.CompoundButton.MaterialSwitch">
+        <item name="materialThemeOverlay">@style/ThemeOverlay.App.Switch</item>
+        <item name="android:scaleX">0.8</item>
+        <item name="android:scaleY">0.8</item>
+        <item name="thumbIcon">@drawable/ic_check</item>
+    </style>
+
+    <style name="ThemeOverlay.App.Switch" parent="">
+        <item name="colorPrimary">@color/primary_blue</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorSurfaceVariant">@color/primary_gray</item>
+        <item name="colorSurfaceContainerHighest">@color/primary_gray_full</item>
+        <item name="colorOnPrimaryContainer">@color/primary_blue</item>
+    </style>
+
     <style name="ToggleButton" parent="Widget.Material3.Button">
         <item name="backgroundTint">@color/toggle_btn_color</item>
-        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:textColor">@color/toggle_text_color</item>
         <item name="iconTint">@color/text_primary</item>
         <item name="strokeColor">@color/toggle_btn_color</item>
     </style>
@@ -59,7 +93,7 @@
     <style name="NavTextAppearance" parent="TextAppearance.Material3.LabelSmall">
         <item name="android:textSize">10sp</item>
         <item name="android:textAllCaps">true</item>
-        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:fontFamily" xmlns:tools="http://schemas.android.com/tools" tools:ignore="SpUsage">sans-serif-medium</item>
     </style>
 
     <style name="ShapeAppearance.Circle" parent="">

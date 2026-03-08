@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Adaptive Colors (Dark Mode) -->
+    <color name="app_background">#0A0E14</color>
+    <color name="card_surface">#151C26</color>
+    <color name="text_primary">#FFFFFF</color>
+    <color name="text_primary_inverted">#000000</color>
+    <color name="text_secondary">#8E9299</color>
+    <color name="primary">@color/primary_blue</color>
+
+    <color name="primary_blue">#0A84FF</color>
+    <color name="primary_pink">#FF2D55</color>
+    <color name="primary_gray">#33FFFFFF</color>
+    <color name="primary_gray_full">#3A3A3C</color>
+
+    <color name="bg_gray">#1A222C</color>
+    <color name="border_gray">#2A323C</color>
+    <color name="bg_drag_gray">#4DFFFFFF</color>
+    <color name="pill_dark">#CC151C26</color>
+</resources>

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/bg_dark"
+    android:background="@color/app_background"
     android:paddingTop="48dp"
     tools:context=".LocationDetailsFragment">
 
@@ -35,7 +35,7 @@
             android:layout_marginStart="16dp"
             android:includeFontPadding="false"
             android:text="@string/app_name"
-            android:textColor="@color/white"
+            android:textColor="@color/text_primary"
             android:textSize="18sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -77,11 +77,11 @@
                 android:paddingHorizontal="12dp"
                 android:paddingVertical="6dp"
                 android:text="@string/distance_text"
-                android:textColor="@color/text_primary"
+                android:textColor="@color/white"
                 android:textSize="12sp"
                 android:visibility="gone"
                 app:drawableStartCompat="@drawable/ic_navigation"
-                app:drawableTint="@color/text_primary" />
+                app:drawableTint="@color/white" />
 
             <TextView
                 android:id="@+id/timeText"
@@ -99,7 +99,7 @@
                 android:textSize="12sp"
                 android:visibility="gone"
                 app:drawableStartCompat="@drawable/ic_time"
-                app:drawableTint="@color/text_primary" />
+                app:drawableTint="@color/white" />
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -113,20 +113,23 @@
         android:focusable="false"
         app:layout_constraintBottom_toTopOf="@id/locationScrollView" />
 
-    <ImageView
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/center_location"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_margin="16dp"
-        android:background="@drawable/rounded_pill_dark"
         android:contentDescription="@string/my_location"
-        android:padding="8dp"
-        android:src="@drawable/ic_my_location"
+        android:src="@android:drawable/ic_menu_mylocation"
+        app:backgroundTint="@color/app_background"
+        app:fabCustomSize="40dp"
         app:layout_constraintBottom_toTopOf="@id/locationScrollView"
         app:layout_constraintEnd_toEndOf="parent"
-        app:tint="@color/white" />
+        app:maxImageSize="24dp"
+        app:shapeAppearanceOverlay="@style/CircleImage"
+        app:tint="@color/primary_blue" />
 
-    <!-- Transport Selector (Material 3 Segmented Button) -->
+    <!-- Transport Selector (Material 3 Segment Button) -->
     <com.google.android.material.button.MaterialButtonToggleGroup
         android:id="@+id/transportToggleGroup"
         android:layout_width="wrap_content"
@@ -164,19 +167,19 @@
         android:layout_height="56dp"
         android:layout_marginBottom="16dp"
         android:backgroundTint="@color/primary_blue"
+        android:padding="10dp"
         android:text="@string/start_navigation"
         android:textAllCaps="false"
-        android:textColor="@color/text_primary"
+        android:textColor="@color/white"
         android:textSize="16sp"
         android:textStyle="bold"
-        app:cornerRadius="56dp"
         android:visibility="visible"
+        app:cornerRadius="56dp"
         app:icon="@drawable/ic_navigation"
-        app:iconTint="@color/text_primary"
+        app:iconTint="@color/white"
         app:layout_constraintBottom_toTopOf="@id/locationScrollView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        android:padding="10dp"
         app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.MediumComponent" />
 
     <com.google.android.material.progressindicator.CircularProgressIndicator
@@ -184,12 +187,12 @@
         style="@style/Widget.Material3Expressive.CircularProgressIndicator.Wavy"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:indicatorSize="36dp"
         android:elevation="10dp"
         android:indeterminate="true"
         android:indeterminateTint="@color/text_secondary"
         android:visibility="gone"
         app:indicatorColor="@color/text_primary"
+        app:indicatorSize="36dp"
         app:layout_constraintBottom_toBottomOf="@id/btn_start_navigation"
         app:layout_constraintEnd_toEndOf="@id/btn_start_navigation"
         app:layout_constraintStart_toStartOf="@id/btn_start_navigation"
@@ -215,12 +218,12 @@
                 android:id="@+id/locationName"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
                 android:includeFontPadding="false"
                 android:text="@string/address_line"
-                android:textColor="@color/white"
+                android:textColor="@color/text_primary"
                 android:textSize="24sp"
                 android:textStyle="bold"
-                android:layout_marginTop="8dp"
                 app:layout_constraintEnd_toStartOf="@+id/actionButtons"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -295,7 +298,7 @@
                 android:includeFontPadding="false"
                 android:padding="16dp"
                 android:text="@string/no_notes_added"
-                android:textColor="@color/white"
+                android:textColor="@color/text_primary"
                 app:layout_constraintTop_toBottomOf="@id/notesLabel" />
 
             <LinearLayout
@@ -332,7 +335,7 @@
                         android:layout_marginTop="4dp"
                         android:includeFontPadding="false"
                         android:text="@string/date_value"
-                        android:textColor="@color/white"
+                        android:textColor="@color/text_primary"
                         android:textSize="14sp" />
                 </LinearLayout>
 
@@ -380,7 +383,7 @@
                             android:layout_height="wrap_content"
                             android:textSize="16sp"
                             android:text="@string/default_category_emoji"
-                            android:textColor="@color/white"
+                            android:textColor="@color/text_primary"
                             />
 
                         <TextView
@@ -390,7 +393,7 @@
                             android:includeFontPadding="false"
                             android:layout_marginStart="4dp"
                             android:text="@string/category"
-                            android:textColor="@color/white"
+                            android:textColor="@color/text_primary"
                             android:textSize="14sp" />
                     </LinearLayout>
                 </LinearLayout>
@@ -430,7 +433,7 @@
                         android:layout_marginTop="4dp"
                         android:includeFontPadding="false"
                         android:text="@string/coords_format"
-                        android:textColor="@color/white"
+                        android:textColor="@color/text_primary"
                         android:textSize="14sp" />
                 </LinearLayout>
 

@@ -1,17 +1,42 @@
-<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <PreferenceCategory app:title="@string/location_header">
-        <SwitchPreferenceCompat
-            app:defaultValue="true"
-            app:key="location_service"
-            app:summary="@string/location_service_summary"
-            app:title="@string/location_service_title" />
+    <PreferenceCategory
+        android:layout="@layout/custom_preference_category"
+        app:iconSpaceReserved="false"
+        app:title="@string/appearance">
+
+        <io.josrom.whereismycar.ThemePreference
+            app:iconSpaceReserved="false"
+            app:key="theme_selection" />
+
     </PreferenceCategory>
 
-    <PreferenceCategory app:title="@string/sync_header">
-        <SwitchPreferenceCompat
-            app:key="sync"
-            app:title="@string/sync_title" />
+    <PreferenceCategory
+        android:layout="@layout/custom_preference_category"
+        app:iconSpaceReserved="false"
+        app:title="@string/app_settings_header">
+
+        <io.josrom.whereismycar.AppSettingsPreference
+            android:key="app_settings_card"
+            app:iconSpaceReserved="false" />
+
     </PreferenceCategory>
+
+    <PreferenceCategory
+        android:layout="@layout/custom_preference_category"
+        app:iconSpaceReserved="false"
+        app:title="@string/cloud_sync">
+
+        <io.josrom.whereismycar.SyncPreference
+            app:iconSpaceReserved="false"
+            app:key="google_sync_card" />
+
+    </PreferenceCategory>
+
+    <Preference
+        app:icon="@drawable/ic_more"
+        app:key="help_support"
+        app:title="@string/help_support" />
 
 </PreferenceScreen>

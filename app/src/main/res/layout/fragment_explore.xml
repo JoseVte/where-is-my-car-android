@@ -62,7 +62,7 @@
         android:translationY="-38dp"
         android:contentDescription="@string/current_location"
         android:src="@android:drawable/ic_menu_mylocation"
-        app:backgroundTint="@color/bg_dark"
+        app:backgroundTint="@color/app_background"
         app:tint="@color/primary_blue"
         app:fabSize="normal"
         app:layout_anchor="@id/bottom_sheet"
@@ -80,7 +80,7 @@
         app:behavior_expandedOffset="100dp"
         app:behavior_fitToContents="false"
         app:behavior_hideable="false"
-        app:behavior_peekHeight="180dp"
+        app:behavior_peekHeight="140dp"
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
         <View
@@ -118,14 +118,14 @@
                         android:layout_height="32dp"
                         android:layout_marginEnd="12dp"
                         android:src="@drawable/ic_location_plus"
-                        app:tint="@color/text_primary" />
+                        app:tint="@color/white" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:includeFontPadding="false"
                         android:text="@string/save_current_position"
-                        android:textColor="@color/text_primary"
+                        android:textColor="@color/white"
                         android:textSize="22sp"
                         android:textStyle="bold" />
                 </LinearLayout>
@@ -137,7 +137,7 @@
                     android:alpha="0.8"
                     android:includeFontPadding="false"
                     android:text="@string/save_instantly"
-                    android:textColor="@color/text_primary"
+                    android:textColor="@color/white"
                     android:textSize="12sp"
                     android:letterSpacing="0.1" />
 

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/bg_dark"
+    android:background="@color/app_background"
     android:paddingTop="48dp"
     tools:context=".HistoryFragment">
 
@@ -34,7 +34,7 @@
             android:layout_marginStart="16dp"
             android:includeFontPadding="false"
             android:text="@string/history"
-            android:textColor="@color/white"
+            android:textColor="@color/text_primary"
             android:textSize="18sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"

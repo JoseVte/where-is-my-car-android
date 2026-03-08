@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/bg_dark"
+    android:background="@color/app_background"
     android:paddingTop="48dp"
     tools:context=".EditLocationFragment">
 
@@ -35,7 +35,7 @@
             android:layout_marginStart="16dp"
             android:includeFontPadding="false"
             android:text="@string/edit_location"
-            android:textColor="@color/white"
+            android:textColor="@color/text_primary"
             android:textSize="18sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -107,7 +107,7 @@
                 android:inputType="text"
                 android:padding="16dp"
                 android:textSize="16sp"
-                android:textColor="@color/white"
+                android:textColor="@color/text_primary"
                 android:textColorHint="@color/primary_gray"
                 app:layout_constraintTop_toBottomOf="@id/displayNameLabel" />
 
@@ -137,7 +137,7 @@
                 android:minLines="3"
                 android:textSize="16sp"
                 android:padding="16dp"
-                android:textColor="@color/white"
+                android:textColor="@color/text_primary"
                 android:textColorHint="@color/primary_gray"
                 app:layout_constraintTop_toBottomOf="@id/notesLabel" />
 
@@ -208,7 +208,7 @@
                         android:id="@+id/tvCoordinates"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/white"
+                        android:textColor="@color/text_primary"
                         android:textSize="14sp"
                         tools:text="37.7749° N, 122.4194° W" />
                 </LinearLayout>
@@ -230,7 +230,7 @@
                 android:backgroundTint="@color/primary_blue"
                 android:text="@string/save_changes"
                 android:textAllCaps="false"
-                android:textColor="@color/white"
+                android:textColor="@color/text_primary"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 app:cornerRadius="12dp"

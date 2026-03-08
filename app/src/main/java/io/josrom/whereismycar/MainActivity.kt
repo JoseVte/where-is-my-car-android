@@ -10,21 +10,20 @@ import android.view.MenuItem
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupWithNavController
+import androidx.preference.PreferenceManager
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.common.api.ApiException
 import io.josrom.whereismycar.databinding.ActivityMainBinding
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.osmdroid.bonuspack.location.GeocoderNominatim
-import org.osmdroid.util.GeoPoint
-import kotlin.random.Random
 
 class MainActivity : AppCompatActivity() {
 
@@ -48,6 +47,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        // Apply saved theme before super.onCreate
+        applySavedTheme()
+        
         super.onCreate(savedInstanceState)
 
         val sharedPref = getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
@@ -87,40 +89,28 @@ class MainActivity : AppCompatActivity() {
                 val repository = SavedLocationRepository(this@MainActivity)
                 withContext(Dispatchers.IO) {
                     val locations = repository.getAllLocations()
-//                    // Delete existing to re-generate as requested
-//                    locations.forEach { repository.deleteLocation(it.id) }
-//
-//                    for (i in 1..10) {
-//                        val plusMinus = Random.nextBoolean()
-//                        val tolerance = i * 0.1 * (if (plusMinus) 1 else -1)
-//                        val location = GeoPoint(40.4168 + tolerance, -3.7038 + tolerance)
-//                        val address = withContext(Dispatchers.IO) {
-//                            try {
-//                                GeocoderNominatim(packageName)
-//                                    .getFromLocation(location.latitude, location.longitude, 1)
-//                            } catch (e: Exception) {
-//                                Log.e("ExploreFragment", "Error getting address", e)
-//                                null
-//                            }
-//                        }
-//
-//                        // Generate a new test location
-//                        if (!address.isNullOrEmpty()) {
-//                            repository.insertLocation(address.first(), location, 1, "Test node")
-//                        } else {
-//                            repository.insertLocation("Unknown location", location, 1, "Test node")
-//                        }
-//                    }
-
-                    withContext(Dispatchers.Main) {
-                        val bundle = Bundle().apply {
-                            putInt("locationId", locations.random().id)
+                    if (locations.isNotEmpty()) {
+                        withContext(Dispatchers.Main) {
+                            val bundle = Bundle().apply {
+                                putInt("locationId", locations.random().id)
+                            }
+                            navController.navigate(R.id.LocationDetailsFragment, bundle)
                         }
-                        navController.navigate(R.id.EditLocationFragment, bundle)
                     }
                 }
             }
         }
+    }
+
+    private fun applySavedTheme() {
+        val sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this)
+        val themeValue = sharedPrefs.getString("theme_selection", "system") ?: "system"
+        val mode = when (themeValue) {
+            "light" -> AppCompatDelegate.MODE_NIGHT_NO
+            "dark" -> AppCompatDelegate.MODE_NIGHT_YES
+            else -> AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
+        }
+        AppCompatDelegate.setDefaultNightMode(mode)
     }
 
     private fun updateCenterItemBackground(selectedItemId: Int) {
@@ -130,7 +120,6 @@ class MainActivity : AppCompatActivity() {
             else R.drawable.bg_nav_center_unselected
         )
         
-        // También ajustamos la opacidad del icono para que se vea más "apagado"
         binding.icNavCenterIcon.alpha = if (isExploreSelected) 1.0f else 0.5f
     }
 

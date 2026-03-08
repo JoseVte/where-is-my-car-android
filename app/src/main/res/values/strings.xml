@@ -176,4 +176,7 @@
     <string name="backup_summary">Sync your saved places across all your devices and never lose your data.</string>
     <string name="sign_in_google">Sign in with Google</string>
     <string name="help_support">Help &amp; Support</string>
+
+    <string name="confirm_deletion_title">Confirm Deletion</string>
+    <string name="confirm_deletion_summary">Always ask for confirmation before deleting a location</string>
 </resources>

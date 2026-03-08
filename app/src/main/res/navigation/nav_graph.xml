@@ -39,11 +39,6 @@
     </fragment>
 
     <fragment
-        android:id="@+id/nav_settings"
-        android:name="io.josrom.whereismycar.SettingsFragment"
-        android:label="Settings" />
-
-    <fragment
         android:id="@+id/LocationDetailsFragment"
         android:name="io.josrom.whereismycar.LocationDetailsFragment"
         android:label="LocationDetailsFragment"
@@ -58,10 +53,23 @@
             android:id="@+id/action_LocationDetailsFragment_to_EditLocationFragment"
             app:destination="@id/EditLocationFragment" />
     </fragment>
+
     <fragment
         android:id="@+id/SettingsFragment"
         android:name="io.josrom.whereismycar.SettingsFragment"
-        android:label="Settings" />
+        android:label="Settings"
+        tools:layout="@layout/fragment_settings">
+        <action
+            android:id="@+id/action_SettingsFragment_to_ManageCategoriesFragment"
+            app:destination="@id/ManageCategoriesFragment" />
+        <action
+            android:id="@+id/action_SettingsFragment_to_LocationHistoryFragment"
+            app:destination="@id/LocationHistoryFragment" />
+        <action
+            android:id="@+id/action_SettingsFragment_to_ExploreFragment"
+            app:destination="@id/ExploreFragment" />
+    </fragment>
+
     <fragment
         android:id="@+id/EditLocationFragment"
         android:name="io.josrom.whereismycar.EditLocationFragment"
@@ -71,4 +79,10 @@
             android:name="locationId"
             app:argType="integer" />
     </fragment>
+
+    <fragment
+        android:id="@+id/ManageCategoriesFragment"
+        android:name="io.josrom.whereismycar.ManageCategoriesFragment"
+        android:label="Manage Categories"
+        tools:layout="@layout/fragment_manage_categories" />
 </navigation>

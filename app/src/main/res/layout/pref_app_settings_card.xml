@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingHorizontal="16dp"
+    android:paddingVertical="8dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/rounded_card_dark"
+        android:orientation="vertical"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <!-- Manage Categories -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/item_manage_categories"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true"
+            android:padding="16dp">
+
+            <View
+                android:id="@+id/icon_bg_categories"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:background="@drawable/rounded_card_dark"
+                android:backgroundTint="#FF9500"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:src="@drawable/ic_location"
+                app:layout_constraintBottom_toBottomOf="@id/icon_bg_categories"
+                app:layout_constraintEnd_toEndOf="@id/icon_bg_categories"
+                app:layout_constraintStart_toStartOf="@id/icon_bg_categories"
+                app:layout_constraintTop_toTopOf="@id/icon_bg_categories"
+                app:tint="@color/white" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:text="@string/manage_categories"
+                android:textColor="@color/text_primary"
+                android:textSize="16sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/iv_chevron_1"
+                app:layout_constraintStart_toEndOf="@id/icon_bg_categories"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/iv_chevron_1"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/ic_back"
+                android:rotation="180"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:tint="@color/text_secondary" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!-- Location Services -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp">
+
+            <View
+                android:id="@+id/icon_bg_location"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:background="@drawable/rounded_card_dark"
+                android:backgroundTint="@color/primary_blue"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:src="@drawable/ic_location"
+                app:layout_constraintBottom_toBottomOf="@id/icon_bg_location"
+                app:layout_constraintEnd_toEndOf="@id/icon_bg_location"
+                app:layout_constraintStart_toStartOf="@id/icon_bg_location"
+                app:layout_constraintTop_toTopOf="@id/icon_bg_location"
+                app:tint="@color/white" />
+
+            <TextView
+                android:id="@+id/tv_location_title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:text="@string/location_service_title"
+                android:textColor="@color/text_primary"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toStartOf="@id/switch_location"
+                app:layout_constraintStart_toEndOf="@id/icon_bg_location"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="@string/location_service_summary"
+                android:textColor="@color/text_secondary"
+                android:textSize="12sp"
+                app:layout_constraintEnd_toEndOf="@id/tv_location_title"
+                app:layout_constraintStart_toStartOf="@id/tv_location_title"
+                app:layout_constraintTop_toBottomOf="@id/tv_location_title" />
+
+            <com.google.android.material.materialswitch.MaterialSwitch
+                android:id="@+id/switch_location"
+                style="@style/Widget.App.Switch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!-- Confirm Deletion -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp">
+
+            <View
+                android:id="@+id/icon_bg_delete"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:background="@drawable/rounded_card_dark"
+                android:backgroundTint="#FF3B30"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:src="@drawable/ic_delete"
+                app:layout_constraintBottom_toBottomOf="@id/icon_bg_delete"
+                app:layout_constraintEnd_toEndOf="@id/icon_bg_delete"
+                app:layout_constraintStart_toStartOf="@id/icon_bg_delete"
+                app:layout_constraintTop_toTopOf="@id/icon_bg_delete"
+                app:tint="@color/white" />
+
+            <TextView
+                android:id="@+id/tv_delete_confirm_title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:text="@string/confirm_deletion_title"
+                android:textColor="@color/text_primary"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toStartOf="@id/switch_delete_confirm"
+                app:layout_constraintStart_toEndOf="@id/icon_bg_delete"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="@string/confirm_deletion_summary"
+                android:textColor="@color/text_secondary"
+                android:textSize="12sp"
+                app:layout_constraintEnd_toEndOf="@id/tv_delete_confirm_title"
+                app:layout_constraintStart_toStartOf="@id/tv_delete_confirm_title"
+                app:layout_constraintTop_toBottomOf="@id/tv_delete_confirm_title" />
+
+            <com.google.android.material.materialswitch.MaterialSwitch
+                android:id="@+id/switch_delete_confirm"
+                style="@style/Widget.App.Switch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

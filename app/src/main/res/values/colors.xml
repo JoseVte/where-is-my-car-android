@@ -2,16 +2,26 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="primary">#FFFF00</color>
 
-    <color name="bg_dark">#0A0E14</color>
-    <color name="surface_dark">#151C26</color>
+    <!-- Adaptive Colors (Light Mode) -->
+    <color name="app_background">#F2F2F7</color>
+    <color name="card_surface">#FFFFFF</color>
+    <color name="text_primary">#000000</color>
+    <color name="text_primary_inverted">#FFFFFF</color>
+    <color name="text_secondary">#8E8E93</color>
+    <color name="primary">@color/primary_blue</color>
+
     <color name="primary_blue">#007AFF</color>
     <color name="primary_pink">#E91E63</color>
-    <color name="text_secondary">#8E9299</color>
-    <color name="primary_gray">#33FFFFFF</color>
-    <color name="primary_gray_full">#FF3A3A3C</color>
-    <color name="text_primary">#ffffff</color>
-    <color name="bg_gray">#1A222C</color>
-    <color name="border_gray">#2A323C</color>
+    <color name="primary_gray">#E5E5EA</color>
+    <color name="primary_gray_full">#C7C7CC</color>
+
+    <color name="bg_gray">#DDDDDE</color>
+    <color name="border_gray">#D4D6D8</color>
+    <color name="bg_drag_gray">#4D000000</color>
+    <color name="pill_dark">#CC88A8D9</color>
+
+    <!-- Keep old names as aliases to avoid breaking things immediately -->
+    <color name="bg_dark">@color/app_background</color>
+    <color name="surface_dark">@color/card_surface</color>
 </resources>

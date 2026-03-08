@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/bg_dark">
+    android:background="@color/app_background">
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/viewPager"
@@ -23,7 +23,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:tabIndicatorColor="@android:color/transparent"
-        android:background="@color/bg_dark" />
+        android:background="@color/app_background" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnNext"
