@@ -84,5 +84,20 @@
         android:id="@+id/ManageCategoriesFragment"
         android:name="io.josrom.whereismycar.ManageCategoriesFragment"
         android:label="Manage Categories"
-        tools:layout="@layout/fragment_manage_categories" />
+        tools:layout="@layout/fragment_manage_categories" >
+        <action
+            android:id="@+id/action_ManageCategoriesFragment_to_EditCategoryFragment"
+            app:destination="@id/EditCategoryFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/EditCategoryFragment"
+        android:name="io.josrom.whereismycar.EditCategoryFragment"
+        android:label="Edit Category"
+        tools:layout="@layout/fragment_edit_category" >
+        <argument
+            android:name="category_id"
+            app:argType="integer"
+            android:defaultValue="-1" />
+    </fragment>
 </navigation>

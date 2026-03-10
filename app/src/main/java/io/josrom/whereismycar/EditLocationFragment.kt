@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import org.osmdroid.config.Configuration
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
@@ -88,6 +89,20 @@ class EditLocationFragment : Fragment() {
     private fun loadCategories() {
         val categories = categoryRepository.getAllCategories()
         binding.categoryChipGroup.removeAllViews()
+
+        // None / Uncategorized chip
+        val isNoneSelected = selectedCategoryId == null
+        val noneChip = createFilterChip(
+            context = requireContext(),
+            label = getString(R.string.uncategorized),
+            iconRes = R.drawable.ic_forbidden,
+            isSelected = isNoneSelected,
+            baseColor = ContextCompat.getColor(requireContext(), R.color.text_secondary)
+        ) {
+            selectedCategoryId = null
+            loadCategories()
+        }
+        binding.categoryChipGroup.addView(noneChip)
 
         for (category in categories) {
             val isSelected = category.id == selectedCategoryId

@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/app_background"
-    android:paddingTop="48dp"
+    android:paddingTop="@dimen/layout_padding_top"
     tools:context=".ManageCategoriesFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -30,23 +30,66 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:text="Manage Categories"
+            android:text="@string/manage_categories"
             android:textColor="@color/text_primary"
             android:textSize="18sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/btn_back"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/btn_search"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:contentDescription="@string/search"
+            android:src="@drawable/ic_search"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/text_primary" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <TextView
+        android:id="@+id/tv_title_categories"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Categories will appear here"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="24dp"
+        android:text="@string/your_categories"
+        android:textAllCaps="true"
         android:textColor="@color/text_secondary"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:textSize="12sp"
+        android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/toolbar" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_categories"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        android:clipToPadding="false"
+        android:paddingHorizontal="16dp"
+        android:paddingBottom="100dp"
+        app:layout_constraintBottom_toTopOf="@id/btn_add_category"
+        app:layout_constraintTop_toBottomOf="@id/tv_title_categories"
+        tools:listitem="@layout/item_category" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_add_category"
+        android:layout_width="wrap_content"
+        android:layout_height="56dp"
+        android:layout_margin="24dp"
+        android:backgroundTint="@color/primary_blue"
+        app:icon="@drawable/ic_plus"
+        android:text="@string/add_new_category"
+        android:textAllCaps="false"
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        app:cornerRadius="28dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

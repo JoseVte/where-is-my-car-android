@@ -3,11 +3,92 @@ package io.josrom.whereismycar
 import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Color
+import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.ColorUtils
 import androidx.core.graphics.toColorInt
 import com.google.android.material.chip.Chip
+import com.google.android.material.shape.CornerFamily
+import com.google.android.material.shape.MaterialShapeDrawable
+import com.google.android.material.shape.ShapeAppearanceModel
+
+fun Category.getResolvedLabel(context: Context): String {
+    return if (this.label.startsWith("@string/")) {
+        val resourceName = this.label.substringAfterLast("/")
+        val resourceId = context.resources.getIdentifier(resourceName, "string", context.packageName)
+        if (resourceId != 0) context.getString(resourceId) else this.label
+    } else {
+        this.label
+    }
+}
+
+fun Category.getResolvedColor(context: Context? = null): Int {
+    return try {
+        this.color.toColorInt()
+    } catch (_: Exception) {
+        if (context != null) {
+            ContextCompat.getColor(context, R.color.text_primary)
+        } else {
+            Color.GRAY
+        }
+    }
+}
+
+fun Int.withAlpha(alpha: Float): Int {
+    return ColorUtils.setAlphaComponent(this, (255 * alpha).toInt())
+}
+
+fun Category.setupIcon(drawableView: ImageView, emojiView: TextView, alpha: Float = 0.15f) {
+    val context = drawableView.context
+    val categoryColor = this.getResolvedColor(context)
+    val alphaBackground = categoryColor.withAlpha(alpha)
+    val isForbidden = this.icon == "ic_forbidden" || this.icon == "@drawable/ic_forbidden"
+
+    if (isForbidden) {
+        emojiView.visibility = View.GONE
+        drawableView.visibility = View.VISIBLE
+        drawableView.backgroundTintList = ColorStateList.valueOf(alphaBackground)
+        drawableView.imageTintList = ColorStateList.valueOf(categoryColor)
+        drawableView.setImageResource(R.drawable.ic_forbidden)
+    } else if (this.icon.startsWith("@drawable/")) {
+        emojiView.visibility = View.GONE
+        drawableView.visibility = View.VISIBLE
+        drawableView.backgroundTintList = ColorStateList.valueOf(alphaBackground)
+        drawableView.imageTintList = ColorStateList.valueOf(categoryColor)
+        
+        val resourceName = this.icon.substringAfterLast("/")
+        val resourceId = context.resources.getIdentifier(resourceName, "drawable", context.packageName)
+        if (resourceId != 0) {
+            drawableView.setImageResource(resourceId)
+        }
+    } else {
+        emojiView.visibility = View.VISIBLE
+        drawableView.visibility = View.GONE
+        emojiView.backgroundTintList = ColorStateList.valueOf(alphaBackground)
+        emojiView.text = this.icon
+        emojiView.setTextColor(categoryColor)
+    }
+}
+
+fun Category.setupBadge(textView: TextView, alpha: Float = 0.3f) {
+    val context = textView.context
+    val color = this.getResolvedColor(context)
+    textView.text = this.getResolvedLabel(context)
+    textView.setTextColor(color)
+    
+    val alphaColor = color.withAlpha(alpha)
+    val shape = MaterialShapeDrawable(
+        ShapeAppearanceModel().toBuilder()
+            .setAllCorners(CornerFamily.ROUNDED, 16f)
+            .build()
+    )
+    shape.setTint(alphaColor)
+    textView.background = shape
+}
 
 fun createFilterChip(
     context: Context,
@@ -56,23 +137,32 @@ fun Category.createChip(
     isSelected: Boolean,
     onClick: () -> Unit
 ): Chip {
-    val categoryColor = try { this.color.toColorInt() } catch (_: Exception) { Color.WHITE }
-    val iconRes = context.resources.getIdentifier(this.icon, "drawable", context.packageName)
+    val categoryColor = this.getResolvedColor(context)
+    val isForbidden = this.icon == "ic_forbidden" || this.icon == "@drawable/ic_forbidden"
+    val iconRes = if (isForbidden) 0 else context.resources.getIdentifier(this.icon, "drawable", context.packageName)
     
-    val labelText = if (this.label.startsWith("@string/")) {
-        val resourceName = this.label.substringAfterLast("/")
-        val resourceId = context.resources.getIdentifier(resourceName, "string", context.packageName)
-        if (resourceId != 0) context.getString(resourceId) else this.label
-    } else {
-        this.label
-    }
-
     return createFilterChip(
         context = context,
-        label = labelText,
+        label = this.getResolvedLabel(context),
         iconRes = if (iconRes != 0) iconRes else null,
         isSelected = isSelected,
         baseColor = categoryColor,
         onClick = onClick
+    )
+}
+
+fun Category.confirmAndDelete(
+    context: Context,
+    repository: CategoryRepository,
+    onDeleted: () -> Unit
+) {
+    showDeleteConfirmationDialog(
+        context = context,
+        titleRes = R.string.delete_category_confirmation_title,
+        messageRes = R.string.delete_category_confirmation_message,
+        onConfirm = {
+            repository.deleteCategory(this.id)
+            onDeleted()
+        }
     )
 }

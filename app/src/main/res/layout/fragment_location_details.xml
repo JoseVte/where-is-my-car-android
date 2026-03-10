@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/app_background"
-    android:paddingTop="48dp"
+    android:paddingTop="@dimen/layout_padding_top"
     tools:context=".LocationDetailsFragment">
 
     <!-- Header / Toolbar -->
@@ -363,26 +363,30 @@
 
                     <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                        android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
                         android:orientation="horizontal"
                         android:gravity="center_vertical"
                         >
                         <ImageView
                             android:id="@+id/categoryIconDrawable"
-                            android:layout_width="16dp"
-                            android:layout_height="16dp"
+                            android:layout_width="28dp"
+                            android:layout_height="28dp"
                             android:background="@drawable/rounded_pill_dark"
                             android:contentDescription="@string/category"
+                            android:padding="6dp"
+                            android:layout_marginEnd="8dp"
                             android:src="@drawable/home"
-                            app:tint="@color/primary_pink"
                             />
                         <TextView
                             android:id="@+id/categoryIconEmoji"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                            android:layout_width="28dp"
+                            android:layout_height="28dp"
+                            android:background="@drawable/rounded_pill_dark"
+                            android:gravity="center"
                             android:textSize="16sp"
                             android:text="@string/default_category_emoji"
+                            android:layout_marginEnd="8dp"
                             android:textColor="@color/text_primary"
                             />
 
@@ -391,7 +395,6 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:includeFontPadding="false"
-                            android:layout_marginStart="4dp"
                             android:text="@string/category"
                             android:textColor="@color/text_primary"
                             android:textSize="14sp" />

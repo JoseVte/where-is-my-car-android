@@ -48,6 +48,11 @@ android {
         jniLibs {
             useLegacyPackaging = false
         }
+        resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            excludes += "LICENSE_OFL"
+            excludes += "LICENSE_UNICODE"
+        }
     }
     useLibrary("wear-sdk")
 
@@ -92,6 +97,11 @@ dependencies {
     implementation(libs.firebase.database)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.recyclerview)
+
+    implementation(libs.colorpickerview)
+    implementation(libs.androidx.emoji2.views)
+    implementation(libs.androidx.emoji)
+    implementation(libs.androidx.emoji2.bundled)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

@@ -86,15 +86,18 @@ class MainActivity : AppCompatActivity() {
         // on the LocationDetailsFragment, and re-generate on each start.
         if (savedInstanceState == null && BuildConfig.DEBUG) {
             lifecycleScope.launch {
-                val repository = SavedLocationRepository(this@MainActivity)
+                val locationRepository = SavedLocationRepository(this@MainActivity)
+                val categoryRepository = CategoryRepository(this@MainActivity)
                 withContext(Dispatchers.IO) {
-                    val locations = repository.getAllLocations()
+                    val locations = locationRepository.getAllLocations()
+                    val categories = categoryRepository.getAllCategories()
                     if (locations.isNotEmpty()) {
                         withContext(Dispatchers.Main) {
                             val bundle = Bundle().apply {
-                                putInt("locationId", locations.random().id)
+                                putInt("locationId", locations.first().id)
+                                putInt("categoryId", categories.first().id)
                             }
-                            navController.navigate(R.id.LocationDetailsFragment, bundle)
+                            navController.navigate(R.id.SettingsFragment, bundle)
                         }
                     }
                 }

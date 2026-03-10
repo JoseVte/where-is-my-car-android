@@ -18,6 +18,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -256,9 +257,9 @@ class ExploreFragment : Fragment(), LocationListener,
             _mapController.animateTo(GeoPoint(location.latitude, location.longitude))
             _bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
         }, { location ->
-            lifecycleScope.launch {
-                _locationRepository.deleteLocation(location.id)
+            location.confirmAndDelete(requireContext(), _locationRepository) {
                 resetAndLoadLocations()
+                Toast.makeText(context, getString(R.string.location_deleted), Toast.LENGTH_SHORT).show()
             }
         })
 

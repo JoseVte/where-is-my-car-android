@@ -3,6 +3,8 @@ package io.josrom.whereismycar
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import android.content.res.ColorStateList
+import android.graphics.Color
 import android.location.LocationManager
 import android.os.Bundle
 import android.os.Handler
@@ -11,7 +13,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.graphics.ColorUtils
+import androidx.core.graphics.toColorInt
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.preference.PreferenceManager
@@ -28,7 +33,6 @@ import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
 import java.util.Locale
 import kotlin.math.abs
-import androidx.core.graphics.toColorInt
 
 class LocationDetailsFragment : Fragment() {
 
@@ -105,10 +109,22 @@ class LocationDetailsFragment : Fragment() {
             binding.dateText.text = loc.formattedDate
 
             if (loc.categoryId == null) {
-                binding.categoryText.visibility = View.GONE
+                val categoryColor = ContextCompat.getColor(requireContext(), R.color.text_secondary)
+                val alphaBackground = ColorUtils.setAlphaComponent(categoryColor, (255 * 0.15).toInt())
+
+                binding.categoryText.visibility = View.VISIBLE
+                binding.categoryText.text = getString(R.string.uncategorized)
+                binding.categoryIconEmoji.visibility = View.GONE
+                binding.categoryIconDrawable.visibility = View.VISIBLE
+                binding.categoryIconDrawable.backgroundTintList = ColorStateList.valueOf(alphaBackground)
+                binding.categoryIconDrawable.imageTintList = ColorStateList.valueOf(categoryColor)
+                binding.categoryIconDrawable.setImageResource(R.drawable.ic_forbidden)
             } else {
                 val category = _categoryRepository.getCategory(loc.categoryId)
                 if (category != null) {
+                    val categoryColor = try { category.color.toColorInt() } catch (e: Exception) { ContextCompat.getColor(requireContext(), R.color.text_primary) }
+                    val alphaBackground = ColorUtils.setAlphaComponent(categoryColor, (255 * 0.15).toInt())
+                    
                     binding.categoryText.visibility = View.VISIBLE
                     if (category.label.startsWith("@string/")) {
                         binding.categoryText.text = getString(category.label.substringAfterLast("/").toInt())
@@ -116,23 +132,42 @@ class LocationDetailsFragment : Fragment() {
                         binding.categoryText.text = category.label
                     }
 
-                    if (category.icon.startsWith("@drawable/")) {
+                    val isForbidden = category.icon == "ic_forbidden" || category.icon == "@drawable/ic_forbidden"
+                    if (isForbidden) {
                         binding.categoryIconEmoji.visibility = View.GONE
                         binding.categoryIconDrawable.visibility = View.VISIBLE
+                        binding.categoryIconDrawable.backgroundTintList = ColorStateList.valueOf(alphaBackground)
+                        binding.categoryIconDrawable.imageTintList = ColorStateList.valueOf(categoryColor)
+                        binding.categoryIconDrawable.setImageResource(R.drawable.ic_forbidden)
+                    } else if (category.icon.startsWith("@drawable/")) {
+                        binding.categoryIconEmoji.visibility = View.GONE
+                        binding.categoryIconDrawable.visibility = View.VISIBLE
+                        binding.categoryIconDrawable.backgroundTintList = ColorStateList.valueOf(alphaBackground)
+                        binding.categoryIconDrawable.imageTintList = ColorStateList.valueOf(categoryColor)
+                        
                         val resourceName = category.icon.substringAfterLast("/")
                         val resourceId = resources.getIdentifier(resourceName, "drawable", requireContext().packageName)
                         if (resourceId != 0) {
-                            val drawable = ResourcesCompat.getDrawable(resources, resourceId, requireContext().theme)
-                            binding.categoryIconDrawable.setImageDrawable(drawable)
+                            binding.categoryIconDrawable.setImageResource(resourceId)
                         }
                     } else {
                         binding.categoryIconEmoji.visibility = View.VISIBLE
                         binding.categoryIconDrawable.visibility = View.GONE
+                        binding.categoryIconEmoji.backgroundTintList = ColorStateList.valueOf(alphaBackground)
                         binding.categoryIconEmoji.text = category.icon
-                        binding.categoryIconEmoji.setTextColor(category.color.toColorInt())
+                        binding.categoryIconEmoji.setTextColor(categoryColor)
                     }
                 } else {
-                    binding.categoryText.visibility = View.GONE
+                    val categoryColor = ContextCompat.getColor(requireContext(), R.color.text_secondary)
+                    val alphaBackground = ColorUtils.setAlphaComponent(categoryColor, (255 * 0.15).toInt())
+
+                    binding.categoryText.visibility = View.VISIBLE
+                    binding.categoryText.text = getString(R.string.uncategorized)
+                    binding.categoryIconEmoji.visibility = View.GONE
+                    binding.categoryIconDrawable.visibility = View.VISIBLE
+                    binding.categoryIconDrawable.backgroundTintList = ColorStateList.valueOf(alphaBackground)
+                    binding.categoryIconDrawable.imageTintList = ColorStateList.valueOf(categoryColor)
+                    binding.categoryIconDrawable.setImageResource(R.drawable.ic_forbidden)
                 }
             }
 

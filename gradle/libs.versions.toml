@@ -29,6 +29,10 @@ firebaseBom = "34.10.0"
 googleServices = "4.4.4"
 activity = "1.12.4"
 recyclerview = "1.4.0"
+colorpickerview = "2.4.0"
+emoji2Views = "1.6.0"
+emoji = "1.2.0"
+emoji2Bundled = "1.6.0"
 
 [libraries]
 androidx-compose-material3 = { module = "androidx.compose.material3:material3", version.ref = "material3" }
@@ -71,6 +75,10 @@ firebase-auth = { group = "com.google.firebase", name = "firebase-auth" }
 firebase-database = { group = "com.google.firebase", name = "firebase-database" }
 androidx-activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
 androidx-recyclerview = { group = "androidx.recyclerview", name = "recyclerview", version.ref = "recyclerview" }
+colorpickerview = { module = "com.github.skydoves:colorpickerview", version.ref = "colorpickerview" }
+androidx-emoji2-views = { group = "androidx.emoji2", name = "emoji2-views", version.ref = "emoji2Views" }
+androidx-emoji = { group = "androidx.emoji", name = "emoji", version.ref = "emoji" }
+androidx-emoji2-bundled = { group = "androidx.emoji2", name = "emoji2-bundled", version.ref = "emoji2Bundled" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

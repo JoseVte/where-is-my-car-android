@@ -52,20 +52,7 @@ class LocationAdapter(
 
         if (location.category != null) {
             holder.binding.textViewCategory.visibility = View.VISIBLE
-            val category = location.category
-            if (category.label.startsWith("@string/")) {
-                holder.binding.textViewCategory.text = holder.itemView.context.getString(category.label.substringAfterLast("/").toInt())
-            } else {
-                holder.binding.textViewCategory.text = category.label
-            }
-            holder.binding.textViewCategory.setTextColor(category.color.toColorInt())
-            val backgroundColorInt = Color.valueOf(category.color.toColorInt())
-            val backgroundColor = Color.argb(0.3f, backgroundColorInt.red(), backgroundColorInt.green(), backgroundColorInt.blue())
-
-            val shape = MaterialShapeDrawable(ShapeAppearanceModel().toBuilder().setAllCorners(CornerFamily.ROUNDED, 16f).build())
-            shape.setTint(backgroundColor)
-
-            ViewCompat.setBackground(holder.binding.textViewCategory, shape)
+            location.category.setupBadge(holder.binding.textViewCategory)
         } else {
             holder.binding.textViewCategory.visibility = View.GONE
         }

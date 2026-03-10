@@ -123,7 +123,7 @@ class HistoryFragment : Fragment() {
                 label = getString(R.string.all),
                 iconRes = R.drawable.ic_time,
                 isSelected = false,
-                baseColor = Color.WHITE
+                baseColor = ContextCompat.getColor(requireContext(), R.color.text_primary)
             ) {
                 startDate = null
                 endDate = null
@@ -178,7 +178,8 @@ class HistoryFragment : Fragment() {
 
     private fun addPresetChip(label: String, isSelected: Boolean, onClick: () -> Unit) {
         val primaryBlue = ContextCompat.getColor(requireContext(), R.color.primary_blue)
-        val color = if (isSelected) primaryBlue else Color.WHITE
+        val primaryColor = ContextCompat.getColor(requireContext(), R.color.text_primary)
+        val color = if (isSelected) primaryBlue else primaryColor
         val chip = createFilterChip(
             context = requireContext(),
             label = label,
@@ -200,7 +201,7 @@ class HistoryFragment : Fragment() {
                 label = getString(R.string.all),
                 iconRes = R.drawable.ic_map,
                 isSelected = false,
-                baseColor = Color.WHITE
+                baseColor = ContextCompat.getColor(requireContext(), R.color.text_primary)
             ) {
                 selectedCategoryIds.clear()
                 renderFilters()
@@ -208,6 +209,25 @@ class HistoryFragment : Fragment() {
             }
             binding.categoriesContainer.addView(allChip)
         }
+
+        // Uncategorized filter
+        val isUncategorizedSelected = selectedCategoryIds.contains(-1)
+        val uncategorizedChip = createFilterChip(
+            context = requireContext(),
+            label = getString(R.string.uncategorized),
+            iconRes = R.drawable.ic_forbidden,
+            isSelected = isUncategorizedSelected,
+            baseColor = ContextCompat.getColor(requireContext(), R.color.text_secondary)
+        ) {
+            if (isUncategorizedSelected) {
+                selectedCategoryIds.remove(-1)
+            } else {
+                selectedCategoryIds.add(-1)
+            }
+            renderFilters()
+            loadLocations()
+        }
+        binding.categoriesContainer.addView(uncategorizedChip)
 
         val categories = categoryRepository.getAllCategories()
         for (category in categories) {
@@ -242,12 +262,24 @@ class HistoryFragment : Fragment() {
             binding.activeFiltersGroup.addView(chip)
         }
 
+        // Uncategorized filter
+        if (selectedCategoryIds.contains(-1)) {
+            val color = ContextCompat.getColor(requireContext(), R.color.text_secondary)
+            val chip = createActiveFilterChip(getString(R.string.uncategorized), color, R.drawable.ic_forbidden) {
+                selectedCategoryIds.remove(-1)
+                renderFilters()
+                loadLocations()
+            }
+            binding.activeFiltersGroup.addView(chip)
+        }
+
         // Category filters
         val categories = categoryRepository.getAllCategories()
         selectedCategoryIds.forEach { id ->
+            if (id == -1) return@forEach
             val category = categories.find { it.id == id }
             category?.let {
-                val categoryColor = try { it.color.toColorInt() } catch (e: Exception) { Color.WHITE }
+                val categoryColor = try { it.color.toColorInt() } catch (e: Exception) { ContextCompat.getColor(requireContext(), R.color.text_primary) }
                 val iconRes = resources.getIdentifier(it.icon, "drawable", requireContext().packageName)
                 val chip = createActiveFilterChip(it.label, categoryColor, if (iconRes != 0) iconRes else R.drawable.ic_location) {
                     selectedCategoryIds.remove(id)

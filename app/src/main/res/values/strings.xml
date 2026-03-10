@@ -179,4 +179,19 @@
 
     <string name="confirm_deletion_title">Confirm Deletion</string>
     <string name="confirm_deletion_summary">Always ask for confirmation before deleting a location</string>
+    <string name="location_count_text">%1$d locations</string>
+    <string name="add_new_category">Add New Category</string>
+    <string name="your_categories">Your categories</string>
+    <string name="edit_category">Edit Category</string>
+    <string name="save">Save</string>
+    <string name="preview">Preview</string>
+    <string name="color">Color</string>
+    <string name="save_category">Save Category</string>
+    <string name="icon">Icon</string>
+    <string name="select_emoji">Select Emoji</string>
+    <string name="select_emoji_desc">Choose an emoji to represent this category</string>
+
+    <string name="delete_category_confirmation_title">Delete Category?</string>
+    <string name="delete_category_confirmation_message">Are you sure you want to delete this category? This won\'t delete the locations in it.</string>
+    <string name="uncategorized">Uncategorized</string>
 </resources>

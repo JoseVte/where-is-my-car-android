@@ -2,11 +2,8 @@ package io.josrom.whereismycar
 
 import android.content.Context
 import android.content.Intent
-import android.view.LayoutInflater
-import android.widget.CheckBox
 import androidx.core.content.edit
 import androidx.preference.PreferenceManager
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import java.text.SimpleDateFormat
 import java.util.Locale
 import kotlin.math.abs
@@ -33,30 +30,15 @@ fun SavedLocation.confirmAndDelete(
     repository: SavedLocationRepository,
     onDeleted: () -> Unit
 ) {
-    val prefs = PreferenceManager.getDefaultSharedPreferences(context)
-    val dontAskAgain = prefs.getBoolean("dont_ask_delete_confirmation", false)
-
-    if (dontAskAgain) {
-        repository.deleteLocation(this.id)
-        onDeleted()
-    } else {
-        val dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_confirm_delete, null)
-        val checkBox = dialogView.findViewById<CheckBox>(R.id.cbDontAskAgain)
-
-        MaterialAlertDialogBuilder(context)
-            .setIcon(R.drawable.ic_delete)
-            .setTitle(R.string.delete_confirmation_title)
-            .setView(dialogView)
-            .setPositiveButton(R.string.delete) { _, _ ->
-                if (checkBox.isChecked) {
-                    prefs.edit { putBoolean("dont_ask_delete_confirmation", true) }
-                }
-                repository.deleteLocation(this.id)
-                onDeleted()
-            }
-            .setNegativeButton(R.string.cancel, null)
-            .show()
-    }
+    showDeleteConfirmationDialog(
+        context = context,
+        titleRes = R.string.delete_confirmation_title,
+        messageRes = R.string.delete_confirmation_message,
+        onConfirm = {
+            repository.deleteLocation(this.id)
+            onDeleted()
+        }
+    )
 }
 
 fun SavedLocation.formattedCoordinates(context: Context): String {

@@ -38,9 +38,22 @@ class SavedLocationRepository(context: Context) {
         }
 
         if (!categoryIds.isNullOrEmpty()) {
-            val placeholders = categoryIds.joinToString(",") { "?" }
-            selectionParts.add("${SavedLocation.COLUMN_CATEGORY_ID} IN ($placeholders)")
-            categoryIds.forEach { selectionArgsList.add(it.toString()) }
+            val hasUncategorized = categoryIds.contains(-1)
+            val actualCategoryIds = categoryIds.filter { it != -1 }
+            
+            val categorySelection = mutableListOf<String>()
+            if (actualCategoryIds.isNotEmpty()) {
+                val placeholders = actualCategoryIds.joinToString(",") { "?" }
+                categorySelection.add("${SavedLocation.COLUMN_CATEGORY_ID} IN ($placeholders)")
+                actualCategoryIds.forEach { selectionArgsList.add(it.toString()) }
+            }
+            if (hasUncategorized) {
+                categorySelection.add("${SavedLocation.COLUMN_CATEGORY_ID} IS NULL")
+            }
+            
+            if (categorySelection.isNotEmpty()) {
+                selectionParts.add("(" + categorySelection.joinToString(" OR ") + ")")
+            }
         }
 
         if (!startDate.isNullOrBlank()) {
