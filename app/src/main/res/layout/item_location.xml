@@ -36,7 +36,7 @@
                 android:layout_gravity="center"
                 android:contentDescription="@string/my_location"
                 android:src="@drawable/ic_location"
-                app:tint="@color/primary_blue" />
+                app:tint="@color/primary" />
         </com.google.android.material.card.MaterialCardView>
 
         <TextView
@@ -48,7 +48,7 @@
             android:paddingHorizontal="8dp"
             android:paddingVertical="2dp"
             android:text="@string/category"
-            android:textColor="@color/primary_blue"
+            android:textColor="@color/primary"
             android:textSize="11sp"
             android:textStyle="bold"
             app:layout_constraintStart_toEndOf="@id/map_container"

@@ -1,7 +1,5 @@
 package io.josrom.whereismycar
 
-import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -34,7 +32,8 @@ class MainActivity : AppCompatActivity() {
     private val signInLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
-        if (result.resultCode == Activity.RESULT_OK) {
+        if (result.resultCode == RESULT_OK) {
+            @Suppress("DEPRECATION")
             val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
             try {
                 val account = task.getResult(ApiException::class.java)
@@ -52,7 +51,7 @@ class MainActivity : AppCompatActivity() {
         
         super.onCreate(savedInstanceState)
 
-        val sharedPref = getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+        val sharedPref = getSharedPreferences("app_prefs", MODE_PRIVATE)
         if (!sharedPref.getBoolean("onboarding_completed", false)) {
             startActivity(Intent(this, OnboardingActivity::class.java))
             finish()
@@ -95,9 +94,11 @@ class MainActivity : AppCompatActivity() {
                         withContext(Dispatchers.Main) {
                             val bundle = Bundle().apply {
                                 putInt("locationId", locations.first().id)
-                                putInt("categoryId", categories.first().id)
+                                if (categories.isNotEmpty()) {
+                                    putInt("categoryId", categories.first().id)
+                                }
                             }
-                            navController.navigate(R.id.SettingsFragment, bundle)
+                            navController.navigate(R.id.LocationDetailsFragment, bundle)
                         }
                     }
                 }
@@ -151,6 +152,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onSupportNavigateUp(): Boolean {
+        val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+        appBarConfiguration = AppBarConfiguration(navHostFragment.navController.graph)
         return getNavController().navigateUp(appBarConfiguration)
             || super.onSupportNavigateUp()
     }

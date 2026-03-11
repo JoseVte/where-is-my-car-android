@@ -24,7 +24,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:tint="@color/primary_blue" />
+            app:tint="@color/primary" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -81,7 +81,7 @@
         android:layout_width="wrap_content"
         android:layout_height="56dp"
         android:layout_margin="24dp"
-        android:backgroundTint="@color/primary_blue"
+        android:backgroundTint="@color/primary"
         app:icon="@drawable/ic_plus"
         android:text="@string/add_new_category"
         android:textAllCaps="false"

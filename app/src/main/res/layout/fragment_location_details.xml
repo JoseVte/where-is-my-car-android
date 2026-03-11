@@ -26,7 +26,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:tint="@color/primary_blue" />
+            app:tint="@color/primary" />
 
         <TextView
             android:id="@+id/locationNameTop"
@@ -77,11 +77,11 @@
                 android:paddingHorizontal="12dp"
                 android:paddingVertical="6dp"
                 android:text="@string/distance_text"
-                android:textColor="@color/white"
+                android:textColor="@color/primary"
                 android:textSize="12sp"
                 android:visibility="gone"
                 app:drawableStartCompat="@drawable/ic_navigation"
-                app:drawableTint="@color/white" />
+                app:drawableTint="@color/primary" />
 
             <TextView
                 android:id="@+id/timeText"
@@ -127,7 +127,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:maxImageSize="24dp"
         app:shapeAppearanceOverlay="@style/CircleImage"
-        app:tint="@color/primary_blue" />
+        app:tint="@color/primary" />
 
     <!-- Transport Selector (Material 3 Segment Button) -->
     <com.google.android.material.button.MaterialButtonToggleGroup
@@ -166,7 +166,7 @@
         android:layout_width="wrap_content"
         android:layout_height="56dp"
         android:layout_marginBottom="16dp"
-        android:backgroundTint="@color/primary_blue"
+        android:backgroundTint="@color/primary"
         android:padding="10dp"
         android:text="@string/start_navigation"
         android:textAllCaps="false"
@@ -247,7 +247,7 @@
                     android:contentDescription="@string/edit"
                     android:padding="10dp"
                     android:src="@drawable/ic_edit"
-                    app:tint="@color/primary_blue" />
+                    app:tint="@color/primary" />
 
                 <ImageView
                     android:id="@+id/btn_share"
@@ -258,7 +258,7 @@
                     android:contentDescription="@string/share"
                     android:padding="10dp"
                     android:src="@drawable/ic_share"
-                    app:tint="@color/primary_blue" />
+                    app:tint="@color/primary" />
             </LinearLayout>
 
             <TextView
@@ -446,7 +446,7 @@
                     android:layout_height="24dp"
                     android:contentDescription="@string/copy_coordinates"
                     android:src="@drawable/ic_layers"
-                    app:tint="@color/primary_blue" />
+                    app:tint="@color/primary" />
             </LinearLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>

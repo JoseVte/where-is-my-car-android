@@ -1,20 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Adaptive Colors (Dark Mode) -->
-    <color name="app_background">#0A0E14</color>
-    <color name="card_surface">#151C26</color>
-    <color name="text_primary">#FFFFFF</color>
-    <color name="text_primary_inverted">#000000</color>
-    <color name="text_secondary">#8E9299</color>
-    <color name="primary">@color/primary_blue</color>
+    <!-- Adaptive Colors (Dark Mode) - Warmer Tones -->
+    <color name="app_background">#12100E</color>
+    <color name="card_surface">#1C1917</color>
+    <color name="text_primary">#F5F5F4</color>
+    <color name="text_primary_inverted">#2C1B00</color>
+    <color name="text_secondary">#A8A29E</color>
+    <color name="primary">@color/primary_warm_orange</color>
 
-    <color name="primary_blue">#0A84FF</color>
-    <color name="primary_pink">#FF2D55</color>
-    <color name="primary_gray">#33FFFFFF</color>
-    <color name="primary_gray_full">#3A3A3C</color>
+    <color name="primary_pink">#F472B6</color>
+    <color name="primary_gray">#2E2A27</color>
+    <color name="primary_gray_full">#44403C</color>
 
-    <color name="bg_gray">#1A222C</color>
-    <color name="border_gray">#2A323C</color>
-    <color name="bg_drag_gray">#4DFFFFFF</color>
-    <color name="pill_dark">#CC151C26</color>
+    <color name="primary_warm_orange">#F4511E</color> <!-- Stronger, harder orange instead of salmon -->
+    <color name="secondary_warm_brown">#BCAAA4</color>
+
+    <color name="bg_gray">#262320</color>
+    <color name="border_gray">#3F3A36</color>
+    <color name="bg_drag_gray">#4DF5F5F4</color>
+    <color name="pill_dark">#2E2A27</color> <!-- Lighter than background for better button contrast in dark mode -->
 </resources>

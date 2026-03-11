@@ -115,7 +115,7 @@ class ExploreFragment : Fragment(), LocationListener,
             _myLocationNewOverlay =
                 MyLocationNewOverlay(GpsMyLocationProvider(requireContext()), map)
             _compassOverlay = CompassOverlay(requireContext(), map)
-            _compassOverlay?.setCompassCenter(36.0F, 140.0F)
+            _compassOverlay?.setCompassCenter(36.0F, 160.0F)
 
             map.overlays.add(_myLocationNewOverlay)
             map.overlays.add(_compassOverlay)

@@ -194,4 +194,5 @@
     <string name="delete_category_confirmation_title">Delete Category?</string>
     <string name="delete_category_confirmation_message">Are you sure you want to delete this category? This won\'t delete the locations in it.</string>
     <string name="uncategorized">Uncategorized</string>
+    <string name="search_for_locations">Search for locations...</string>
 </resources>

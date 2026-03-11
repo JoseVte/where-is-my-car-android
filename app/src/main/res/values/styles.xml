@@ -11,8 +11,8 @@
     </style>
 
     <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <item name="colorPrimary">#007AFF</item>
-        <item name="android:windowBackground">#0A0E14</item>
-        <item name="android:statusBarColor">#0A0E14</item>
+        <item name="colorPrimary">@color/primary</item>
+        <item name="android:windowBackground">@color/app_background</item>
+        <item name="android:statusBarColor">@color/app_background</item>
     </style>
 </resources>

@@ -12,7 +12,7 @@
         android:id="@+id/category_icon_container"
         android:layout_width="48dp"
         android:layout_height="48dp"
-        app:cardBackgroundColor="@color/primary_blue"
+        app:cardBackgroundColor="@color/primary"
         app:cardCornerRadius="8dp"
         app:cardElevation="0dp"
         app:layout_constraintBottom_toBottomOf="parent"

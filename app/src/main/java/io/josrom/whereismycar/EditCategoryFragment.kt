@@ -36,19 +36,19 @@ class EditCategoryFragment : Fragment() {
     private lateinit var repository: CategoryRepository
 
     private var categoryId: Int? = null
-    private var selectedColor: String = "#0A84FF"
+    private var selectedColor: String = "#E65100"
     private var selectedIcon: String = "favorite"
     private var customColor: String? = null
     private val randomEmoji = listOf("🤩", "🚀", "🎨", "🎭", "🎮", "🎸", "⛺", "🌈", "🍦", "🍩").random()
 
     private val presetColors = listOf(
-        "#0A84FF" to "Ocean Blue",
-        "#30D158" to "Green",
-        "#FF453A" to "Red",
-        "#FF9F0A" to "Orange",
-        "#AF52DE" to "Purple",
-        "#FF375F" to "Pink",
-        "#5E5CE6" to "Indigo"
+        "#E65100" to "Warm Orange",
+        "#795548" to "Brown",
+        "#8D6E63" to "Tan",
+        "#BF360C" to "Deep Orange",
+        "#5D4037" to "Dark Brown",
+        "#FFB300" to "Amber",
+        "#F4511E" to "Sunset"
     )
 
     private val icons = listOf(
@@ -168,7 +168,7 @@ class EditCategoryFragment : Fragment() {
         val initialColor = try {
             selectedColor.toColorInt()
         } catch (e: Exception) {
-            Color.BLUE
+            ContextCompat.getColor(requireContext(), R.color.primary)
         }
 
         val builder = ColorPickerDialog.Builder(requireContext())
@@ -280,7 +280,7 @@ class EditCategoryFragment : Fragment() {
         val colorInt = try {
             selectedColor.toColorInt()
         } catch (e: Exception) {
-            Color.BLUE
+            ContextCompat.getColor(requireContext(), R.color.primary)
         }
         binding.categoryPreviewTag.backgroundTintList = ColorStateList.valueOf(colorInt)
 
@@ -318,7 +318,7 @@ class EditCategoryFragment : Fragment() {
                 binding.customColorView.backgroundTintList = ColorStateList.valueOf(
                     ContextCompat.getColor(
                         requireContext(),
-                        R.color.primary_blue
+                        R.color.primary
                     )
                 )
                 binding.customColorIcon.setImageResource(R.drawable.ic_color_lens)
@@ -411,7 +411,7 @@ class EditCategoryFragment : Fragment() {
                 if (isCustomEmojiPlaceholder) isCurrentlySelectedEmoji else selectedIcon == iconName
 
             if (isSelected) {
-                val colorInt = selectedColor.toColorInt()
+                val colorInt = ContextCompat.getColor(context, R.color.primary)
                 holder.binding.cvIconBackground.setCardBackgroundColor(colorInt)
                 holder.binding.cvIconBackground.strokeColor = colorInt
                 holder.binding.ivIcon.imageTintList = ColorStateList.valueOf(Color.WHITE)

@@ -3,23 +3,25 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
-    <!-- Adaptive Colors (Light Mode) -->
-    <color name="app_background">#F2F2F7</color>
+    <!-- Adaptive Colors (Light Mode) - Warmer Tones -->
+    <color name="app_background">#FFFBF0</color>
     <color name="card_surface">#FFFFFF</color>
-    <color name="text_primary">#000000</color>
+    <color name="text_primary">#2C1B00</color>
     <color name="text_primary_inverted">#FFFFFF</color>
-    <color name="text_secondary">#8E8E93</color>
-    <color name="primary">@color/primary_blue</color>
+    <color name="text_secondary">#7D6E5D</color>
+    <color name="primary">#E65100</color>
 
-    <color name="primary_blue">#007AFF</color>
     <color name="primary_pink">#E91E63</color>
-    <color name="primary_gray">#E5E5EA</color>
-    <color name="primary_gray_full">#C7C7CC</color>
+    <color name="primary_gray">#EBE3D5</color>
+    <color name="primary_gray_full">#D6CDC0</color>
 
-    <color name="bg_gray">#DDDDDE</color>
-    <color name="border_gray">#D4D6D8</color>
-    <color name="bg_drag_gray">#4D000000</color>
-    <color name="pill_dark">#CC88A8D9</color>
+    <color name="primary_warm_orange">#E65100</color>
+    <color name="secondary_warm_brown">#795548</color>
+
+    <color name="bg_gray">#EDE7DE</color>
+    <color name="border_gray">#E0D7C6</color>
+    <color name="bg_drag_gray">#4D2C1B00</color>
+    <color name="pill_dark">#F2EFE9</color> <!-- Much lighter for better contrast with orange icons -->
 
     <!-- Keep old names as aliases to avoid breaking things immediately -->
     <color name="bg_dark">@color/app_background</color>

@@ -33,8 +33,8 @@ fun showDeleteConfirmationDialog(
             messageView.text = context.getString(it)
         }
 
-        val primaryBlue = ContextCompat.getColor(context, R.color.primary_blue)
-        checkBox.buttonTintList = ColorStateList.valueOf(primaryBlue)
+        val primaryColor = ContextCompat.getColor(context, R.color.primary)
+        checkBox.buttonTintList = ColorStateList.valueOf(primaryColor)
 
         val typedValue = TypedValue()
         context.theme.resolveAttribute(R.attr.iconColor, typedValue, true)
@@ -61,7 +61,7 @@ fun showDeleteConfirmationDialog(
             .setNegativeButton(R.string.cancel, null)
             .show()
 
-        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(primaryBlue)
-        dialog.getButton(DialogInterface.BUTTON_NEGATIVE).setTextColor(primaryBlue)
+        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(primaryColor)
+        dialog.getButton(DialogInterface.BUTTON_NEGATIVE).setTextColor(primaryColor)
     }
 }

@@ -75,9 +75,6 @@ dependencies {
     implementation(libs.androidx.navigation.ui.ktx)
     implementation(libs.osmdroid.android)
     implementation(libs.osmbonuspack)
-    implementation(libs.androidx.datastore)
-    implementation(libs.androidx.datastore.preferences)
-    implementation(libs.javax.inject)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.compose.ui)
     implementation(libs.androidx.compose.ui.graphics)
@@ -100,7 +97,6 @@ dependencies {
 
     implementation(libs.colorpickerview)
     implementation(libs.androidx.emoji2.views)
-    implementation(libs.androidx.emoji)
     implementation(libs.androidx.emoji2.bundled)
 
     testImplementation(libs.junit)

@@ -177,9 +177,9 @@ class HistoryFragment : Fragment() {
     }
 
     private fun addPresetChip(label: String, isSelected: Boolean, onClick: () -> Unit) {
-        val primaryBlue = ContextCompat.getColor(requireContext(), R.color.primary_blue)
-        val primaryColor = ContextCompat.getColor(requireContext(), R.color.text_primary)
-        val color = if (isSelected) primaryBlue else primaryColor
+        val primaryColor = ContextCompat.getColor(requireContext(), R.color.primary)
+        val defaultTextColor = ContextCompat.getColor(requireContext(), R.color.text_primary)
+        val color = if (isSelected) primaryColor else defaultTextColor
         val chip = createFilterChip(
             context = requireContext(),
             label = label,
@@ -251,8 +251,8 @@ class HistoryFragment : Fragment() {
         // Date filter
         activePreset?.let { preset ->
             val label = if (preset == getString(R.string.custom)) getFormattedDateRange(startDate!!, endDate!!) else preset
-            val primaryBlue = ContextCompat.getColor(requireContext(), R.color.primary_blue)
-            val chip = createActiveFilterChip(label, primaryBlue, R.drawable.ic_time) {
+            val primaryColor = ContextCompat.getColor(requireContext(), R.color.primary)
+            val chip = createActiveFilterChip(label, primaryColor, R.drawable.ic_time) {
                 activePreset = null
                 startDate = null
                 endDate = null

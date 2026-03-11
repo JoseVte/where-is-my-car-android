@@ -40,7 +40,7 @@
             app:boxCornerRadiusBottomStart="12dp"
             app:boxCornerRadiusTopEnd="12dp"
             app:boxCornerRadiusTopStart="12dp"
-            app:boxStrokeColor="@color/primary_blue"
+            app:boxStrokeColor="@color/primary"
             app:boxStrokeWidth="1dp"
             app:hintEnabled="false">
 
