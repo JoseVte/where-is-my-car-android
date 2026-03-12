@@ -135,40 +135,44 @@ class HistoryFragment : Fragment() {
         }
 
         // "Today" preset
-        addPresetChip(getString(R.string.today), activePreset == getString(R.string.today)) {
+        val todayStr = getString(R.string.today)
+        addPresetChip(todayStr, activePreset == todayStr) {
             val today = getFormattedDate(0)
             startDate = today
             endDate = today
-            activePreset = getString(R.string.today)
+            activePreset = todayStr
             renderFilters()
             loadLocations()
         }
 
         // "Yesterday" preset
-        addPresetChip(getString(R.string.yesterday), activePreset == getString(R.string.yesterday)) {
+        val yesterdayStr = getString(R.string.yesterday)
+        addPresetChip(yesterdayStr, activePreset == yesterdayStr) {
             val yesterday = getFormattedDate(-1)
             startDate = yesterday
             endDate = yesterday
-            activePreset = getString(R.string.yesterday)
+            activePreset = yesterdayStr
             renderFilters()
             loadLocations()
         }
 
         // "Last 7 Days" preset
-        addPresetChip(getString(R.string.last_7_days), activePreset == getString(R.string.last_7_days)) {
+        val last7DaysStr = getString(R.string.last_7_days)
+        addPresetChip(last7DaysStr, activePreset == last7DaysStr) {
             startDate = getFormattedDate(-7)
             endDate = getFormattedDate(0)
-            activePreset = getString(R.string.last_7_days)
+            activePreset = last7DaysStr
             renderFilters()
             loadLocations()
         }
 
         // "Custom Range" button
-        val isCustom = activePreset == getString(R.string.custom)
+        val customStr = getString(R.string.custom)
+        val isCustom = activePreset == customStr
         val customLabel = if (isCustom && startDate != null && endDate != null) {
             getFormattedDateRange(startDate!!, endDate!!)
         } else {
-            getString(R.string.custom)+"..."
+            "$customStr..."
         }
 
         addPresetChip(customLabel, isCustom) {
@@ -281,7 +285,7 @@ class HistoryFragment : Fragment() {
             category?.let {
                 val categoryColor = try { it.color.toColorInt() } catch (e: Exception) { ContextCompat.getColor(requireContext(), R.color.text_primary) }
                 val iconRes = resources.getIdentifier(it.icon, "drawable", requireContext().packageName)
-                val chip = createActiveFilterChip(it.label, categoryColor, if (iconRes != 0) iconRes else R.drawable.ic_location) {
+                val chip = createActiveFilterChip(it.getResolvedLabel(requireContext()), categoryColor, if (iconRes != 0) iconRes else R.drawable.ic_location) {
                     selectedCategoryIds.remove(id)
                     renderFilters()
                     loadLocations()

@@ -4,7 +4,6 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.res.ColorStateList
-import android.graphics.Color
 import android.location.LocationManager
 import android.os.Bundle
 import android.os.Handler
@@ -31,8 +30,6 @@ import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.Polyline
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
-import java.util.Locale
-import kotlin.math.abs
 
 class LocationDetailsFragment : Fragment() {
 
@@ -127,7 +124,8 @@ class LocationDetailsFragment : Fragment() {
                     
                     binding.categoryText.visibility = View.VISIBLE
                     if (category.label.startsWith("@string/")) {
-                        binding.categoryText.text = getString(category.label.substringAfterLast("/").toInt())
+                        val stringId = resources.getIdentifier(category.label.substringAfterLast("/"), "string", requireContext().packageName)
+                        binding.categoryText.text = if (stringId != 0) getString(stringId) else category.label
                     } else {
                         binding.categoryText.text = category.label
                     }
@@ -323,7 +321,7 @@ class LocationDetailsFragment : Fragment() {
 
                 } else {
                     binding.btnStartNavigation.text = getString(R.string.start_navigation)
-                    Toast.makeText(context, "Error loading route", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, getString(R.string.error_loading_route), Toast.LENGTH_SHORT).show()
                 }
             }
         }.start()

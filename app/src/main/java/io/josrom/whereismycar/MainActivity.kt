@@ -37,7 +37,7 @@ class MainActivity : AppCompatActivity() {
             val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
             try {
                 val account = task.getResult(ApiException::class.java)
-                Toast.makeText(this, "Signed in as ${account.email}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.signed_in_as, account.email), Toast.LENGTH_SHORT).show()
                 syncManager.sync()
             } catch (e: ApiException) {
                 Log.w("MainActivity", "signInResult:failed code=" + e.statusCode)

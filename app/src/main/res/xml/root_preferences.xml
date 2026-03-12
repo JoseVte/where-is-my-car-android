@@ -10,6 +10,10 @@
             app:iconSpaceReserved="false"
             app:key="theme_selection" />
 
+        <io.josrom.whereismycar.LanguagePreference
+            app:iconSpaceReserved="false"
+            app:key="language_selection" />
+
     </PreferenceCategory>
 
     <PreferenceCategory

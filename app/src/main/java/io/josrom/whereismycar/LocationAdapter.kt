@@ -1,7 +1,6 @@
 package io.josrom.whereismycar
 
 import android.annotation.SuppressLint
-import android.graphics.Color
 import android.graphics.Typeface
 import android.text.Spannable
 import android.text.SpannableString
@@ -13,12 +12,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.view.ContextThemeWrapper
 import androidx.appcompat.widget.PopupMenu
-import androidx.core.graphics.toColorInt
-import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.shape.CornerFamily
-import com.google.android.material.shape.MaterialShapeDrawable
-import com.google.android.material.shape.ShapeAppearanceModel
 import io.josrom.whereismycar.databinding.ItemLocationBinding
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.GeoPoint
@@ -45,7 +39,7 @@ class LocationAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val location = locations[position]
         
-        val title = location.displayName.ifEmpty { "Saved Location" }
+        val title = location.displayName.ifEmpty { holder.itemView.context.getString(R.string.saved_location_default) }
         holder.binding.textViewTitle.text = getHighlightedText(title, searchQuery)
         holder.binding.textViewSubtitle.text = getHighlightedText(location.address, searchQuery)
         holder.binding.textViewTime.text = location.formattedDate

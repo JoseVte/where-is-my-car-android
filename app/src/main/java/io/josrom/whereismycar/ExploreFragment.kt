@@ -197,7 +197,7 @@ class ExploreFragment : Fragment(), LocationListener,
                     if (!address.isNullOrEmpty()) {
                         _locationRepository.insertLocation(address.first(), location)
                     } else {
-                        _locationRepository.insertLocation("Unknown location", location)
+                        _locationRepository.insertLocation(getString(R.string.unknown_location), location)
                     }
                     resetAndLoadLocations()
                 }

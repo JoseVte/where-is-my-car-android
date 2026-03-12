@@ -9,7 +9,6 @@ import android.text.InputType
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
@@ -21,7 +20,6 @@ import io.josrom.whereismycar.databinding.FragmentEditCategoryBinding
 import io.josrom.whereismycar.databinding.ItemColorPickerBinding
 import io.josrom.whereismycar.databinding.ItemIconPickerBinding
 import androidx.core.graphics.toColorInt
-import androidx.emoji2.bundled.BundledEmojiCompatConfig
 import androidx.emoji2.widget.EmojiEditText
 import androidx.emoji2.text.EmojiCompat
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -41,15 +39,17 @@ class EditCategoryFragment : Fragment() {
     private var customColor: String? = null
     private val randomEmoji = listOf("🤩", "🚀", "🎨", "🎭", "🎮", "🎸", "⛺", "🌈", "🍦", "🍩").random()
 
-    private val presetColors = listOf(
-        "#E65100" to "Warm Orange",
-        "#795548" to "Brown",
-        "#8D6E63" to "Tan",
-        "#BF360C" to "Deep Orange",
-        "#5D4037" to "Dark Brown",
-        "#FFB300" to "Amber",
-        "#F4511E" to "Sunset"
-    )
+    private val presetColors by lazy {
+        listOf(
+            "#E65100" to getString(R.string.color_warm_orange),
+            "#795548" to getString(R.string.color_brown),
+            "#8D6E63" to getString(R.string.color_tan),
+            "#BF360C" to getString(R.string.color_deep_orange),
+            "#5D4037" to getString(R.string.color_dark_brown),
+            "#FFB300" to getString(R.string.color_amber),
+            "#F4511E" to getString(R.string.color_sunset)
+        )
+    }
 
     private val icons = listOf(
         // Row 1

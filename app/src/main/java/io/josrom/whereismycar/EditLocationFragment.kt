@@ -121,7 +121,7 @@ class EditLocationFragment : Fragment() {
 
         binding.btnCopyCoords.setOnClickListener {
             val clipboard = requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-            val clip = ClipData.newPlainText("Coordinates", binding.tvCoordinates.text)
+            val clip = ClipData.newPlainText(getString(R.string.coordinates), binding.tvCoordinates.text)
             clipboard.setPrimaryClip(clip)
             Toast.makeText(context, getString(R.string.coords_copied), Toast.LENGTH_SHORT).show()
         }

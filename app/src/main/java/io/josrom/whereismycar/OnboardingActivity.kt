@@ -18,9 +18,9 @@ class OnboardingActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         val pages = listOf(
-            OnboardingPage("Never Forget a Place", "Save your current location...", R.layout.item_onboarding_1),
-            OnboardingPage("Organize Your World", "Categorize your spots...", R.layout.item_onboarding_2),
-            OnboardingPage("Find Your Way Back", "Get instant walking or driving...", R.layout.item_onboarding_3)
+            OnboardingPage(getString(R.string.onboarding_title_1), getString(R.string.onboarding_description_1), R.layout.item_onboarding_1),
+            OnboardingPage(getString(R.string.onboarding_title_2), getString(R.string.onboarding_description_2), R.layout.item_onboarding_2),
+            OnboardingPage(getString(R.string.onboarding_title_3), getString(R.string.onboarding_description_3), R.layout.item_onboarding_3)
         )
 
         val adapter = OnboardingAdapter(pages) {
