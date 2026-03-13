@@ -1,7 +1,6 @@
 <resources>
     <string name="app_name">¿Dónde está mi coche?</string>
     <string name="action_settings">Ajustes</string>
-    <string name="location_list_fragment_label">Lista</string>
     <string name="next">Siguiente</string>
     <string name="previous">Anterior</string>
     <string name="save_position">Guardar GPS del coche</string>
@@ -106,7 +105,7 @@
     <string name="backup_title">Copia de seguridad</string>
     <string name="backup_summary">Sincroniza tus lugares guardados en todos tus dispositivos.</string>
     <string name="sign_in_google">Iniciar sesión con Google</string>
-    <string name="help_support">Ayuda y soporte</string>
+    <string name="help_support">Help &amp; Support</string>
 
     <string name="confirm_deletion_title">Confirmar eliminación</string>
     <string name="confirm_deletion_summary">Pedir siempre confirmación antes de borrar</string>
@@ -139,4 +138,7 @@
     <string name="color_amber">Ámbar</string>
     <string name="color_sunset">Atardecer</string>
     <string name="signed_in_as">Sesión iniciada como %1$s</string>
+    <string name="address_line">Dirección</string>
+    <string name="city_country">Ciudad\nPaís</string>
+    <string name="date_value">Jueves, 12 de Marzo de 2026</string>
 </resources>

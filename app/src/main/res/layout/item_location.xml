@@ -89,7 +89,7 @@
             android:layout_marginStart="16dp"
             android:ellipsize="end"
             android:maxLines="1"
-            android:text="@string/city_country"
+            android:text="@string/location_address"
             android:textColor="@color/text_secondary"
             android:textSize="14sp"
             app:layout_constraintEnd_toStartOf="@id/button_more"

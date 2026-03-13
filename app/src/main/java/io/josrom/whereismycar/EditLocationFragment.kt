@@ -10,16 +10,19 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
+import io.josrom.whereismycar.databinding.FragmentEditLocationBinding
+import io.josrom.whereismycar.databinding.LayoutHeaderBinding
 import org.osmdroid.config.Configuration
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.overlay.Marker
-import io.josrom.whereismycar.databinding.FragmentEditLocationBinding
 
 class EditLocationFragment : Fragment() {
 
     private var _binding: FragmentEditLocationBinding? = null
     private val binding get() = _binding!!
+    private lateinit var headerBinding: LayoutHeaderBinding
     private lateinit var locationRepository: SavedLocationRepository
     private lateinit var categoryRepository: CategoryRepository
     private var locationId: Int = -1
@@ -43,6 +46,7 @@ class EditLocationFragment : Fragment() {
         Configuration.getInstance().userAgentValue = ctx.packageName
         
         _binding = FragmentEditLocationBinding.inflate(inflater, container, false)
+        headerBinding = LayoutHeaderBinding.bind(binding.layoutHeader.root)
         locationRepository = SavedLocationRepository(ctx)
         categoryRepository = CategoryRepository(ctx)
         return binding.root
@@ -51,9 +55,17 @@ class EditLocationFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        setupHeader()
         loadLocationData()
         setupClickListeners()
         setupFocusListeners()
+    }
+
+    private fun setupHeader() {
+        headerBinding.tvToolbarTitle.text = getString(R.string.edit_location)
+        headerBinding.btnBack.setOnClickListener {
+            findNavController().popBackStack()
+        }
     }
 
     private fun loadLocationData() {
@@ -115,10 +127,6 @@ class EditLocationFragment : Fragment() {
     }
 
     private fun setupClickListeners() {
-        binding.btnBack.setOnClickListener {
-            parentFragmentManager.popBackStack()
-        }
-
         binding.btnCopyCoords.setOnClickListener {
             val clipboard = requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
             val clip = ClipData.newPlainText(getString(R.string.coordinates), binding.tvCoordinates.text)
@@ -160,14 +168,14 @@ class EditLocationFragment : Fragment() {
         
         locationRepository.updateLocation(locationId, newName, selectedCategoryId, newNotes)
         Toast.makeText(requireContext(), getString(R.string.location_updated), Toast.LENGTH_SHORT).show()
-        parentFragmentManager.popBackStack()
+        findNavController().popBackStack()
     }
 
     private fun confirmDelete() {
         currentLocation?.confirmAndDelete(requireContext(), locationRepository) {
             Toast.makeText(requireContext(), getString(R.string.location_deleted), Toast.LENGTH_SHORT).show()
-            parentFragmentManager.popBackStack() // Back to details
-            parentFragmentManager.popBackStack() // Back to list
+            findNavController().popBackStack() // Back to details
+            findNavController().popBackStack() // Back to list
         }
     }
 

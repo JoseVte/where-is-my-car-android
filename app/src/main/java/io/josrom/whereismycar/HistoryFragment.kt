@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.chip.Chip
 import com.google.android.material.datepicker.MaterialDatePicker
 import io.josrom.whereismycar.databinding.FragmentHistoryBinding
+import io.josrom.whereismycar.databinding.LayoutHeaderBinding
 import org.osmdroid.config.Configuration
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -29,6 +30,7 @@ class HistoryFragment : Fragment() {
 
     private var _binding: FragmentHistoryBinding? = null
     private val binding get() = _binding!!
+    private lateinit var headerBinding: LayoutHeaderBinding
     private lateinit var adapter: LocationAdapter
     private lateinit var repository: SavedLocationRepository
     private lateinit var categoryRepository: CategoryRepository
@@ -43,6 +45,7 @@ class HistoryFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentHistoryBinding.inflate(inflater, container, false)
+        headerBinding = LayoutHeaderBinding.bind(binding.layoutHeader.root)
         return binding.root
     }
 
@@ -53,10 +56,18 @@ class HistoryFragment : Fragment() {
         repository = SavedLocationRepository(requireContext())
         categoryRepository = CategoryRepository(requireContext())
 
+        setupHeader()
         setupRecyclerView()
         setupListeners()
         renderFilters()
         loadLocations()
+    }
+
+    private fun setupHeader() {
+        headerBinding.tvToolbarTitle.text = getString(R.string.history)
+        headerBinding.btnBack.setOnClickListener {
+            findNavController().popBackStack()
+        }
     }
 
     private fun setupRecyclerView() {
@@ -90,10 +101,6 @@ class HistoryFragment : Fragment() {
     }
 
     private fun setupListeners() {
-        binding.btnBack.setOnClickListener {
-            findNavController().popBackStack()
-        }
-
         binding.btnFilters.setOnClickListener {
             val transition = AutoTransition()
             transition.duration = 150

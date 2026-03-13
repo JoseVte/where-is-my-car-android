@@ -8,11 +8,13 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.josrom.whereismycar.databinding.FragmentManageCategoriesBinding
+import io.josrom.whereismycar.databinding.LayoutHeaderBinding
 
 class ManageCategoriesFragment : Fragment() {
 
     private var _binding: FragmentManageCategoriesBinding? = null
     private val binding get() = _binding!!
+    private lateinit var headerBinding: LayoutHeaderBinding
     private lateinit var repository: CategoryRepository
     private lateinit var adapter: ManageCategoriesAdapter
 
@@ -22,6 +24,7 @@ class ManageCategoriesFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentManageCategoriesBinding.inflate(inflater, container, false)
+        headerBinding = LayoutHeaderBinding.bind(binding.layoutHeader.root)
         return binding.root
     }
 
@@ -29,14 +32,25 @@ class ManageCategoriesFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         repository = CategoryRepository(requireContext())
         
+        setupHeader()
         setupRecyclerView()
         
-        binding.btnBack.setOnClickListener {
-            findNavController().popBackStack()
-        }
-
         binding.btnAddCategory.setOnClickListener {
             openEditCategoryFragment()
+        }
+    }
+
+    private fun setupHeader() {
+        headerBinding.tvToolbarTitle.text = getString(R.string.manage_categories)
+        headerBinding.btnBack.setOnClickListener {
+            findNavController().popBackStack()
+        }
+        headerBinding.btnToolbarActionIcon.apply {
+            visibility = View.VISIBLE
+            setImageResource(R.drawable.ic_search)
+            setOnClickListener {
+                // TODO: Implement search
+            }
         }
     }
 

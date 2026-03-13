@@ -37,7 +37,7 @@ fun showDeleteConfirmationDialog(
         checkBox.buttonTintList = ColorStateList.valueOf(primaryColor)
 
         val typedValue = TypedValue()
-        context.theme.resolveAttribute(R.attr.iconColor, typedValue, true)
+        context.theme.resolveAttribute(R.attr.icon_color, typedValue, true)
         val iconColor = if (typedValue.resourceId != 0) {
             ContextCompat.getColor(context, typedValue.resourceId)
         } else {

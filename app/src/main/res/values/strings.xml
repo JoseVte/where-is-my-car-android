@@ -1,8 +1,6 @@
 <resources>
     <string name="app_name">Where Is My Car</string>
     <string name="action_settings">Settings</string>
-    <!-- Strings used for fragments for navigation -->
-    <string name="location_list_fragment_label">List</string>
     <string name="next">Next</string>
     <string name="previous">Previous</string>
     <string name="save_position">Save Car GPS</string>
@@ -12,6 +10,13 @@
     -->
     <string name="hello_world">From the Square world,\nHello, %1$s!</string>
     <string name="title_activity_watch">WatchActivity</string>
+
+    <string name="city_country">City\nCountry</string>
+    <string name="latitude" translatable="false">0.0123</string>
+    <string name="longitude" translatable="false">4.567</string>
+    <string name="address_line">Address Line</string>
+    <string name="location_address" translatable="false">%1$s, %2$s, %3$s</string>
+    <string name="location_coordinates" translatable="false">%1$s, %2$s - %3$s</string>
     <string name="show_route">Show route</string>
 
     <!-- Sync Preferences -->
@@ -66,10 +71,14 @@
     <string name="layer_topographic">Topographic (USGS)</string>
     <string name="layer_satellite">Satellite (USGS)</string>
     <string name="edit_coming_soon">Edit functionality coming soon</string>
+    <string name="address_format" translatable="false">%1$s, %2$s</string>
+    <string name="coords_format" translatable="false">%1$s° %2$s, %3$s° %4$s</string>
     <string name="my_location">My Location</string>
     <string name="category">Category</string>
     <string name="notes">Notes</string>
     <string name="date">Saved on</string>
+    <string name="date_value">Thurday, 12th March 2026</string>
+    <string name="default_category_emoji" translatable="false">😋</string>
     <string name="copy_coordinates">Copy coordinates</string>
     <string name="search">Search</string>
     <string name="search_saved_places">Search saved places</string>
@@ -132,7 +141,7 @@
     <string name="delete_category_confirmation_title">Delete Category?</string>
     <string name="delete_category_confirmation_message">Are you sure you want to delete this category? This won\'t delete the locations in it.</string>
     <string name="uncategorized">Uncategorized</string>
-    <string name="search_for_locations">Search for locations…</string>
+    <string name="search_for_locations">Search for locations...</string>
 
     <string name="unknown_location">Unknown location</string>
     <string name="error_loading_route">Error loading route</string>

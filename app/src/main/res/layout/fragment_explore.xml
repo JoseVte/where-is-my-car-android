@@ -31,22 +31,23 @@
             android:gravity="center_vertical">
 
             <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:contentDescription="@string/search"
                 android:src="@drawable/ic_search"
                 app:tint="@color/text_secondary" />
 
             <EditText
                 android:id="@+id/et_search"
                 android:layout_width="0dp"
+                android:layout_marginStart="12dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:hint="@string/search_for_locations"
+                android:hint="@string/search_saved_places"
                 android:background="@null"
-                android:paddingStart="12dp"
-                android:paddingEnd="8dp"
                 android:textColor="@color/text_primary"
                 android:textColorHint="@color/text_secondary"
+                android:textSize="16sp"
                 android:importantForAutofill="no"
                 android:inputType="text"
                 android:gravity="center_vertical"

@@ -3,6 +3,6 @@
     <style name="Base.Theme.WhereIsMyCar" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your dark theme here. -->
         <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
-        <item name="iconColor">@android:color/white</item>
+        <item name="icon_color">@android:color/white</item>
     </style>
 </resources>

@@ -3,7 +3,6 @@ package io.josrom.whereismycar
 import android.Manifest
 import android.content.pm.PackageManager
 import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -17,11 +16,13 @@ import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
 import io.josrom.whereismycar.databinding.FragmentSettingsBinding
 import androidx.core.graphics.drawable.toDrawable
+import io.josrom.whereismycar.databinding.LayoutHeaderBinding
 
 class SettingsFragment : PreferenceFragmentCompat() {
 
     private var _binding: FragmentSettingsBinding? = null
     private val binding get() = _binding!!
+    private lateinit var headerBinding: LayoutHeaderBinding
 
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -39,6 +40,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentSettingsBinding.inflate(inflater, container, false)
+        headerBinding = LayoutHeaderBinding.bind(binding.layoutHeader.root)
         
         val preferenceView = super.onCreateView(inflater, binding.settingsContainer, savedInstanceState)
         binding.settingsContainer.addView(preferenceView)
@@ -59,7 +61,8 @@ class SettingsFragment : PreferenceFragmentCompat() {
         setDivider(Color.TRANSPARENT.toDrawable())
         setDividerHeight(0)
 
-        binding.btnBack.setOnClickListener {
+        headerBinding.tvToolbarTitle.text = getString(R.string.settings)
+        headerBinding.btnBack.setOnClickListener {
             findNavController().popBackStack()
         }
     }

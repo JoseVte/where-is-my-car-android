@@ -20,6 +20,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.preference.PreferenceManager
 import io.josrom.whereismycar.databinding.FragmentLocationDetailsBinding
+import io.josrom.whereismycar.databinding.LayoutHeaderBinding
 import org.osmdroid.bonuspack.routing.OSRMRoadManager
 import org.osmdroid.bonuspack.routing.Road
 import org.osmdroid.bonuspack.routing.RoadManager
@@ -35,6 +36,7 @@ class LocationDetailsFragment : Fragment() {
 
     private var _binding: FragmentLocationDetailsBinding? = null
     private val binding get() = _binding!!
+    private lateinit var headerBinding: LayoutHeaderBinding
     private lateinit var _locationRepository: SavedLocationRepository
     private lateinit var _categoryRepository: CategoryRepository
     private var locationId: Int = -1
@@ -64,6 +66,7 @@ class LocationDetailsFragment : Fragment() {
         Configuration.getInstance().userAgentValue = ctx.packageName
         
         _binding = FragmentLocationDetailsBinding.inflate(inflater, container, false)
+        headerBinding = LayoutHeaderBinding.bind(binding.layoutHeader.root)
         _locationRepository = SavedLocationRepository(ctx)
         _categoryRepository = CategoryRepository(ctx)
         return binding.root
@@ -72,9 +75,17 @@ class LocationDetailsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        setupHeader()
         loadLocationData()
         setupClickListeners()
         setupTransportToggle()
+    }
+
+    private fun setupHeader() {
+        headerBinding.tvToolbarTitle.text = getString(R.string.app_name)
+        headerBinding.btnBack.setOnClickListener {
+            findNavController().popBackStack()
+        }
     }
 
     override fun onResume() {
@@ -99,7 +110,7 @@ class LocationDetailsFragment : Fragment() {
     private fun loadLocationData() {
         location = _locationRepository.getLocation(locationId, true)
         location?.let { loc ->
-            binding.locationNameTop.text = loc.displayName.ifEmpty { getString(R.string.app_name) }
+            headerBinding.tvToolbarTitle.text = loc.displayName.ifEmpty { getString(R.string.app_name) }
             binding.locationName.text = loc.displayName.ifEmpty { getString(R.string.saved_location_default) }
             binding.addressSubtext.text = loc.address.ifEmpty { getString(R.string.address_format, loc.city, loc.country) }
             binding.noteText.text = loc.note?.ifEmpty { getString(R.string.no_notes_added) } ?: getString(R.string.no_notes_added)
@@ -192,10 +203,6 @@ class LocationDetailsFragment : Fragment() {
     }
 
     private fun setupClickListeners() {
-        binding.btnBack.setOnClickListener {
-            parentFragmentManager.popBackStack()
-        }
-
         binding.btnCopy.setOnClickListener {
             val clipboard = requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
             val clip = ClipData.newPlainText("Coordinates", binding.coordsText.text)

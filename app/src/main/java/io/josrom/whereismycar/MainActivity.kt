@@ -98,7 +98,7 @@ class MainActivity : AppCompatActivity() {
                                     putInt("categoryId", categories.first().id)
                                 }
                             }
-                            navController.navigate(R.id.LocationDetailsFragment, bundle)
+                            navController.navigate(R.id.LocationHistoryFragment, bundle)
                         }
                     }
                 }

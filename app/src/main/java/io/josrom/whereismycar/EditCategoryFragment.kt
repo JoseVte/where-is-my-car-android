@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView
 import io.josrom.whereismycar.databinding.FragmentEditCategoryBinding
 import io.josrom.whereismycar.databinding.ItemColorPickerBinding
 import io.josrom.whereismycar.databinding.ItemIconPickerBinding
+import io.josrom.whereismycar.databinding.LayoutHeaderBinding
 import androidx.core.graphics.toColorInt
 import androidx.emoji2.widget.EmojiEditText
 import androidx.emoji2.text.EmojiCompat
@@ -31,6 +32,7 @@ class EditCategoryFragment : Fragment() {
 
     private var _binding: FragmentEditCategoryBinding? = null
     private val binding get() = _binding!!
+    private lateinit var headerBinding: LayoutHeaderBinding
     private lateinit var repository: CategoryRepository
 
     private var categoryId: Int? = null
@@ -77,6 +79,7 @@ class EditCategoryFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentEditCategoryBinding.inflate(inflater, container, false)
+        headerBinding = LayoutHeaderBinding.bind(binding.layoutHeader.root)
 
         EmojiCompat.init(requireContext())
 
@@ -89,13 +92,22 @@ class EditCategoryFragment : Fragment() {
 
         categoryId = arguments?.getInt(ARG_CATEGORY_ID)?.takeIf { it != -1 }
 
+        setupHeader()
         setupUI()
         loadCategoryData()
     }
 
-    private fun setupUI() {
-        binding.btnBack.setOnClickListener { parentFragmentManager.popBackStack() }
+    private fun setupHeader() {
+        headerBinding.tvToolbarTitle.text = if (categoryId == null) getString(R.string.add_new_category) else getString(R.string.edit_category)
+        headerBinding.btnBack.setOnClickListener { parentFragmentManager.popBackStack() }
+        headerBinding.btnToolbarActionText.apply {
+            visibility = View.VISIBLE
+            text = getString(R.string.save)
+            setOnClickListener { saveCategory() }
+        }
+    }
 
+    private fun setupUI() {
         binding.categoryName.addTextChangedListener {
             binding.categoryPreviewName.text =
                 it.toString().ifEmpty { getString(R.string.category) }
@@ -104,34 +116,33 @@ class EditCategoryFragment : Fragment() {
         setupColorPicker()
         setupIconPicker()
 
-        val saveAction = {
-            val name = binding.categoryName.text.toString()
-            if (name.isNotBlank()) {
-                val iconToSave = if (icons.contains(selectedIcon)) {
-                    "@drawable/$selectedIcon"
-                } else {
-                    selectedIcon
-                }
-                val category = Category(
-                    id = categoryId ?: 0,
-                    label = name,
-                    icon = iconToSave,
-                    color = selectedColor
-                )
-                if (categoryId == null) {
-                    repository.insertCategory(category)
-                } else {
-                    repository.updateCategory(category)
-                }
-                parentFragmentManager.popBackStack()
-            }
-        }
-
-        binding.btnSaveText.setOnClickListener { saveAction() }
-        binding.btnSaveCategory.setOnClickListener { saveAction() }
+        binding.btnSaveCategory.setOnClickListener { saveCategory() }
 
         binding.btnCustomColor.setOnClickListener {
             showCustomColorPicker()
+        }
+    }
+
+    private fun saveCategory() {
+        val name = binding.categoryName.text.toString()
+        if (name.isNotBlank()) {
+            val iconToSave = if (icons.contains(selectedIcon)) {
+                "@drawable/$selectedIcon"
+            } else {
+                selectedIcon
+            }
+            val category = Category(
+                id = categoryId ?: 0,
+                label = name,
+                icon = iconToSave,
+                color = selectedColor
+            )
+            if (categoryId == null) {
+                repository.insertCategory(category)
+            } else {
+                repository.updateCategory(category)
+            }
+            parentFragmentManager.popBackStack()
         }
     }
 
