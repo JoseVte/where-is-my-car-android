@@ -4,6 +4,21 @@
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/primary</item>
         <item name="colorOnPrimary">@color/white</item>
+        <item name="colorPrimaryContainer">@color/primary_gray</item>
+        <item name="colorOnPrimaryContainer">@color/primary</item>
+        <item name="colorSecondary">@color/secondary_warm_brown</item>
+        <item name="colorOnSecondary">@color/white</item>
+        <item name="colorSecondaryContainer">@color/primary_gray</item>
+        <item name="colorOnSecondaryContainer">@color/secondary_warm_brown</item>
+        <item name="colorTertiary">@color/primary_pink</item>
+        <item name="colorOnTertiary">@color/white</item>
+        <item name="colorSurface">@color/card_surface</item>
+        <item name="colorOnSurface">@color/text_primary</item>
+        <item name="colorSurfaceVariant">@color/primary_gray</item>
+        <item name="colorOnSurfaceVariant">@color/text_secondary</item>
+        <item name="colorOutline">@color/border_gray</item>
+        <item name="colorError">@color/error</item>
+        <item name="colorOnError">@color/white</item>
         <item name="android:windowBackground">@color/app_background</item>
 
         <!-- Material 3 Menu Styling -->
@@ -23,6 +38,26 @@
     <style name="Theme.WhereIsMyCar" parent="Base.Theme.WhereIsMyCar" />
 
     <style name="PreferenceThemeOverlay" parent="PreferenceThemeOverlay.v14.Material">
+        <!-- Add Material 3 attributes that MaterialButton and other M3 components expect -->
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorPrimaryContainer">@color/primary_gray</item>
+        <item name="colorOnPrimaryContainer">@color/primary</item>
+        <item name="colorSecondary">@color/secondary_warm_brown</item>
+        <item name="colorOnSecondary">@color/white</item>
+        <item name="colorSecondaryContainer">@color/primary_gray</item>
+        <item name="colorOnSecondaryContainer">@color/secondary_warm_brown</item>
+        <item name="colorTertiary">@color/primary_pink</item>
+        <item name="colorOnTertiary">@color/white</item>
+        <item name="colorSurface">@color/card_surface</item>
+        <item name="colorOnSurface">@color/text_primary</item>
+        <item name="colorSurfaceVariant">@color/primary_gray</item>
+        <item name="colorOnSurfaceVariant">@color/text_secondary</item>
+        <item name="colorOutline">@color/border_gray</item>
+        <item name="colorError">@color/error</item>
+        <item name="colorOnError">@color/white</item>
+        <item name="icon_color">@color/text_primary</item>
+
         <item name="preferenceCategoryStyle">@style/PreferenceCategoryStyle</item>
     </style>
 
@@ -90,6 +125,13 @@
         <item name="android:textColor">@color/toggle_text_color</item>
         <item name="iconTint">@color/toggle_text_color</item>
         <item name="strokeColor">@color/toggle_btn_color</item>
+        <item name="android:maxLines">2</item>
+        <item name="android:minLines">1</item>
+        <item name="android:paddingLeft">8dp</item>
+        <item name="android:paddingRight">8dp</item>
+        <item name="android:paddingTop">8dp</item>
+        <item name="android:paddingBottom">8dp</item>
+        <item name="android:textSize">12sp</item>
     </style>
 
     <!-- Save Button Style -->

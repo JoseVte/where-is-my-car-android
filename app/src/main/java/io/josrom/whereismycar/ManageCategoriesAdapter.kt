@@ -1,9 +1,8 @@
 package io.josrom.whereismycar
 
-import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.core.graphics.toColorInt
+import androidx.core.content.ContextCompat.getString
 import androidx.recyclerview.widget.RecyclerView
 import io.josrom.whereismycar.databinding.ItemCategoryBinding
 
@@ -25,18 +24,13 @@ class ManageCategoriesAdapter(
         val category = categories[position]
         val context = holder.itemView.context
 
-        holder.binding.categoryName.text = category.label
+        holder.binding.categoryName.text = category.getResolvedLabel(context)
         
         val count = repository.getLocationCountForCategory(category.id)
         holder.binding.locationCount.text = context.getString(R.string.location_count_text, count)
 
-        val color = try { category.color.toColorInt() } catch (e: Exception) { Color.BLUE }
-        holder.binding.categoryIconContainer.setCardBackgroundColor(color)
-
-        val iconRes = context.resources.getIdentifier(category.icon, "drawable", context.packageName)
-        if (iconRes != 0) {
-            holder.binding.categoryIcon.setImageResource(iconRes)
-        }
+        // Unified icon rendering logic
+        category.setupIcon(holder.binding.categoryIcon, holder.binding.categoryEmoji, forbiddenShow = category.label == getString(context, R.string.uncategorized))
 
         holder.binding.edit.setOnClickListener { onEditClick(category) }
         holder.binding.delete.setOnClickListener { onDeleteClick(category) }

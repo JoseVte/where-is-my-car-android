@@ -1,8 +1,16 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
     id("com.google.gms.google-services")
 }
+
+val properties = Properties()
+val localPropertiesFile: File = project.rootProject.file("local.properties")
+properties.load(localPropertiesFile.inputStream())
+val googleApiKey: String = properties.getProperty("google.api.key")
+
 
 android {
     namespace = "io.josrom.whereismycar"
@@ -16,6 +24,8 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField("String", "GOOGLE_API_KEY", googleApiKey)
     }
 
     flavorDimensions += "device"
@@ -98,6 +108,8 @@ dependencies {
     implementation(libs.colorpickerview)
     implementation(libs.androidx.emoji2.views)
     implementation(libs.androidx.emoji2.bundled)
+    
+    implementation(libs.glide)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

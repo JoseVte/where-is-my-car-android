@@ -1,5 +1,7 @@
 package io.josrom.whereismycar
 
+import android.content.Context
+import android.content.ContextWrapper
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -27,21 +29,53 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
-    private lateinit var syncManager: SyncManager
+    lateinit var syncManager: SyncManager
 
     private val signInLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
+        Log.d("MainActivity", "signInLauncher result: resultCode=${result.resultCode}, RESULT_OK=$RESULT_OK")
+        
         if (result.resultCode == RESULT_OK) {
             @Suppress("DEPRECATION")
             val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
             try {
                 val account = task.getResult(ApiException::class.java)
+                Log.d("MainActivity", "✅ Sign in successful: email=${account.email}, displayName=${account.displayName}")
+                Log.d("MainActivity", "   idToken=${if (account.idToken != null) "present" else "null"}")
+                
                 Toast.makeText(this, getString(R.string.signed_in_as, account.email), Toast.LENGTH_SHORT).show()
+                
+                // Verify immediately that account is saved
+                val savedAccount = GoogleSignIn.getLastSignedInAccount(this)
+                Log.d("MainActivity", "Immediately after login - getLastSignedInAccount: ${if (savedAccount != null) savedAccount.email else "null"}")
+                
                 syncManager.sync()
+                
+                // Trigger multiple refreshes to ensure UI updates
+                // First refresh after sync starts
+                binding.root.postDelayed({
+                    Log.d("MainActivity", "Refresh 1 - Initial (300ms)")
+                    refreshSyncPreference()
+                }, 300)
+                
+                // Second refresh after Firebase auth completes
+                binding.root.postDelayed({
+                    Log.d("MainActivity", "Refresh 2 - Firebase (800ms)")
+                    refreshSyncPreference()
+                }, 800)
+                
+                // Third refresh as final confirmation
+                binding.root.postDelayed({
+                    Log.d("MainActivity", "Refresh 3 - Final (1500ms)")
+                    refreshSyncPreference()
+                }, 1500)
             } catch (e: ApiException) {
-                Log.w("MainActivity", "signInResult:failed code=" + e.statusCode)
+                Log.w("MainActivity", "❌ signInResult failed: code=${e.statusCode}, message=${e.message}")
+                Toast.makeText(this, getString(R.string.sign_in_failed, e.message), Toast.LENGTH_LONG).show()
             }
+        } else {
+            Log.w("MainActivity", "⚠️ Sign in cancelled or failed: resultCode=$result.resultCode")
         }
     }
 
@@ -98,7 +132,7 @@ class MainActivity : AppCompatActivity() {
                                     putInt("categoryId", categories.first().id)
                                 }
                             }
-                            navController.navigate(R.id.LocationHistoryFragment, bundle)
+                            navController.navigate(R.id.SettingsFragment, bundle)
                         }
                     }
                 }
@@ -129,6 +163,41 @@ class MainActivity : AppCompatActivity() {
 
     fun startSignIn() {
         signInLauncher.launch(syncManager.googleSignInClient.signInIntent)
+    }
+
+    fun signOut() {
+        syncManager.signOut()
+        binding.root.postDelayed({
+            refreshSyncPreference()
+        }, 500)
+        Toast.makeText(this, getString(R.string.signed_out), Toast.LENGTH_SHORT).show()
+    }
+
+    private fun refreshSyncPreference() {
+        // Try to find and refresh the SyncPreference in SettingsFragment
+        supportFragmentManager.fragments.forEach { parentFragment ->
+            if (parentFragment is NavHostFragment) {
+                parentFragment.childFragmentManager.fragments.forEach { fragment ->
+                    if (fragment is SettingsFragment) {
+                        Log.d("MainActivity", "Found SettingsFragment, refreshing SyncPreference")
+                        // Force refresh to trigger onBindViewHolder update
+                        binding.root.postDelayed({
+                            fragment.findPreference<SyncPreference>("google_sync_card")?.refresh()
+                        }, 100)
+                    }
+                }
+            }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // Re-attempt sync when app comes back to foreground (handles token refresh)
+        syncManager.sync()
+        // Refresh UI to show current login state
+        binding.root.postDelayed({
+            refreshSyncPreference()
+        }, 500)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

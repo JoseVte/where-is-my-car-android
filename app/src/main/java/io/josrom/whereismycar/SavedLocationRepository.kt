@@ -4,17 +4,24 @@ import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
 import android.location.Address
+import androidx.preference.PreferenceManager
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import org.json.JSONArray
 import org.osmdroid.api.IGeoPoint
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-class SavedLocationRepository(context: Context) {
+class SavedLocationRepository(private val context: Context) {
 
     private val dbHelper = DBHelper(context, null)
     private val gson = Gson()
+    private var syncManager: SyncManager? = null
+
+    fun setSyncManager(syncManager: SyncManager) {
+        this.syncManager = syncManager
+    }
 
     fun getAllLocations(
         limit: Int? = null,
@@ -205,15 +212,15 @@ class SavedLocationRepository(context: Context) {
         return SavedLocation(id, displayName, address, city, country, latitude, longitude, date, categoryId, note, addressData, category)
     }
 
-    fun insertLocation(location: IGeoPoint, categoryId: Int? = null, note: String? = null) {
-        insertLocation("", "", "", "", location.latitude, location.longitude, hashMapOf(), categoryId, note)
+    fun insertLocation(location: IGeoPoint, categoryId: Int? = null, note: String? = null): Int {
+        return insertLocation("", "", "", "", location.latitude, location.longitude, hashMapOf(), categoryId, note)
     }
 
-    fun insertLocation(displayName: String, location: IGeoPoint, categoryId: Int? = null, note: String? = null) {
-        insertLocation(displayName, displayName, "", "", location.latitude, location.longitude, hashMapOf(), categoryId, note)
+    fun insertLocation(displayName: String, location: IGeoPoint, categoryId: Int? = null, note: String? = null): Int {
+        return insertLocation(displayName, displayName, "", "", location.latitude, location.longitude, hashMapOf(), categoryId, note)
     }
 
-    fun insertLocation(address: Address, location: IGeoPoint, categoryId: Int? = null, note: String? = null) {
+    fun insertLocation(address: Address, location: IGeoPoint, categoryId: Int? = null, note: String? = null): Int {
         val addressLines = mutableListOf<String>()
         if (address.maxAddressLineIndex >= 0) {
             for (i in 1..address.maxAddressLineIndex) {
@@ -223,7 +230,7 @@ class SavedLocationRepository(context: Context) {
         val addressLine = addressLines.joinToString(", ")
         val displayName = address.getAddressLine(0) ?: ""
 
-        insertLocation(addressLine, displayName, address.locality ?: "", address.countryName ?: "", location.latitude, location.longitude, getFormattedAddress(address), categoryId, note)
+        return insertLocation(addressLine, displayName, address.locality ?: "", address.countryName ?: "", location.latitude, location.longitude, getFormattedAddress(address), categoryId, note)
     }
 
     private fun getFormattedAddress(address: Address): HashMap<String, String> {
@@ -266,11 +273,12 @@ class SavedLocationRepository(context: Context) {
         return addressParts
     }
 
-    fun insertLocation(address: String, displayName: String, city: String, country: String, location: IGeoPoint, addressMap: HashMap<String, String>, categoryId: Int? = null, note: String? = null) {
-        insertLocation(address, displayName, city, country, location.latitude, location.longitude, addressMap, categoryId, note)
+    fun insertLocation(address: String, displayName: String, city: String, country: String, location: IGeoPoint, addressMap: HashMap<String, String>, categoryId: Int? = null, note: String? = null): Int {
+        return insertLocation(address, displayName, city, country, location.latitude, location.longitude, addressMap, categoryId, note)
     }
 
-    fun insertLocation(address: String, displayName: String, city: String, country: String, latitude: Double, longitude: Double, addressMap: HashMap<String, String>, categoryId: Int? = null, note: String? = null) {
+    fun insertLocation(address: String, displayName: String, city: String, country: String, latitude: Double, longitude: Double, addressMap: HashMap<String, String>, categoryId: Int? = null, note: String? = null): Int {
+        val dateString = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Date())
         val values = ContentValues().apply {
             put(SavedLocation.COLUMN_DISPLAY_NAME, displayName)
             put(SavedLocation.COLUMN_ADDRESS, address)
@@ -278,14 +286,34 @@ class SavedLocationRepository(context: Context) {
             put(SavedLocation.COLUMN_COUNTRY, country)
             put(SavedLocation.COLUMN_LATITUDE, latitude)
             put(SavedLocation.COLUMN_LONGITUDE, longitude)
-            put(SavedLocation.COLUMN_DATE, SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Date()))
+            put(SavedLocation.COLUMN_DATE, dateString)
             put(SavedLocation.COLUMN_CATEGORY_ID, categoryId)
             put(SavedLocation.COLUMN_NOTE, note)
             put(SavedLocation.COLUMN_ADDRESS_DATA, gson.toJson(addressMap))
         }
 
         val db = dbHelper.writableDatabase
-        db.insert(SavedLocation.TABLE_NAME, null, values)
+        val newId = db.insert(SavedLocation.TABLE_NAME, null, values).toInt()
+        
+        // Auto-sync if enabled
+        if (shouldSyncLocation(categoryId)) {
+            val location = SavedLocation(
+                id = newId,
+                displayName = displayName,
+                address = address,
+                city = city,
+                country = country,
+                latitude = latitude,
+                longitude = longitude,
+                date = dateString,
+                categoryId = categoryId,
+                note = note,
+                addressData = addressMap
+            )
+            syncManager?.uploadLocation(location)
+        }
+        
+        return newId
     }
 
     fun updateLocation(id: Int, displayName: String, categoryId: Int?, note: String?) {
@@ -297,10 +325,44 @@ class SavedLocationRepository(context: Context) {
 
         val db = dbHelper.writableDatabase
         db.update(SavedLocation.TABLE_NAME, values, "${SavedLocation.COLUMN_ID} = ?", arrayOf(id.toString()))
+        
+        // Auto-sync if enabled
+        if (shouldSyncLocation(categoryId)) {
+            getLocation(id)?.let { location ->
+                syncManager?.uploadLocation(location)
+            }
+        }
     }
 
     fun deleteLocation(id: Int) {
+        // Get location before deleting for sync
+        val locationToDelete = getLocation(id)
+        
         val db = dbHelper.writableDatabase
         db.delete(SavedLocation.TABLE_NAME, "${SavedLocation.COLUMN_ID} = ?", arrayOf(id.toString()))
+        
+        // Auto-sync if enabled
+        if (locationToDelete != null && shouldSyncLocation(locationToDelete.categoryId)) {
+            syncManager?.deleteFromCloud(id)
+        }
+    }
+
+    private fun shouldSyncLocation(categoryId: Int?): Boolean {
+        val prefs = PreferenceManager.getDefaultSharedPreferences(context)
+        val autoSync = prefs.getBoolean("sync_auto", true)
+        if (!autoSync) return false
+        
+        val syncAllCategories = prefs.getBoolean("sync_all_categories", true)
+        if (syncAllCategories) return true
+        
+        // Check if category is in selected categories
+        val selectedJson = prefs.getString("sync_selected_categories", "[]") ?: "[]"
+        return try {
+            val arr = JSONArray(selectedJson)
+            val selectedIds = MutableList(arr.length()) { i -> arr.getInt(i) }
+            categoryId == null || selectedIds.contains(categoryId)
+        } catch (_: Exception) {
+            false
+        }
     }
 }

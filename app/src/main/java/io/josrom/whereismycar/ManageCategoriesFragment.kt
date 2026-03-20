@@ -31,6 +31,9 @@ class ManageCategoriesFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         repository = CategoryRepository(requireContext())
+        (activity as? MainActivity)?.let { mainActivity ->
+            repository.setSyncManager(mainActivity.syncManager)
+        }
         
         setupHeader()
         setupRecyclerView()

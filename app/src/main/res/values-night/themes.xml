@@ -2,7 +2,23 @@
     <!-- Base application theme. -->
     <style name="Base.Theme.WhereIsMyCar" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your dark theme here. -->
-        <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorPrimaryContainer">@color/primary_gray</item>
+        <item name="colorOnPrimaryContainer">@color/primary</item>
+        <item name="colorSecondary">@color/secondary_warm_brown</item>
+        <item name="colorOnSecondary">@color/white</item>
+        <item name="colorSecondaryContainer">@color/primary_gray</item>
+        <item name="colorOnSecondaryContainer">@color/secondary_warm_brown</item>
+        <item name="colorTertiary">@color/primary_pink</item>
+        <item name="colorOnTertiary">@color/white</item>
+        <item name="colorSurface">@color/card_surface</item>
+        <item name="colorOnSurface">@color/text_primary</item>
+        <item name="colorSurfaceVariant">@color/primary_gray</item>
+        <item name="colorOnSurfaceVariant">@color/text_secondary</item>
+        <item name="colorOutline">@color/border_gray</item>
+        <item name="colorError">@color/error</item>
+        <item name="colorOnError">@color/white</item>
         <item name="icon_color">@android:color/white</item>
     </style>
 </resources>

@@ -2,9 +2,16 @@ package io.josrom.whereismycar
 
 import android.content.ContentValues
 import android.content.Context
+import androidx.preference.PreferenceManager
+import org.json.JSONArray
 
-class CategoryRepository(context: Context) {
+class CategoryRepository(private val context: Context) {
     private val dbHelper = DBHelper(context, null)
+    private var syncManager: SyncManager? = null
+
+    fun setSyncManager(syncManager: SyncManager) {
+        this.syncManager = syncManager
+    }
 
     fun getAllCategories(): MutableList<Category> {
         val categories: MutableList<Category> = mutableListOf()
@@ -24,13 +31,21 @@ class CategoryRepository(context: Context) {
         return categories
     }
 
-    fun insertCategory(category: Category) {
+    fun insertCategory(category: Category): Int {
         val values = ContentValues().apply {
             put(Category.COLUMN_LABEL, category.label)
             put(Category.COLUMN_ICON, category.icon)
             put(Category.COLUMN_COLOR, category.color)
         }
-        dbHelper.writableDatabase.insert(Category.TABLE_NAME, null, values)
+        val newId = dbHelper.writableDatabase.insert(Category.TABLE_NAME, null, values).toInt()
+
+        // Auto-sync if enabled
+        if (shouldSyncCategory(newId)) {
+            val categoryWithId = Category(newId, category.label, category.icon, category.color)
+            syncManager?.uploadCategory(categoryWithId)
+        }
+
+        return newId
     }
 
     fun updateCategory(category: Category) {
@@ -45,6 +60,11 @@ class CategoryRepository(context: Context) {
             "${Category.COLUMN_ID} = ?",
             arrayOf(category.id.toString())
         )
+
+        // Auto-sync if enabled
+        if (shouldSyncCategory(category.id)) {
+            syncManager?.uploadCategory(category)
+        }
     }
 
     fun deleteCategory(categoryId: Int) {
@@ -71,6 +91,11 @@ class CategoryRepository(context: Context) {
             db.setTransactionSuccessful()
         } finally {
             db.endTransaction()
+        }
+
+        // Auto-sync if enabled
+        if (shouldSyncCategory(categoryId)) {
+            syncManager?.deleteCategoryFromCloud(categoryId)
         }
     }
 
@@ -99,5 +124,24 @@ class CategoryRepository(context: Context) {
             }
         }
         return 0
+    }
+
+    private fun shouldSyncCategory(categoryId: Int): Boolean {
+        val prefs = PreferenceManager.getDefaultSharedPreferences(context)
+        val autoSync = prefs.getBoolean("sync_auto", true)
+        if (!autoSync) return false
+
+        val syncAllCategories = prefs.getBoolean("sync_all_categories", true)
+        if (syncAllCategories) return true
+
+        // Check if category is in selected categories
+        val selectedJson = prefs.getString("sync_selected_categories", "[]") ?: "[]"
+        return try {
+            val arr = JSONArray(selectedJson)
+            val selectedIds = MutableList(arr.length()) { i -> arr.getInt(i) }
+            selectedIds.contains(categoryId)
+        } catch (e: Exception) {
+            false
+        }
     }
 }

@@ -13,14 +13,16 @@ import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ServerValue
 import com.google.firebase.database.ValueEventListener
 import org.json.JSONObject
+import androidx.core.content.edit
 
 @Suppress("DEPRECATION")
 class SyncManager(private val context: Context) {
 
     private val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-        .requestIdToken(context.getString(R.string.default_web_client_id))
+        .requestIdToken(BuildConfig.GOOGLE_API_KEY)
         .requestEmail()
         .build()
 
@@ -28,16 +30,54 @@ class SyncManager(private val context: Context) {
     private val auth = FirebaseAuth.getInstance()
     private val database = FirebaseDatabase.getInstance()
 
+    interface SyncStatsListener {
+        fun onStatsLoaded(localLocs: Int, localCats: Int, cloudLocs: Int, cloudCats: Int)
+    }
+
+    fun getSyncStats(listener: SyncStatsListener) {
+        val locationRepository = SavedLocationRepository(context)
+        val categoryRepository = CategoryRepository(context)
+        
+        val localLocs = locationRepository.getAllLocations().size
+        val localCats = categoryRepository.getAllCategories().size
+        
+        val user = auth.currentUser
+        if (user == null) {
+            listener.onStatsLoaded(localLocs, localCats, 0, 0)
+            return
+        }
+
+        database.getReference("users").child(user.uid).addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val cloudLocs = snapshot.child("locations").childrenCount.toInt()
+                val cloudCats = snapshot.child("categories").childrenCount.toInt()
+                listener.onStatsLoaded(localLocs, localCats, cloudLocs, cloudCats)
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                listener.onStatsLoaded(localLocs, localCats, 0, 0)
+            }
+        })
+    }
+
     fun sync() {
         val prefs = PreferenceManager.getDefaultSharedPreferences(context)
-        val syncEnabled = prefs.getBoolean("sync", false)
+        // General sync enabled check
+        val syncEnabled = prefs.getBoolean("sync_enabled", true)
+        
+        Log.d("SyncManager", "sync() called - syncEnabled=$syncEnabled")
 
         if (syncEnabled) {
             val account = GoogleSignIn.getLastSignedInAccount(context)
+            
             if (account != null) {
-                firebaseAuthWithGoogle(account)
-            } else {
-                Log.d("SyncManager", "User not signed in, skipping sync")
+                googleSignInClient.silentSignIn()
+                    .addOnSuccessListener { updatedAccount ->
+                        firebaseAuthWithGoogle(updatedAccount)
+                    }
+                    .addOnFailureListener { _ ->
+                        firebaseAuthWithGoogle(account)
+                    }
             }
         }
     }
@@ -51,24 +91,213 @@ class SyncManager(private val context: Context) {
                     user?.let { 
                         downloadAndMerge(it.uid)
                         uploadData(it.uid)
+                        updateLastSyncTime()
                     }
-                } else {
-                    Log.w("SyncManager", "Firebase auth failed", task.exception)
                 }
             }
     }
 
-    private fun uploadData(userId: String) {
+    private fun updateLastSyncTime() {
+        val user = auth.currentUser ?: return
+        val userRef = database.getReference("users").child(user.uid).child("lastSync")
+        
+        // Save server timestamp to Firebase
+        val timestampMap = hashMapOf<String, Any>(
+            "timestamp" to ServerValue.TIMESTAMP,
+            "clientTime" to System.currentTimeMillis()
+        )
+        userRef.setValue(timestampMap)
+        
+        // Also save locally for immediate display
+        val prefs = PreferenceManager.getDefaultSharedPreferences(context)
+        prefs.edit { putLong("last_sync_timestamp", System.currentTimeMillis()) }
+    }
+
+    fun uploadData(userId: String) {
         val locationRepository = SavedLocationRepository(context)
+        val categoryRepository = CategoryRepository(context)
+        
+        val prefs = PreferenceManager.getDefaultSharedPreferences(context)
+        val syncAll = prefs.getBoolean("sync_all_categories", true)
+        val selectedCategoriesJson = prefs.getString("sync_selected_categories", "[]") ?: "[]"
+        val selectedCategoryIds = try {
+            val jsonArray = org.json.JSONArray(selectedCategoriesJson)
+            List(jsonArray.length()) { jsonArray.getInt(it) }
+        } catch (_: Exception) {
+            emptyList<Int>()
+        }
+
         val locations = locationRepository.getAllLocations()
-        val userRef = database.getReference("users").child(userId).child("locations")
+        val categories = categoryRepository.getAllCategories()
+        
+        val categoriesToSync = mutableListOf<Int>()
+        val locationsToSync = mutableListOf<Int>()
+
+        val syncUncategorized = syncAll || selectedCategoryIds.contains(-1)
+
+        for (category in categories) {
+            if (syncAll || selectedCategoryIds.contains(category.id)) {
+                uploadCategoryInternal(category)
+                categoriesToSync.add(category.id)
+            }
+        }
         
         for (location in locations) {
-            userRef.child(location.id.toString()).setValue(location)
+            val shouldSync = syncAll || (location.categoryId != null && selectedCategoryIds.contains(location.categoryId)) || (location.categoryId == null && syncUncategorized)
+            if (shouldSync) {
+                uploadLocationInternal(location)
+                locationsToSync.add(location.id)
+            }
+        }
+
+        cleanupCloudData(userId, categoriesToSync, locationsToSync)
+    }
+
+    private fun cleanupCloudData(userId: String, validCategoryIds: List<Int>, validLocationIds: List<Int>) {
+        val userRef = database.getReference("users").child(userId)
+        
+        userRef.child("categories").addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                for (catSnapshot in snapshot.children) {
+                    val id = catSnapshot.key?.toIntOrNull()
+                    if (id != null && !validCategoryIds.contains(id)) {
+                        catSnapshot.ref.removeValue()
+                    }
+                }
+            }
+            override fun onCancelled(error: DatabaseError) {}
+        })
+
+        userRef.child("locations").addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                for (locSnapshot in snapshot.children) {
+                    val id = locSnapshot.key?.toIntOrNull()
+                    if (id != null && !validLocationIds.contains(id)) {
+                        locSnapshot.ref.removeValue()
+                    }
+                }
+            }
+            override fun onCancelled(error: DatabaseError) {}
+        })
+    }
+
+    fun forceUpload(onComplete: () -> Unit = {}) {
+        val user = auth.currentUser ?: return
+        database.getReference("users").child(user.uid).removeValue()
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    uploadData(user.uid)
+                    updateLastSyncTime()
+                    onComplete()
+                }
+            }
+    }
+
+    fun forceDownload(onComplete: () -> Unit = {}) {
+        val user = auth.currentUser ?: return
+        clearLocalData()
+        downloadAndMerge(user.uid, onComplete)
+        updateLastSyncTime()
+    }
+
+    private fun clearLocalData() {
+        val dbHelper = DBHelper(context, null)
+        val db = dbHelper.writableDatabase
+        db.delete(SavedLocation.TABLE_NAME, null, null)
+        db.delete(Category.TABLE_NAME, null, null)
+    }
+
+    fun uploadCategory(category: Category) {
+        val prefs = PreferenceManager.getDefaultSharedPreferences(context)
+        if (!prefs.getBoolean("sync_auto", true)) return
+        uploadCategoryInternal(category)
+    }
+
+    private fun uploadCategoryInternal(category: Category) {
+        val user = auth.currentUser ?: return
+        val prefs = PreferenceManager.getDefaultSharedPreferences(context)
+        val syncAll = prefs.getBoolean("sync_all_categories", true)
+        val selectedCategoriesJson = prefs.getString("sync_selected_categories", "[]") ?: "[]"
+        val selectedCategoryIds = try {
+            val jsonArray = org.json.JSONArray(selectedCategoriesJson)
+            List(jsonArray.length()) { jsonArray.getInt(it) }
+        } catch (_: Exception) {
+            emptyList<Int>()
+        }
+
+        if (syncAll || selectedCategoryIds.contains(category.id)) {
+            database.getReference("users").child(user.uid).child("categories")
+                .child(category.id.toString()).setValue(category)
+            updateLastSyncTime()
         }
     }
 
-    private fun downloadAndMerge(userId: String) {
+    fun uploadLocation(location: SavedLocation) {
+        val prefs = PreferenceManager.getDefaultSharedPreferences(context)
+        if (!prefs.getBoolean("sync_auto", true)) return
+        uploadLocationInternal(location)
+    }
+
+    private fun uploadLocationInternal(location: SavedLocation) {
+        val user = auth.currentUser ?: return
+        val prefs = PreferenceManager.getDefaultSharedPreferences(context)
+        val syncAll = prefs.getBoolean("sync_all_categories", true)
+        val selectedCategoriesJson = prefs.getString("sync_selected_categories", "[]") ?: "[]"
+        val selectedCategoryIds = try {
+            val jsonArray = org.json.JSONArray(selectedCategoriesJson)
+            List(jsonArray.length()) { jsonArray.getInt(it) }
+        } catch (_: Exception) {
+            emptyList<Int>()
+        }
+
+        val syncUncategorized = syncAll || selectedCategoryIds.contains(-1)
+        val shouldSync = syncAll || (location.categoryId != null && selectedCategoryIds.contains(location.categoryId)) || (location.categoryId == null && syncUncategorized)
+
+        if (shouldSync) {
+            val map = hashMapOf<String, Any?>(
+                "id" to location.id,
+                "displayName" to location.displayName,
+                "address" to location.address,
+                "city" to location.city,
+                "country" to location.country,
+                "latitude" to location.latitude,
+                "longitude" to location.longitude,
+                "date" to location.date,
+                "categoryId" to location.categoryId,
+                "note" to location.note,
+                "addressData" to location.addressData
+            )
+            database.getReference("users").child(user.uid).child("locations")
+                .child(location.id.toString()).setValue(map)
+            updateLastSyncTime()
+        } else {
+            database.getReference("users").child(user.uid).child("locations")
+                .child(location.id.toString()).removeValue()
+            updateLastSyncTime()
+        }
+    }
+
+    private fun downloadAndMerge(userId: String, onComplete: (() -> Unit)? = null) {
+        val userRef = database.getReference("users").child(userId)
+        userRef.child("categories").addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val categoryRepository = CategoryRepository(context)
+                val localCategories = categoryRepository.getAllCategories()
+                val localIds = localCategories.map { it.id }
+
+                for (categorySnapshot in snapshot.children) {
+                    val cloudCategory = categorySnapshot.getValue(Category::class.java)
+                    if (cloudCategory != null && !localIds.contains(cloudCategory.id)) {
+                        insertCloudCategory(cloudCategory)
+                    }
+                }
+                syncLocations(userId, onComplete)
+            }
+            override fun onCancelled(error: DatabaseError) { onComplete?.invoke() }
+        })
+    }
+
+    private fun syncLocations(userId: String, onComplete: (() -> Unit)? = null) {
         val userRef = database.getReference("users").child(userId).child("locations")
         userRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
@@ -77,20 +306,51 @@ class SyncManager(private val context: Context) {
                 val localIds = localLocations.map { it.id }
 
                 for (locationSnapshot in snapshot.children) {
-                    val cloudLocation = locationSnapshot.getValue(SavedLocation::class.java)
-                    if (cloudLocation != null && !localIds.contains(cloudLocation.id)) {
-                        insertCloudLocation(locationRepository, cloudLocation)
+                    val id = locationSnapshot.child("id").getValue(Int::class.java) ?: 0
+                    if (!localIds.contains(id)) {
+                        val cloudLocation = parseLocation(locationSnapshot)
+                        if (cloudLocation != null) {
+                            insertCloudLocation(cloudLocation)
+                        }
                     }
                 }
+                onComplete?.invoke()
             }
-
-            override fun onCancelled(error: DatabaseError) {
-                Log.e("SyncManager", "Failed to download data", error.toException())
-            }
+            override fun onCancelled(error: DatabaseError) {}
         })
     }
 
-    private fun insertCloudLocation(locationRepository: SavedLocationRepository, location: SavedLocation) {
+    private fun parseLocation(snapshot: DataSnapshot): SavedLocation? {
+        return try {
+            val id = snapshot.child("id").getValue(Int::class.java) ?: 0
+            val displayName = snapshot.child("displayName").getValue(String::class.java) ?: ""
+            val address = snapshot.child("address").getValue(String::class.java) ?: ""
+            val city = snapshot.child("city").getValue(String::class.java) ?: ""
+            val country = snapshot.child("country").getValue(String::class.java) ?: ""
+            val latitude = snapshot.child("latitude").getValue(Double::class.java) ?: 0.0
+            val longitude = snapshot.child("longitude").getValue(Double::class.java) ?: 0.0
+            val date = snapshot.child("date").getValue(String::class.java) ?: ""
+            val categoryId = snapshot.child("categoryId").getValue(Int::class.java)
+            val note = snapshot.child("note").getValue(String::class.java)
+            @Suppress("UNCHECKED_CAST")
+            val addressData = snapshot.child("addressData").value as? HashMap<String, String> ?: hashMapOf()
+
+            SavedLocation(id, displayName, address, city, country, latitude, longitude, date, categoryId, note, addressData)
+        } catch (_: Exception) { null }
+    }
+
+    private fun insertCloudCategory(category: Category) {
+        val dbHelper = DBHelper(context, null)
+        val values = ContentValues().apply {
+            put(Category.COLUMN_ID, category.id)
+            put(Category.COLUMN_LABEL, category.label)
+            put(Category.COLUMN_ICON, category.icon)
+            put(Category.COLUMN_COLOR, category.color)
+        }
+        dbHelper.writableDatabase.insertWithOnConflict(Category.TABLE_NAME, null, values, android.database.sqlite.SQLiteDatabase.CONFLICT_IGNORE)
+    }
+
+    private fun insertCloudLocation(location: SavedLocation) {
         val dbHelper = DBHelper(context, null)
         val values = ContentValues().apply {
             put(SavedLocation.COLUMN_ID, location.id)
@@ -110,10 +370,40 @@ class SyncManager(private val context: Context) {
 
     fun deleteFromCloud(locationId: Int) {
         val user = auth.currentUser ?: return
-        database.getReference("users")
-            .child(user.uid)
-            .child("locations")
-            .child(locationId.toString())
-            .removeValue()
+        database.getReference("users").child(user.uid).child("locations").child(locationId.toString()).removeValue()
+        updateLastSyncTime()
+    }
+
+    fun deleteCategoryFromCloud(categoryId: Int) {
+        val user = auth.currentUser ?: return
+        database.getReference("users").child(user.uid).child("categories").child(categoryId.toString()).removeValue()
+        updateLastSyncTime()
+    }
+
+    fun signOut() {
+        auth.signOut()
+        googleSignInClient.signOut()
+    }
+
+    fun getLastSyncTime(callback: (Long?) -> Unit) {
+        val user = auth.currentUser ?: run {
+            callback(null)
+            return
+        }
+        
+        val userRef = database.getReference("users").child(user.uid).child("lastSync")
+        userRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val serverTimestamp = snapshot.child("timestamp").getValue(Long::class.java)
+                callback(serverTimestamp)
+            }
+            
+            override fun onCancelled(error: DatabaseError) {
+                // Fallback to local timestamp if Firebase fails
+                val prefs = PreferenceManager.getDefaultSharedPreferences(context)
+                val localTimestamp = prefs.getLong("last_sync_timestamp", 0L)
+                callback(if (localTimestamp > 0) localTimestamp else null)
+            }
+        })
     }
 }

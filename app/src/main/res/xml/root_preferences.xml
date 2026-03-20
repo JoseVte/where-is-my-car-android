@@ -1,5 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory
+        android:layout="@layout/custom_preference_category"
+        app:iconSpaceReserved="false"
+        app:title="@string/cloud_sync">
+
+        <io.josrom.whereismycar.SyncPreference
+            app:iconSpaceReserved="false"
+            app:key="google_sync_card" />
+
+    </PreferenceCategory>
 
     <PreferenceCategory
         android:layout="@layout/custom_preference_category"
@@ -9,6 +21,13 @@
         <io.josrom.whereismycar.ThemePreference
             app:iconSpaceReserved="false"
             app:key="theme_selection" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:layout="@layout/custom_preference_category"
+        app:iconSpaceReserved="false"
+        app:title="@string/language">
 
         <io.josrom.whereismycar.LanguagePreference
             app:iconSpaceReserved="false"
@@ -27,18 +46,8 @@
 
     </PreferenceCategory>
 
-    <PreferenceCategory
-        android:layout="@layout/custom_preference_category"
-        app:iconSpaceReserved="false"
-        app:title="@string/cloud_sync">
-
-        <io.josrom.whereismycar.SyncPreference
-            app:iconSpaceReserved="false"
-            app:key="google_sync_card" />
-
-    </PreferenceCategory>
-
     <Preference
+        android:layout="@layout/custom_preference_category"
         app:icon="@drawable/ic_more"
         app:key="help_support"
         app:title="@string/help_support" />

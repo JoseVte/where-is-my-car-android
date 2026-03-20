@@ -125,6 +125,10 @@ class ExploreFragment : Fragment(), LocationListener,
 
         // Initialize repository
         _locationRepository = SavedLocationRepository(requireContext())
+        (activity as? MainActivity)?.let { mainActivity ->
+            _locationRepository.setSyncManager(mainActivity.syncManager)
+        }
+
         return _binding?.root
     }
 
@@ -194,11 +198,13 @@ class ExploreFragment : Fragment(), LocationListener,
                         }
                     }
 
-                    if (!address.isNullOrEmpty()) {
+                    val locationId = if (!address.isNullOrEmpty()) {
                         _locationRepository.insertLocation(address.first(), location)
                     } else {
                         _locationRepository.insertLocation(getString(R.string.unknown_location), location)
                     }
+                    
+
                     resetAndLoadLocations()
                 }
             }

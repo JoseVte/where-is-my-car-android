@@ -6,11 +6,13 @@ import android.graphics.Color
 import android.os.Bundle
 import android.text.InputFilter
 import android.text.InputType
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import androidx.core.content.ContextCompat
+import androidx.core.content.edit
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
@@ -23,10 +25,12 @@ import io.josrom.whereismycar.databinding.LayoutHeaderBinding
 import androidx.core.graphics.toColorInt
 import androidx.emoji2.widget.EmojiEditText
 import androidx.emoji2.text.EmojiCompat
+import androidx.preference.PreferenceManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.skydoves.colorpickerview.ColorEnvelope
 import com.skydoves.colorpickerview.ColorPickerDialog
 import com.skydoves.colorpickerview.listeners.ColorEnvelopeListener
+import org.json.JSONArray
 
 class EditCategoryFragment : Fragment() {
 
@@ -71,6 +75,7 @@ class EditCategoryFragment : Fragment() {
         "ic_drive",
         "ic_location",
         "ic_search",
+        "tags"
     )
 
     override fun onCreateView(
@@ -89,6 +94,9 @@ class EditCategoryFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         repository = CategoryRepository(requireContext())
+        (activity as? MainActivity)?.let { mainActivity ->
+            repository.setSyncManager(mainActivity.syncManager)
+        }
 
         categoryId = arguments?.getInt(ARG_CATEGORY_ID)?.takeIf { it != -1 }
 
@@ -131,17 +139,31 @@ class EditCategoryFragment : Fragment() {
             } else {
                 selectedIcon
             }
-            val category = Category(
-                id = categoryId ?: 0,
-                label = name,
-                icon = iconToSave,
-                color = selectedColor
-            )
+            
+            val categoryToSave: Category
             if (categoryId == null) {
-                repository.insertCategory(category)
+                val newId = repository.insertCategory(Category(label = name, icon = iconToSave, color = selectedColor))
+                categoryToSave = Category(id = newId, label = name, icon = iconToSave, color = selectedColor)
+                
+                // Add to selected categories if sync_all is false
+                val prefs = PreferenceManager.getDefaultSharedPreferences(requireContext())
+                if (!prefs.getBoolean("sync_all_categories", true)) {
+                    val selectedJson = prefs.getString("sync_selected_categories", "[]") ?: "[]"
+                    try {
+                        val jsonArray = JSONArray(selectedJson)
+                        jsonArray.put(newId)
+                        prefs.edit {
+                            putString("sync_selected_categories", jsonArray.toString())
+                        }
+                    } catch (e: Exception) {
+                        Log.e("EditCategoryFragment", "Error updating selected categories", e)
+                    }
+                }
             } else {
-                repository.updateCategory(category)
+                categoryToSave = Category(id = categoryId!!, label = name, icon = iconToSave, color = selectedColor)
+                repository.updateCategory(categoryToSave)
             }
+            
             parentFragmentManager.popBackStack()
         }
     }

@@ -19,3 +19,9 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+# Firebase Realtime Database
+-keepclassmembers class io.josrom.whereismycar.Category {
+    !private *;
+}
+-keep class io.josrom.whereismycar.Category { *; }

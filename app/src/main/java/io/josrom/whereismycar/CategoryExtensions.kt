@@ -42,35 +42,47 @@ fun Int.withAlpha(alpha: Float): Int {
     return ColorUtils.setAlphaComponent(this, (255 * alpha).toInt())
 }
 
-fun Category.setupIcon(drawableView: ImageView, emojiView: TextView, alpha: Float = 0.15f) {
+fun Category.setupIcon(drawableView: ImageView, emojiView: TextView, alpha: Float = 0.15f, forbiddenShow: Boolean = false) {
     val context = drawableView.context
     val categoryColor = this.getResolvedColor(context)
     val alphaBackground = categoryColor.withAlpha(alpha)
     val isForbidden = this.icon == "ic_forbidden" || this.icon == "@drawable/ic_forbidden"
 
+    // Apply background tint consistently
+    drawableView.backgroundTintList = ColorStateList.valueOf(alphaBackground)
+    emojiView.backgroundTintList = ColorStateList.valueOf(alphaBackground)
+
     if (isForbidden) {
         emojiView.visibility = View.GONE
         drawableView.visibility = View.VISIBLE
-        drawableView.backgroundTintList = ColorStateList.valueOf(alphaBackground)
         drawableView.imageTintList = ColorStateList.valueOf(categoryColor)
-        drawableView.setImageResource(R.drawable.ic_forbidden)
+        if (forbiddenShow) {
+            drawableView.setImageResource(R.drawable.ic_forbidden)
+        } else {
+            drawableView.setImageDrawable(null)
+        }
     } else if (this.icon.startsWith("@drawable/")) {
         emojiView.visibility = View.GONE
         drawableView.visibility = View.VISIBLE
-        drawableView.backgroundTintList = ColorStateList.valueOf(alphaBackground)
         drawableView.imageTintList = ColorStateList.valueOf(categoryColor)
         
         val resourceName = this.icon.substringAfterLast("/")
         val resourceId = context.resources.getIdentifier(resourceName, "drawable", context.packageName)
         if (resourceId != 0) {
             drawableView.setImageResource(resourceId)
+        } else {
+            drawableView.setImageDrawable(null)
         }
-    } else {
+    } else if (this.icon.isNotEmpty()) {
         emojiView.visibility = View.VISIBLE
         drawableView.visibility = View.GONE
-        emojiView.backgroundTintList = ColorStateList.valueOf(alphaBackground)
         emojiView.text = this.icon
         emojiView.setTextColor(categoryColor)
+    } else {
+        emojiView.visibility = View.GONE
+        drawableView.visibility = View.VISIBLE
+        drawableView.imageTintList = ColorStateList.valueOf(categoryColor)
+        drawableView.setImageDrawable(null)
     }
 }
 
@@ -103,6 +115,8 @@ fun createFilterChip(
     if (iconRes != null && iconRes != 0) {
         chip.chipIcon = ResourcesCompat.getDrawable(context.resources, iconRes, context.theme)
         chip.isChipIconVisible = true
+    } else {
+        chip.isChipIconVisible = false
     }
     
     chip.isCheckable = false
@@ -135,11 +149,17 @@ fun createFilterChip(
 fun Category.createChip(
     context: Context,
     isSelected: Boolean,
+    forbiddenShow: Boolean = false,
     onClick: () -> Unit
 ): Chip {
     val categoryColor = this.getResolvedColor(context)
     val isForbidden = this.icon == "ic_forbidden" || this.icon == "@drawable/ic_forbidden"
-    val iconRes = if (isForbidden) 0 else context.resources.getIdentifier(this.icon, "drawable", context.packageName)
+    val iconRes = if (isForbidden && !forbiddenShow) {
+        0
+    } else {
+        val resourceName = if (this.icon.startsWith("@drawable/")) this.icon.substringAfterLast("/") else this.icon
+        context.resources.getIdentifier(resourceName, "drawable", context.packageName)
+    }
     
     return createFilterChip(
         context = context,

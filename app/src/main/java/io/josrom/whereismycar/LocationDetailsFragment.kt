@@ -3,7 +3,6 @@ package io.josrom.whereismycar
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
-import android.content.res.ColorStateList
 import android.location.LocationManager
 import android.os.Bundle
 import android.os.Handler
@@ -12,10 +11,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
-import androidx.core.graphics.ColorUtils
-import androidx.core.graphics.toColorInt
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.preference.PreferenceManager
@@ -69,6 +65,10 @@ class LocationDetailsFragment : Fragment() {
         headerBinding = LayoutHeaderBinding.bind(binding.layoutHeader.root)
         _locationRepository = SavedLocationRepository(ctx)
         _categoryRepository = CategoryRepository(ctx)
+        (activity as? MainActivity)?.let { mainActivity ->
+            _locationRepository.setSyncManager(mainActivity.syncManager)
+            _categoryRepository.setSyncManager(mainActivity.syncManager)
+        }
         return binding.root
     }
 
@@ -117,66 +117,19 @@ class LocationDetailsFragment : Fragment() {
             binding.dateText.text = loc.formattedDate
 
             if (loc.categoryId == null) {
-                val categoryColor = ContextCompat.getColor(requireContext(), R.color.text_secondary)
-                val alphaBackground = ColorUtils.setAlphaComponent(categoryColor, (255 * 0.15).toInt())
-
-                binding.categoryText.visibility = View.VISIBLE
                 binding.categoryText.text = getString(R.string.uncategorized)
-                binding.categoryIconEmoji.visibility = View.GONE
-                binding.categoryIconDrawable.visibility = View.VISIBLE
-                binding.categoryIconDrawable.backgroundTintList = ColorStateList.valueOf(alphaBackground)
-                binding.categoryIconDrawable.imageTintList = ColorStateList.valueOf(categoryColor)
-                binding.categoryIconDrawable.setImageResource(R.drawable.ic_forbidden)
+                // Use a virtual category for consistent rendering
+                val virtualUncategorized = Category(icon = "ic_forbidden", color = "#7D6E5D")
+                virtualUncategorized.setupIcon(binding.categoryIconDrawable, binding.categoryIconEmoji)
             } else {
                 val category = _categoryRepository.getCategory(loc.categoryId)
                 if (category != null) {
-                    val categoryColor = try { category.color.toColorInt() } catch (e: Exception) { ContextCompat.getColor(requireContext(), R.color.text_primary) }
-                    val alphaBackground = ColorUtils.setAlphaComponent(categoryColor, (255 * 0.15).toInt())
-                    
-                    binding.categoryText.visibility = View.VISIBLE
-                    if (category.label.startsWith("@string/")) {
-                        val stringId = resources.getIdentifier(category.label.substringAfterLast("/"), "string", requireContext().packageName)
-                        binding.categoryText.text = if (stringId != 0) getString(stringId) else category.label
-                    } else {
-                        binding.categoryText.text = category.label
-                    }
-
-                    val isForbidden = category.icon == "ic_forbidden" || category.icon == "@drawable/ic_forbidden"
-                    if (isForbidden) {
-                        binding.categoryIconEmoji.visibility = View.GONE
-                        binding.categoryIconDrawable.visibility = View.VISIBLE
-                        binding.categoryIconDrawable.backgroundTintList = ColorStateList.valueOf(alphaBackground)
-                        binding.categoryIconDrawable.imageTintList = ColorStateList.valueOf(categoryColor)
-                        binding.categoryIconDrawable.setImageResource(R.drawable.ic_forbidden)
-                    } else if (category.icon.startsWith("@drawable/")) {
-                        binding.categoryIconEmoji.visibility = View.GONE
-                        binding.categoryIconDrawable.visibility = View.VISIBLE
-                        binding.categoryIconDrawable.backgroundTintList = ColorStateList.valueOf(alphaBackground)
-                        binding.categoryIconDrawable.imageTintList = ColorStateList.valueOf(categoryColor)
-                        
-                        val resourceName = category.icon.substringAfterLast("/")
-                        val resourceId = resources.getIdentifier(resourceName, "drawable", requireContext().packageName)
-                        if (resourceId != 0) {
-                            binding.categoryIconDrawable.setImageResource(resourceId)
-                        }
-                    } else {
-                        binding.categoryIconEmoji.visibility = View.VISIBLE
-                        binding.categoryIconDrawable.visibility = View.GONE
-                        binding.categoryIconEmoji.backgroundTintList = ColorStateList.valueOf(alphaBackground)
-                        binding.categoryIconEmoji.text = category.icon
-                        binding.categoryIconEmoji.setTextColor(categoryColor)
-                    }
+                    binding.categoryText.text = category.getResolvedLabel(requireContext())
+                    category.setupIcon(binding.categoryIconDrawable, binding.categoryIconEmoji)
                 } else {
-                    val categoryColor = ContextCompat.getColor(requireContext(), R.color.text_secondary)
-                    val alphaBackground = ColorUtils.setAlphaComponent(categoryColor, (255 * 0.15).toInt())
-
-                    binding.categoryText.visibility = View.VISIBLE
                     binding.categoryText.text = getString(R.string.uncategorized)
-                    binding.categoryIconEmoji.visibility = View.GONE
-                    binding.categoryIconDrawable.visibility = View.VISIBLE
-                    binding.categoryIconDrawable.backgroundTintList = ColorStateList.valueOf(alphaBackground)
-                    binding.categoryIconDrawable.imageTintList = ColorStateList.valueOf(categoryColor)
-                    binding.categoryIconDrawable.setImageResource(R.drawable.ic_forbidden)
+                    val virtualUncategorized = Category(icon = "ic_forbidden", color = "#7D6E5D")
+                    virtualUncategorized.setupIcon(binding.categoryIconDrawable, binding.categoryIconEmoji)
                 }
             }
 

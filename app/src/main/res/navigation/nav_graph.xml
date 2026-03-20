@@ -68,6 +68,9 @@
         <action
             android:id="@+id/action_SettingsFragment_to_ExploreFragment"
             app:destination="@id/ExploreFragment" />
+        <action
+            android:id="@+id/action_SettingsFragment_to_CloudSyncSettingsFragment"
+            app:destination="@id/CloudSyncSettingsFragment" />
     </fragment>
 
     <fragment
@@ -100,4 +103,10 @@
             app:argType="integer"
             android:defaultValue="-1" />
     </fragment>
+
+    <fragment
+        android:id="@+id/CloudSyncSettingsFragment"
+        android:name="io.josrom.whereismycar.CloudSyncSettingsFragment"
+        android:label="@string/cloud_sync"
+        tools:layout="@layout/fragment_cloud_sync_settings" />
 </navigation>

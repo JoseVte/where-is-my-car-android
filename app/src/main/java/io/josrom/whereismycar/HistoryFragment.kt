@@ -55,6 +55,10 @@ class HistoryFragment : Fragment() {
         Configuration.getInstance().userAgentValue = requireContext().packageName
         repository = SavedLocationRepository(requireContext())
         categoryRepository = CategoryRepository(requireContext())
+        (activity as? MainActivity)?.let { mainActivity ->
+            repository.setSyncManager(mainActivity.syncManager)
+            categoryRepository.setSyncManager(mainActivity.syncManager)
+        }
 
         setupHeader()
         setupRecyclerView()
@@ -226,7 +230,7 @@ class HistoryFragment : Fragment() {
         val uncategorizedChip = createFilterChip(
             context = requireContext(),
             label = getString(R.string.uncategorized),
-            iconRes = R.drawable.ic_forbidden,
+            iconRes = 0, // Consistently hide forbidden/uncategorized icon foreground
             isSelected = isUncategorizedSelected,
             baseColor = ContextCompat.getColor(requireContext(), R.color.text_secondary)
         ) {
@@ -243,7 +247,7 @@ class HistoryFragment : Fragment() {
         val categories = categoryRepository.getAllCategories()
         for (category in categories) {
             val isSelected = selectedCategoryIds.contains(category.id)
-            val chip = category.createChip(requireContext(), isSelected) {
+            val chip = category.createChip(requireContext(), isSelected, category.label == getString(R.string.uncategorized)) {
                 if (selectedCategoryIds.contains(category.id)) {
                     selectedCategoryIds.remove(category.id)
                 } else {
@@ -276,7 +280,7 @@ class HistoryFragment : Fragment() {
         // Uncategorized filter
         if (selectedCategoryIds.contains(-1)) {
             val color = ContextCompat.getColor(requireContext(), R.color.text_secondary)
-            val chip = createActiveFilterChip(getString(R.string.uncategorized), color, R.drawable.ic_forbidden) {
+            val chip = createActiveFilterChip(getString(R.string.uncategorized), color, 0) {
                 selectedCategoryIds.remove(-1)
                 renderFilters()
                 loadLocations()
@@ -290,9 +294,14 @@ class HistoryFragment : Fragment() {
             if (id == -1) return@forEach
             val category = categories.find { it.id == id }
             category?.let {
-                val categoryColor = try { it.color.toColorInt() } catch (e: Exception) { ContextCompat.getColor(requireContext(), R.color.text_primary) }
-                val iconRes = resources.getIdentifier(it.icon, "drawable", requireContext().packageName)
-                val chip = createActiveFilterChip(it.getResolvedLabel(requireContext()), categoryColor, if (iconRes != 0) iconRes else R.drawable.ic_location) {
+                val categoryColor = it.getResolvedColor(requireContext())
+                val isForbidden = it.icon == "ic_forbidden" || it.icon == "@drawable/ic_forbidden"
+                val iconRes = if (isForbidden) 0 else {
+                    val resourceName = if (it.icon.startsWith("@drawable/")) it.icon.substringAfterLast("/") else it.icon
+                    resources.getIdentifier(resourceName, "drawable", requireContext().packageName)
+                }
+                
+                val chip = createActiveFilterChip(it.getResolvedLabel(requireContext()), categoryColor, if (iconRes != 0) iconRes else 0) {
                     selectedCategoryIds.remove(id)
                     renderFilters()
                     loadLocations()
@@ -307,8 +316,12 @@ class HistoryFragment : Fragment() {
     private fun createActiveFilterChip(label: String, color: Int, iconRes: Int, onRemove: () -> Unit): Chip {
         return Chip(requireContext()).apply {
             text = label
-            setChipIconResource(iconRes)
-            chipIconTint = android.content.res.ColorStateList.valueOf(color)
+            if (iconRes != 0) {
+                setChipIconResource(iconRes)
+                chipIconTint = android.content.res.ColorStateList.valueOf(color)
+            } else {
+                isChipIconVisible = false
+            }
             isCloseIconVisible = true
             setOnCloseIconClickListener { onRemove() }
             

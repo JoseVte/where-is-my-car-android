@@ -49,6 +49,10 @@ class EditLocationFragment : Fragment() {
         headerBinding = LayoutHeaderBinding.bind(binding.layoutHeader.root)
         locationRepository = SavedLocationRepository(ctx)
         categoryRepository = CategoryRepository(ctx)
+        (activity as? MainActivity)?.let { mainActivity ->
+            locationRepository.setSyncManager(mainActivity.syncManager)
+            categoryRepository.setSyncManager(mainActivity.syncManager)
+        }
         return binding.root
     }
 
@@ -107,7 +111,7 @@ class EditLocationFragment : Fragment() {
         val noneChip = createFilterChip(
             context = requireContext(),
             label = getString(R.string.uncategorized),
-            iconRes = R.drawable.ic_forbidden,
+            iconRes = 0, // Forbidden icon foreground removed for Uncategorized
             isSelected = isNoneSelected,
             baseColor = ContextCompat.getColor(requireContext(), R.color.text_secondary)
         ) {
@@ -118,7 +122,7 @@ class EditLocationFragment : Fragment() {
 
         for (category in categories) {
             val isSelected = category.id == selectedCategoryId
-            val chip = category.createChip(requireContext(), isSelected) {
+            val chip = category.createChip(requireContext(), isSelected, category.label == getString(R.string.uncategorized)) {
                 selectedCategoryId = if (selectedCategoryId == category.id) null else category.id
                 loadCategories() // Refresh all chips to update visuals
             }
@@ -167,6 +171,7 @@ class EditLocationFragment : Fragment() {
         val newNotes = binding.etNotes.text.toString()
         
         locationRepository.updateLocation(locationId, newName, selectedCategoryId, newNotes)
+        
         Toast.makeText(requireContext(), getString(R.string.location_updated), Toast.LENGTH_SHORT).show()
         findNavController().popBackStack()
     }
