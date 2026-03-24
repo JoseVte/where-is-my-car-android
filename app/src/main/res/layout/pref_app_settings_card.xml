@@ -37,7 +37,7 @@
                 android:layout_width="18dp"
                 android:layout_height="18dp"
                 android:contentDescription="@string/manage_categories"
-                android:src="@drawable/tags"
+                android:src="@drawable/ic_tags"
                 app:layout_constraintBottom_toBottomOf="@id/icon_bg_categories"
                 app:layout_constraintEnd_toEndOf="@id/icon_bg_categories"
                 app:layout_constraintStart_toStartOf="@id/icon_bg_categories"

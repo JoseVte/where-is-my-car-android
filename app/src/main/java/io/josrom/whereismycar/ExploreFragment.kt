@@ -198,7 +198,7 @@ class ExploreFragment : Fragment(), LocationListener,
                         }
                     }
 
-                    val locationId = if (!address.isNullOrEmpty()) {
+                    if (!address.isNullOrEmpty()) {
                         _locationRepository.insertLocation(address.first(), location)
                     } else {
                         _locationRepository.insertLocation(getString(R.string.unknown_location), location)

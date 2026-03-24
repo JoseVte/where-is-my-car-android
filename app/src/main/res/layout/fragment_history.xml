@@ -63,7 +63,7 @@
                 android:contentDescription="@string/filters"
                 android:padding="14dp"
                 android:scaleType="centerInside"
-                android:src="@drawable/filters"
+                android:src="@drawable/ic_filters"
                 app:tint="@color/text_secondary" />
         </LinearLayout>
     </androidx.cardview.widget.CardView>

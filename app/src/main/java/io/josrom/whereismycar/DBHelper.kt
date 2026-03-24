@@ -52,9 +52,9 @@ class DBHelper(private val context: Context, factory: SQLiteDatabase.CursorFacto
 
     private fun insertDefaultCategories(db: SQLiteDatabase?) {
         val defaults = listOf(
-            Triple("Home", "@drawable/home", colorToHex(ContextCompat.getColor(context, R.color.primary))),
-            Triple("Favorites", "@drawable/favorite", colorToHex(ContextCompat.getColor(context, R.color.primary_pink))),
-            Triple("Others", "@drawable/route", colorToHex(ContextCompat.getColor(context, R.color.text_secondary)))
+            Triple("Home", "@drawable/ic_home", colorToHex(ContextCompat.getColor(context, R.color.primary))),
+            Triple("Favorites", "@drawable/ic_favorite", colorToHex(ContextCompat.getColor(context, R.color.primary_pink))),
+            Triple("Others", "@drawable/ic_route", colorToHex(ContextCompat.getColor(context, R.color.text_secondary)))
         )
 
         defaults.forEach { (label, icon, color) ->

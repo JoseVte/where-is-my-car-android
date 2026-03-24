@@ -36,6 +36,7 @@ class LocationAdapter(
         return ViewHolder(binding)
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val location = locations[position]
         

@@ -29,7 +29,7 @@
             android:background="@drawable/rounded_pill_dark"
             android:contentDescription="@string/category"
             android:padding="6dp"
-            android:src="@drawable/tags"
+            android:src="@drawable/ic_tags"
             app:tint="@color/primary" />
 
         <TextView

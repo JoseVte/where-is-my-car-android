@@ -1,13 +1,12 @@
 package io.josrom.whereismycar
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.google.android.material.tabs.TabLayoutMediator
-import io.josrom.whereismycar.databinding.ActivityOnboardingBinding
 import androidx.core.content.edit
 import androidx.viewpager2.widget.ViewPager2
+import com.google.android.material.tabs.TabLayoutMediator
+import io.josrom.whereismycar.databinding.ActivityOnboardingBinding
 
 class OnboardingActivity : AppCompatActivity() {
     private lateinit var binding: ActivityOnboardingBinding
@@ -57,7 +56,7 @@ class OnboardingActivity : AppCompatActivity() {
 
     private fun navigateToMain() {
         // Mark onboarding as completed
-        val sharedPref = getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+        val sharedPref = getSharedPreferences("app_prefs", MODE_PRIVATE)
         sharedPref.edit {
             putBoolean("onboarding_completed", true)
         }

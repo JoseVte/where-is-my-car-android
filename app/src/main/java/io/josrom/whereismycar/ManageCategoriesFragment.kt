@@ -86,7 +86,7 @@ class ManageCategoriesFragment : Fragment() {
         val bundle = Bundle().apply {
             putInt("category_id", categoryId)
         }
-        findNavController().navigate(R.id.action_ManageCategoriesFragment_to_EditCategoryFragment, bundle)
+        findNavController().navigate(R.id.action_manage_categories_fragment_to_edit_category_fragment, bundle)
     }
 
     override fun onResume() {

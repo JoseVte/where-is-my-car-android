@@ -10,7 +10,7 @@ class OnboardingAdapter(
     private val onSkipClicked: () -> Unit
 ) : RecyclerView.Adapter<OnboardingAdapter.ViewHolder>() {
 
-    inner class ViewHolder(val view: View) : RecyclerView.ViewHolder(view)
+    class ViewHolder(val view: View) : RecyclerView.ViewHolder(view)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(viewType, parent, false)

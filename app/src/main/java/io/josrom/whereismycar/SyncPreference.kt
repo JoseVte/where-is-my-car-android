@@ -7,7 +7,6 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.navigation.findNavController
 import androidx.preference.Preference
-import androidx.preference.PreferenceManager
 import androidx.preference.PreferenceViewHolder
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
@@ -39,7 +38,7 @@ class SyncPreference(context: Context, attrs: AttributeSet?) : Preference(contex
         }
 
         holder.findViewById(R.id.btn_sync_settings)?.setOnClickListener {
-            it.findNavController().navigate(R.id.action_SettingsFragment_to_CloudSyncSettingsFragment)
+            it.findNavController().navigate(R.id.action_settings_fragment_to_cloud_sync_settings_fragment)
         }
     }
 

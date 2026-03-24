@@ -1,7 +1,5 @@
 package io.josrom.whereismycar
 
-import android.content.Context
-import android.content.ContextWrapper
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -11,7 +9,6 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
@@ -21,9 +18,6 @@ import androidx.preference.PreferenceManager
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.common.api.ApiException
 import io.josrom.whereismycar.databinding.ActivityMainBinding
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class MainActivity : AppCompatActivity() {
 
@@ -107,37 +101,13 @@ class MainActivity : AppCompatActivity() {
 
         // Set click listener for the center explorer button
         binding.bgNavCenterView.setOnClickListener {
-            if (navController.currentDestination?.id != R.id.ExploreFragment) {
-                navController.navigate(R.id.ExploreFragment)
+            if (navController.currentDestination?.id != R.id.explore_fragment) {
+                navController.navigate(R.id.explore_fragment)
             }
         }
 
         syncManager = SyncManager(this)
         syncManager.sync()
-
-        // TODO: Only during development, allow enter directly on the first location 
-        // on the LocationDetailsFragment, and re-generate on each start.
-        if (savedInstanceState == null && BuildConfig.DEBUG) {
-            lifecycleScope.launch {
-                val locationRepository = SavedLocationRepository(this@MainActivity)
-                val categoryRepository = CategoryRepository(this@MainActivity)
-                withContext(Dispatchers.IO) {
-                    val locations = locationRepository.getAllLocations()
-                    val categories = categoryRepository.getAllCategories()
-                    if (locations.isNotEmpty()) {
-                        withContext(Dispatchers.Main) {
-                            val bundle = Bundle().apply {
-                                putInt("locationId", locations.first().id)
-                                if (categories.isNotEmpty()) {
-                                    putInt("categoryId", categories.first().id)
-                                }
-                            }
-                            navController.navigate(R.id.SettingsFragment, bundle)
-                        }
-                    }
-                }
-            }
-        }
     }
 
     private fun applySavedTheme() {
@@ -152,7 +122,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun updateCenterItemBackground(selectedItemId: Int) {
-        val isExploreSelected = selectedItemId == R.id.ExploreFragment
+        val isExploreSelected = selectedItemId == R.id.explore_fragment
         binding.bgNavCenterView.setBackgroundResource(
             if (isExploreSelected) R.drawable.bg_nav_center_selected
             else R.drawable.bg_nav_center_unselected
@@ -213,7 +183,7 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_settings -> {
-                getNavController().navigate(R.id.SettingsFragment)
+                getNavController().navigate(R.id.settings_fragment)
                 true
             }
             else -> super.onOptionsItemSelected(item)

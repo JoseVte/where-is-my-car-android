@@ -10,12 +10,12 @@ import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
+import androidx.core.graphics.drawable.toDrawable
 import androidx.navigation.fragment.findNavController
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
 import io.josrom.whereismycar.databinding.FragmentSettingsBinding
-import androidx.core.graphics.drawable.toDrawable
 import io.josrom.whereismycar.databinding.LayoutHeaderBinding
 
 class SettingsFragment : PreferenceFragmentCompat() {
@@ -70,7 +70,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
     private fun setupPreferenceListeners() {
         findPreference<AppSettingsPreference>("app_settings_card")?.apply {
             onManageCategoriesClick = {
-                findNavController().navigate(R.id.action_SettingsFragment_to_ManageCategoriesFragment)
+                findNavController().navigate(R.id.action_settings_fragment_to_manage_categories_fragment)
             }
             onArrivalAlertsClick = {
                 // Handle arrival alerts click

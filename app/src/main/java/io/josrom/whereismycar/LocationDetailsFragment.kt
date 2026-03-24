@@ -171,7 +171,7 @@ class LocationDetailsFragment : Fragment() {
             val bundle = Bundle().apply {
                 putInt("locationId", locationId)
             }
-            findNavController().navigate(R.id.action_LocationDetailsFragment_to_EditLocationFragment, bundle)
+            findNavController().navigate(R.id.action_location_details_fragment_to_edit_location_fragment, bundle)
         }
 
         binding.btnShare.setOnClickListener {

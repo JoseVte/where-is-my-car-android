@@ -70,7 +70,7 @@
     <string name="category">Category</string>
     <string name="notes">Notes</string>
     <string name="date">Saved on</string>
-    <string name="date_value">Thurday, 12th March 2026</string>
+    <string name="date_value">Thursday, 12th March 2026</string>
     <string name="default_category_emoji" translatable="false">😋</string>
     <string name="copy_coordinates">Copy coordinates</string>
     <string name="search">Search</string>

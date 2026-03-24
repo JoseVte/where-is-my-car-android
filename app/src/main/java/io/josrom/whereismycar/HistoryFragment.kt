@@ -1,6 +1,5 @@
 package io.josrom.whereismycar
 
-import android.graphics.Color
 import android.os.Bundle
 import android.transition.AutoTransition
 import android.transition.TransitionManager
@@ -9,7 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.content.ContextCompat
-import androidx.core.graphics.toColorInt
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
@@ -81,13 +79,13 @@ class HistoryFragment : Fragment() {
                 val bundle = Bundle().apply {
                     putInt("locationId", location.id)
                 }
-                findNavController().navigate(R.id.action_LocationHistoryFragment_to_LocationDetailsFragment, bundle)
+                findNavController().navigate(R.id.action_location_history_fragment_to_location_details_fragment, bundle)
             },
             onEditClick = { location ->
                 val bundle = Bundle().apply {
                     putInt("locationId", location.id)
                 }
-                findNavController().navigate(R.id.action_LocationHistoryFragment_to_EditLocationFragment, bundle)
+                findNavController().navigate(R.id.action_location_history_fragment_to_edit_location_fragment, bundle)
             },
             onShareClick = { location ->
                 location.share(requireContext())
@@ -383,8 +381,6 @@ class HistoryFragment : Fragment() {
 
         dateRangePicker.show(childFragmentManager, "DATE_RANGE_PICKER")
     }
-
-    private fun Int.toPx(): Int = (this * resources.displayMetrics.density).toInt()
 
     private fun loadLocations() {
         val query = binding.editTextSearch.text?.toString() ?: ""

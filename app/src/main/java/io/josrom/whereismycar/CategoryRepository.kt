@@ -2,6 +2,7 @@ package io.josrom.whereismycar
 
 import android.content.ContentValues
 import android.content.Context
+import androidx.core.database.sqlite.transaction
 import androidx.preference.PreferenceManager
 import org.json.JSONArray
 
@@ -69,28 +70,27 @@ class CategoryRepository(private val context: Context) {
 
     fun deleteCategory(categoryId: Int) {
         val db = dbHelper.writableDatabase
-        db.beginTransaction()
-        try {
-            // Unset category_id from locations
-            val values = ContentValues().apply {
-                putNull(SavedLocation.COLUMN_CATEGORY_ID)
-            }
-            db.update(
-                SavedLocation.TABLE_NAME,
-                values,
-                "${SavedLocation.COLUMN_CATEGORY_ID} = ?",
-                arrayOf(categoryId.toString())
-            )
+        db.transaction {
+            try {
+                // Unset category_id from locations
+                val values = ContentValues().apply {
+                    putNull(SavedLocation.COLUMN_CATEGORY_ID)
+                }
+                update(
+                    SavedLocation.TABLE_NAME,
+                    values,
+                    "${SavedLocation.COLUMN_CATEGORY_ID} = ?",
+                    arrayOf(categoryId.toString())
+                )
 
-            // Delete the category
-            db.delete(
-                Category.TABLE_NAME,
-                "${Category.COLUMN_ID} = ?",
-                arrayOf(categoryId.toString())
-            )
-            db.setTransactionSuccessful()
-        } finally {
-            db.endTransaction()
+                // Delete the category
+                delete(
+                    Category.TABLE_NAME,
+                    "${Category.COLUMN_ID} = ?",
+                    arrayOf(categoryId.toString())
+                )
+            } finally {
+            }
         }
 
         // Auto-sync if enabled
@@ -140,7 +140,7 @@ class CategoryRepository(private val context: Context) {
             val arr = JSONArray(selectedJson)
             val selectedIds = MutableList(arr.length()) { i -> arr.getInt(i) }
             selectedIds.contains(categoryId)
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             false
         }
     }

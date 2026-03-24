@@ -347,7 +347,7 @@
                             android:contentDescription="@string/category"
                             android:padding="6dp"
                             android:layout_marginEnd="8dp"
-                            android:src="@drawable/home"
+                            android:src="@drawable/ic_home"
                             />
                         <TextView
                             android:id="@+id/categoryIconEmoji"
@@ -416,7 +416,7 @@
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:contentDescription="@string/copy_coordinates"
-                    android:src="@drawable/copy"
+                    android:src="@drawable/ic_copy"
                     app:tint="@color/primary" />
             </LinearLayout>
 

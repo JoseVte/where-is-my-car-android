@@ -13,23 +13,23 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
+import androidx.core.graphics.toColorInt
 import androidx.core.widget.addTextChangedListener
+import androidx.emoji2.text.EmojiCompat
+import androidx.emoji2.widget.EmojiEditText
 import androidx.fragment.app.Fragment
+import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import io.josrom.whereismycar.databinding.FragmentEditCategoryBinding
-import io.josrom.whereismycar.databinding.ItemColorPickerBinding
-import io.josrom.whereismycar.databinding.ItemIconPickerBinding
-import io.josrom.whereismycar.databinding.LayoutHeaderBinding
-import androidx.core.graphics.toColorInt
-import androidx.emoji2.widget.EmojiEditText
-import androidx.emoji2.text.EmojiCompat
-import androidx.preference.PreferenceManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.skydoves.colorpickerview.ColorEnvelope
 import com.skydoves.colorpickerview.ColorPickerDialog
 import com.skydoves.colorpickerview.listeners.ColorEnvelopeListener
+import io.josrom.whereismycar.databinding.FragmentEditCategoryBinding
+import io.josrom.whereismycar.databinding.ItemColorPickerBinding
+import io.josrom.whereismycar.databinding.ItemIconPickerBinding
+import io.josrom.whereismycar.databinding.LayoutHeaderBinding
 import org.json.JSONArray
 
 class EditCategoryFragment : Fragment() {
@@ -471,12 +471,5 @@ class EditCategoryFragment : Fragment() {
     companion object {
         private const val ARG_CATEGORY_ID = "category_id"
 
-        fun newInstance(categoryId: Int = -1): EditCategoryFragment {
-            return EditCategoryFragment().apply {
-                arguments = Bundle().apply {
-                    putInt(ARG_CATEGORY_ID, categoryId)
-                }
-            }
-        }
     }
 }

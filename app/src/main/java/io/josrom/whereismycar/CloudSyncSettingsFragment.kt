@@ -11,6 +11,7 @@ import android.widget.LinearLayout
 import android.widget.NumberPicker
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.content.edit
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
@@ -22,6 +23,9 @@ import com.google.android.material.button.MaterialButtonToggleGroup
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.shape.CornerFamily
+import com.google.android.material.shape.MaterialShapeDrawable
+import com.google.android.material.shape.ShapeAppearanceModel
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
 import io.josrom.whereismycar.databinding.FragmentCloudSyncSettingsBinding
@@ -29,10 +33,6 @@ import io.josrom.whereismycar.databinding.LayoutHeaderBinding
 import org.json.JSONArray
 import org.osmdroid.config.Configuration
 import java.util.Locale
-import androidx.core.content.edit
-import com.google.android.material.shape.CornerFamily
-import com.google.android.material.shape.MaterialShapeDrawable
-import com.google.android.material.shape.ShapeAppearanceModel
 
 class CloudSyncSettingsFragment : Fragment() {
 
@@ -179,7 +179,7 @@ class CloudSyncSettingsFragment : Fragment() {
             val arr = JSONArray(selectedJson)
             MutableList(arr.length()) { i -> arr.getInt(i) }
         } catch (_: Exception) {
-            mutableListOf<Int>()
+            mutableListOf()
         }
 
         binding.rvCategories.layoutManager = LinearLayoutManager(requireContext())

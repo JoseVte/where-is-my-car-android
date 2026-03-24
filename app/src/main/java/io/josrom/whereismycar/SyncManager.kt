@@ -3,6 +3,7 @@ package io.josrom.whereismycar
 import android.content.ContentValues
 import android.content.Context
 import android.util.Log
+import androidx.core.content.edit
 import androidx.preference.PreferenceManager
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -16,7 +17,6 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ServerValue
 import com.google.firebase.database.ValueEventListener
 import org.json.JSONObject
-import androidx.core.content.edit
 
 @Suppress("DEPRECATION")
 class SyncManager(private val context: Context) {
@@ -102,7 +102,7 @@ class SyncManager(private val context: Context) {
         val userRef = database.getReference("users").child(user.uid).child("lastSync")
         
         // Save server timestamp to Firebase
-        val timestampMap = hashMapOf<String, Any>(
+        val timestampMap = hashMapOf(
             "timestamp" to ServerValue.TIMESTAMP,
             "clientTime" to System.currentTimeMillis()
         )
@@ -124,7 +124,7 @@ class SyncManager(private val context: Context) {
             val jsonArray = org.json.JSONArray(selectedCategoriesJson)
             List(jsonArray.length()) { jsonArray.getInt(it) }
         } catch (_: Exception) {
-            emptyList<Int>()
+            emptyList()
         }
 
         val locations = locationRepository.getAllLocations()
@@ -222,7 +222,7 @@ class SyncManager(private val context: Context) {
             val jsonArray = org.json.JSONArray(selectedCategoriesJson)
             List(jsonArray.length()) { jsonArray.getInt(it) }
         } catch (_: Exception) {
-            emptyList<Int>()
+            emptyList()
         }
 
         if (syncAll || selectedCategoryIds.contains(category.id)) {
@@ -247,7 +247,7 @@ class SyncManager(private val context: Context) {
             val jsonArray = org.json.JSONArray(selectedCategoriesJson)
             List(jsonArray.length()) { jsonArray.getInt(it) }
         } catch (_: Exception) {
-            emptyList<Int>()
+            emptyList()
         }
 
         val syncUncategorized = syncAll || selectedCategoryIds.contains(-1)

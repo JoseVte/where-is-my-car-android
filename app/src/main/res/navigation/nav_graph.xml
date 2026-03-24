@@ -3,78 +3,78 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/ExploreFragment">
+    app:startDestination="@id/explore_fragment">
 
     <fragment
-        android:id="@+id/ExploreFragment"
+        android:id="@+id/explore_fragment"
         android:name="io.josrom.whereismycar.ExploreFragment"
         android:label=""
         tools:layout="@layout/fragment_explore">
 
         <action
-            android:id="@+id/action_ExploreFragment_to_SettingsFragment"
-            app:destination="@id/SettingsFragment" />
+            android:id="@+id/action_explore_fragment_to_settings_fragment"
+            app:destination="@id/settings_fragment" />
         <action
-            android:id="@+id/action_ExploreFragment_to_LocationDetailsFragment"
-            app:destination="@id/LocationDetailsFragment" />
+            android:id="@+id/action_explore_fragment_to_location_details_fragment"
+            app:destination="@id/location_details_fragment" />
         <action
-            android:id="@+id/action_ExploreFragment_to_LocationHistoryFragment"
-            app:destination="@id/LocationHistoryFragment" />
+            android:id="@+id/action_explore_fragment_to_location_history_fragment"
+            app:destination="@id/location_history_fragment" />
     </fragment>
 
     <fragment
-        android:id="@+id/LocationHistoryFragment"
+        android:id="@+id/location_history_fragment"
         android:name="io.josrom.whereismycar.HistoryFragment"
         android:label="@string/history"
         tools:layout="@layout/fragment_history" >
         <action
-            android:id="@+id/action_LocationHistoryFragment_to_ExploreFragment"
-            app:destination="@id/ExploreFragment" />
+            android:id="@+id/action_location_history_fragment_to_explore_fragment"
+            app:destination="@id/explore_fragment" />
         <action
-            android:id="@+id/action_LocationHistoryFragment_to_LocationDetailsFragment"
-            app:destination="@id/LocationDetailsFragment" />
+            android:id="@+id/action_location_history_fragment_to_location_details_fragment"
+            app:destination="@id/location_details_fragment" />
         <action
-            android:id="@+id/action_LocationHistoryFragment_to_EditLocationFragment"
-            app:destination="@id/EditLocationFragment" />
+            android:id="@+id/action_location_history_fragment_to_edit_location_fragment"
+            app:destination="@id/edit_location_fragment" />
     </fragment>
 
     <fragment
-        android:id="@+id/LocationDetailsFragment"
+        android:id="@+id/location_details_fragment"
         android:name="io.josrom.whereismycar.LocationDetailsFragment"
         android:label="LocationDetailsFragment"
         tools:layout="@layout/fragment_location_details">
         <action
-            android:id="@+id/action_LocationDetailsFragment_to_ExploreFragment"
-            app:destination="@id/ExploreFragment" />
+            android:id="@+id/action_location_details_fragment_to_explore_fragment"
+            app:destination="@id/explore_fragment" />
         <argument
             android:name="locationId"
             app:argType="integer" />
         <action
-            android:id="@+id/action_LocationDetailsFragment_to_EditLocationFragment"
-            app:destination="@id/EditLocationFragment" />
+            android:id="@+id/action_location_details_fragment_to_edit_location_fragment"
+            app:destination="@id/edit_location_fragment" />
     </fragment>
 
     <fragment
-        android:id="@+id/SettingsFragment"
+        android:id="@+id/settings_fragment"
         android:name="io.josrom.whereismycar.SettingsFragment"
         android:label="@string/settings"
         tools:layout="@layout/fragment_settings">
         <action
-            android:id="@+id/action_SettingsFragment_to_ManageCategoriesFragment"
-            app:destination="@id/ManageCategoriesFragment" />
+            android:id="@+id/action_settings_fragment_to_manage_categories_fragment"
+            app:destination="@id/manage_categories_fragment" />
         <action
-            android:id="@+id/action_SettingsFragment_to_LocationHistoryFragment"
-            app:destination="@id/LocationHistoryFragment" />
+            android:id="@+id/action_settings_fragment_to_location_history_fragment"
+            app:destination="@id/location_history_fragment" />
         <action
-            android:id="@+id/action_SettingsFragment_to_ExploreFragment"
-            app:destination="@id/ExploreFragment" />
+            android:id="@+id/action_settings_fragment_to_explore_fragment"
+            app:destination="@id/explore_fragment" />
         <action
-            android:id="@+id/action_SettingsFragment_to_CloudSyncSettingsFragment"
-            app:destination="@id/CloudSyncSettingsFragment" />
+            android:id="@+id/action_settings_fragment_to_cloud_sync_settings_fragment"
+            app:destination="@id/cloud_sync_settings_fragment" />
     </fragment>
 
     <fragment
-        android:id="@+id/EditLocationFragment"
+        android:id="@+id/edit_location_fragment"
         android:name="io.josrom.whereismycar.EditLocationFragment"
         android:label="@string/edit_location"
         tools:layout="@layout/fragment_edit_location" >
@@ -84,17 +84,17 @@
     </fragment>
 
     <fragment
-        android:id="@+id/ManageCategoriesFragment"
+        android:id="@+id/manage_categories_fragment"
         android:name="io.josrom.whereismycar.ManageCategoriesFragment"
         android:label="@string/manage_categories"
         tools:layout="@layout/fragment_manage_categories" >
         <action
-            android:id="@+id/action_ManageCategoriesFragment_to_EditCategoryFragment"
-            app:destination="@id/EditCategoryFragment" />
+            android:id="@+id/action_manage_categories_fragment_to_edit_category_fragment"
+            app:destination="@id/edit_category_fragment" />
     </fragment>
 
     <fragment
-        android:id="@+id/EditCategoryFragment"
+        android:id="@+id/edit_category_fragment"
         android:name="io.josrom.whereismycar.EditCategoryFragment"
         android:label="@string/edit_category"
         tools:layout="@layout/fragment_edit_category" >
@@ -105,7 +105,7 @@
     </fragment>
 
     <fragment
-        android:id="@+id/CloudSyncSettingsFragment"
+        android:id="@+id/cloud_sync_settings_fragment"
         android:name="io.josrom.whereismycar.CloudSyncSettingsFragment"
         android:label="@string/cloud_sync"
         tools:layout="@layout/fragment_cloud_sync_settings" />

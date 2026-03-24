@@ -212,10 +212,6 @@ class SavedLocationRepository(private val context: Context) {
         return SavedLocation(id, displayName, address, city, country, latitude, longitude, date, categoryId, note, addressData, category)
     }
 
-    fun insertLocation(location: IGeoPoint, categoryId: Int? = null, note: String? = null): Int {
-        return insertLocation("", "", "", "", location.latitude, location.longitude, hashMapOf(), categoryId, note)
-    }
-
     fun insertLocation(displayName: String, location: IGeoPoint, categoryId: Int? = null, note: String? = null): Int {
         return insertLocation(displayName, displayName, "", "", location.latitude, location.longitude, hashMapOf(), categoryId, note)
     }
@@ -271,10 +267,6 @@ class SavedLocationRepository(private val context: Context) {
         }
 
         return addressParts
-    }
-
-    fun insertLocation(address: String, displayName: String, city: String, country: String, location: IGeoPoint, addressMap: HashMap<String, String>, categoryId: Int? = null, note: String? = null): Int {
-        return insertLocation(address, displayName, city, country, location.latitude, location.longitude, addressMap, categoryId, note)
     }
 
     fun insertLocation(address: String, displayName: String, city: String, country: String, latitude: Double, longitude: Double, addressMap: HashMap<String, String>, categoryId: Int? = null, note: String? = null): Int {

@@ -22,7 +22,7 @@
             android:layout_height="28dp"
             android:layout_gravity="center"
             android:contentDescription="@string/app_name"
-            android:src="@drawable/favorite"
+            android:src="@drawable/ic_favorite"
             app:tint="@color/text_secondary" />
 
         <TextView

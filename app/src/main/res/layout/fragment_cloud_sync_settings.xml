@@ -209,7 +209,7 @@
                     android:layout_weight="1"
                     android:layout_marginEnd="8dp"
                     android:text="@string/force_upload"
-                    app:icon="@drawable/upload" />
+                    app:icon="@drawable/ic_upload" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnForceDownload"
@@ -218,7 +218,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="@string/force_download"
-                    app:icon="@drawable/download" />
+                    app:icon="@drawable/ic_download" />
             </LinearLayout>
 
         </LinearLayout>

@@ -2,8 +2,6 @@ package io.josrom.whereismycar
 
 import android.content.Context
 import android.content.Intent
-import androidx.core.content.edit
-import androidx.preference.PreferenceManager
 import java.text.SimpleDateFormat
 import java.util.Locale
 import kotlin.math.abs
