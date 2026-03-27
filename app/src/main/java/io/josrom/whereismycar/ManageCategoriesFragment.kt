@@ -86,7 +86,8 @@ class ManageCategoriesFragment : Fragment() {
         val bundle = Bundle().apply {
             putInt("category_id", categoryId)
         }
-        findNavController().navigate(R.id.action_manage_categories_fragment_to_edit_category_fragment, bundle)
+        // Explicitly use resId and args to avoid navigation ambiguity with type-safe routes
+        findNavController().navigate(resId = R.id.action_manage_categories_fragment_to_edit_category_fragment, args = bundle)
     }
 
     override fun onResume() {

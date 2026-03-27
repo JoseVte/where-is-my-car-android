@@ -31,7 +31,7 @@ class SyncManager(private val context: Context) {
     private val database = FirebaseDatabase.getInstance()
 
     interface SyncStatsListener {
-        fun onStatsLoaded(localLocs: Int, localCats: Int, cloudLocs: Int, cloudCats: Int)
+        fun onStatsLoaded(localLocations: Int, localCats: Int, cloudLocations: Int, cloudCats: Int)
     }
 
     fun getSyncStats(listener: SyncStatsListener) {

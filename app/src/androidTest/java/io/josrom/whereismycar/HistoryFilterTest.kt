@@ -85,7 +85,7 @@ class HistoryFilterTest {
     @Test
     fun testUncategorizedFilter() {
         val catRepo = CategoryRepository(context)
-        val catId = catRepo.insertCategory(Category(label = "Home", icon = "home", color = "#00FF00"))
+        val catId = catRepo.insertCategory(Category(label = "Home", icon = "@drawable/ic_home", color = "#00FF00"))
         
         repository.insertLocation("Categorized", "Display Categorized", "", "", 0.0, 0.0, hashMapOf(), catId)
         repository.insertLocation("Uncategorized Loc", "Display Uncategorized Loc", "", "", 0.0, 0.0, hashMapOf(), null)

@@ -52,6 +52,9 @@
         <action
             android:id="@+id/action_location_details_fragment_to_edit_location_fragment"
             app:destination="@id/edit_location_fragment" />
+        <action
+            android:id="@+id/action_location_details_fragment_to_location_history_fragment"
+            app:destination="@id/location_history_fragment" />
     </fragment>
 
     <fragment
@@ -81,6 +84,12 @@
         <argument
             android:name="locationId"
             app:argType="integer" />
+        <action
+            android:id="@+id/action_edit_location_fragment_to_location_details_fragment"
+            app:destination="@id/location_details_fragment" />
+        <action
+            android:id="@+id/action_edit_location_fragment_to_location_history_fragment"
+            app:destination="@id/location_history_fragment" />
     </fragment>
 
     <fragment

@@ -171,7 +171,8 @@ class LocationDetailsFragment : Fragment() {
             val bundle = Bundle().apply {
                 putInt("locationId", locationId)
             }
-            findNavController().navigate(R.id.action_location_details_fragment_to_edit_location_fragment, bundle)
+            // Explicitly use resId and args to avoid navigation ambiguity
+            findNavController().navigate(resId = R.id.action_location_details_fragment_to_edit_location_fragment, args = bundle)
         }
 
         binding.btnShare.setOnClickListener {

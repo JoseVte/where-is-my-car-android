@@ -79,13 +79,15 @@ class HistoryFragment : Fragment() {
                 val bundle = Bundle().apply {
                     putInt("locationId", location.id)
                 }
-                findNavController().navigate(R.id.action_location_history_fragment_to_location_details_fragment, bundle)
+                // Explicitly use resId and args to avoid navigation ambiguity
+                findNavController().navigate(resId = R.id.action_location_history_fragment_to_location_details_fragment, args = bundle)
             },
             onEditClick = { location ->
                 val bundle = Bundle().apply {
                     putInt("locationId", location.id)
                 }
-                findNavController().navigate(R.id.action_location_history_fragment_to_edit_location_fragment, bundle)
+                // Explicitly use resId and args to avoid navigation ambiguity
+                findNavController().navigate(resId = R.id.action_location_history_fragment_to_edit_location_fragment, args = bundle)
             },
             onShareClick = { location ->
                 location.share(requireContext())

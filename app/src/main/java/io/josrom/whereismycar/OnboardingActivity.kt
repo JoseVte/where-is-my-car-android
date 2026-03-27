@@ -17,9 +17,24 @@ class OnboardingActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         val pages = listOf(
-            OnboardingPage(getString(R.string.onboarding_title_1), getString(R.string.onboarding_description_1), R.layout.item_onboarding_1),
-            OnboardingPage(getString(R.string.onboarding_title_2), getString(R.string.onboarding_description_2), R.layout.item_onboarding_2),
-            OnboardingPage(getString(R.string.onboarding_title_3), getString(R.string.onboarding_description_3), R.layout.item_onboarding_3)
+            OnboardingPage(
+                title = getString(R.string.onboarding_title_1),
+                description = getString(R.string.onboarding_description_1),
+                imageRes = R.drawable.img_onboarding_1,
+                showSkip = true
+            ),
+            OnboardingPage(
+                title = getString(R.string.onboarding_title_2),
+                description = getString(R.string.onboarding_description_2),
+                imageRes = R.drawable.img_onboarding_2,
+                showSkip = true
+            ),
+            OnboardingPage(
+                title = getString(R.string.onboarding_title_3),
+                description = getString(R.string.onboarding_description_3),
+                imageRes = R.drawable.img_onboarding_3,
+                showSkip = false
+            )
         )
 
         val adapter = OnboardingAdapter(pages) {
@@ -36,7 +51,6 @@ class OnboardingActivity : AppCompatActivity() {
 
                 if (position == pages.size - 1) {
                     binding.btnNext.text = getString(R.string.get_started)
-                    // Optionally add an icon: binding.btnNext.setIconResource(R.drawable.ic_arrow_right)
                 } else {
                     binding.btnNext.text = getString(R.string.next)
                 }

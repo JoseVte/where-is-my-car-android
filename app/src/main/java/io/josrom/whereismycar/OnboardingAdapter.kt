@@ -3,6 +3,9 @@ package io.josrom.whereismycar
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.TextView
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 
 class OnboardingAdapter(
@@ -10,7 +13,12 @@ class OnboardingAdapter(
     private val onSkipClicked: () -> Unit
 ) : RecyclerView.Adapter<OnboardingAdapter.ViewHolder>() {
 
-    class ViewHolder(val view: View) : RecyclerView.ViewHolder(view)
+    class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        val image: ImageView = view.findViewById(R.id.onboarding_image)
+        val title: TextView = view.findViewById(R.id.onboarding_text)
+        val description: TextView = view.findViewById(R.id.onboarding_description)
+        val skipButton: View = view.findViewById(R.id.onboarding_skip)
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(viewType, parent, false)
@@ -18,8 +26,14 @@ class OnboardingAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        // Find skip button if it exists in the layout
-        holder.view.findViewById<View>(R.id.onboarding_skip)?.setOnClickListener {
+        val page = pages[position]
+        
+        holder.image.setImageResource(page.imageRes)
+        holder.title.text = page.title
+        holder.description.text = page.description
+        
+        holder.skipButton.isVisible = page.showSkip
+        holder.skipButton.setOnClickListener {
             onSkipClicked()
         }
     }

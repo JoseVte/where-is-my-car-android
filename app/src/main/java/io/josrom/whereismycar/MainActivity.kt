@@ -2,7 +2,6 @@ package io.josrom.whereismycar
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
@@ -10,10 +9,11 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.navigation.NavController
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.navOptions
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
-import androidx.navigation.ui.setupWithNavController
 import androidx.preference.PreferenceManager
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.common.api.ApiException
@@ -24,59 +24,29 @@ class MainActivity : AppCompatActivity() {
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
     lateinit var syncManager: SyncManager
+    private var isProgrammaticSelection = false
 
     private val signInLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
-        Log.d("MainActivity", "signInLauncher result: resultCode=${result.resultCode}, RESULT_OK=$RESULT_OK")
-        
         if (result.resultCode == RESULT_OK) {
             @Suppress("DEPRECATION")
             val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
             try {
                 val account = task.getResult(ApiException::class.java)
-                Log.d("MainActivity", "✅ Sign in successful: email=${account.email}, displayName=${account.displayName}")
-                Log.d("MainActivity", "   idToken=${if (account.idToken != null) "present" else "null"}")
-                
                 Toast.makeText(this, getString(R.string.signed_in_as, account.email), Toast.LENGTH_SHORT).show()
-                
-                // Verify immediately that account is saved
-                val savedAccount = GoogleSignIn.getLastSignedInAccount(this)
-                Log.d("MainActivity", "Immediately after login - getLastSignedInAccount: ${if (savedAccount != null) savedAccount.email else "null"}")
-                
                 syncManager.sync()
-                
-                // Trigger multiple refreshes to ensure UI updates
-                // First refresh after sync starts
-                binding.root.postDelayed({
-                    Log.d("MainActivity", "Refresh 1 - Initial (300ms)")
-                    refreshSyncPreference()
-                }, 300)
-                
-                // Second refresh after Firebase auth completes
-                binding.root.postDelayed({
-                    Log.d("MainActivity", "Refresh 2 - Firebase (800ms)")
-                    refreshSyncPreference()
-                }, 800)
-                
-                // Third refresh as final confirmation
-                binding.root.postDelayed({
-                    Log.d("MainActivity", "Refresh 3 - Final (1500ms)")
-                    refreshSyncPreference()
-                }, 1500)
+                binding.root.postDelayed({ refreshSyncPreference() }, 300)
+                binding.root.postDelayed({ refreshSyncPreference() }, 800)
+                binding.root.postDelayed({ refreshSyncPreference() }, 1500)
             } catch (e: ApiException) {
-                Log.w("MainActivity", "❌ signInResult failed: code=${e.statusCode}, message=${e.message}")
                 Toast.makeText(this, getString(R.string.sign_in_failed, e.message), Toast.LENGTH_LONG).show()
             }
-        } else {
-            Log.w("MainActivity", "⚠️ Sign in cancelled or failed: resultCode=$result.resultCode")
         }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        // Apply saved theme before super.onCreate
         applySavedTheme()
-        
         super.onCreate(savedInstanceState)
 
         val sharedPref = getSharedPreferences("app_prefs", MODE_PRIVATE)
@@ -91,18 +61,77 @@ class MainActivity : AppCompatActivity() {
 
         val navController = getNavController()
         
-        // Setup BottomNavigationView with NavController
-        binding.bottomNavigation.setupWithNavController(navController)
+        appBarConfiguration = AppBarConfiguration(
+            setOf(R.id.explore_fragment, R.id.location_history_fragment, R.id.settings_fragment)
+        )
 
-        // Add listener for UI updates (like the center button background)
-        navController.addOnDestinationChangedListener { _, destination, _ ->
-            updateCenterItemBackground(destination.id)
+        binding.bottomNavigation.setOnItemSelectedListener { item ->
+            if (isProgrammaticSelection) return@setOnItemSelectedListener true
+            
+            val currentId = navController.currentDestination?.id
+            
+            if (item.itemId == R.id.explore_fragment) {
+                if (currentId != R.id.explore_fragment) {
+                    if (!navController.popBackStack(R.id.explore_fragment, false)) {
+                        navController.navigate(resId = R.id.explore_fragment, args = null)
+                    }
+                }
+                return@setOnItemSelectedListener true
+            }
+
+            if (!navController.popBackStack(item.itemId, false)) {
+                navController.navigate(resId = item.itemId, args = null, navOptions = navOptions {
+                    popUpTo(navController.graph.findStartDestination().id) {
+                        saveState = true
+                    }
+                    launchSingleTop = true
+                    restoreState = false 
+                })
+            }
+            true
         }
 
-        // Set click listener for the center explorer button
+        binding.bottomNavigation.setOnItemReselectedListener { item ->
+            if (isProgrammaticSelection) return@setOnItemReselectedListener
+            
+            val currentDestId = navController.currentDestination?.id
+            if (currentDestId != item.itemId && currentDestId != null) {
+                if (!navController.popBackStack(item.itemId, false)) {
+                    navController.navigate(resId = item.itemId, args = null, navOptions = navOptions {
+                        popUpTo(navController.graph.findStartDestination().id) {
+                            saveState = true
+                        }
+                        launchSingleTop = true
+                        restoreState = false
+                    })
+                }
+            }
+        }
+
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            updateCenterItemBackground(destination.id)
+            
+            val tabToSelect = when (destination.id) {
+                R.id.location_history_fragment, R.id.location_details_fragment, R.id.edit_location_fragment -> R.id.location_history_fragment
+                R.id.settings_fragment, R.id.manage_categories_fragment, R.id.edit_category_fragment, R.id.cloud_sync_settings_fragment -> R.id.settings_fragment
+                R.id.explore_fragment -> R.id.explore_fragment
+                else -> null
+            }
+
+            tabToSelect?.let { tabId ->
+                if (binding.bottomNavigation.selectedItemId != tabId) {
+                    isProgrammaticSelection = true
+                    binding.bottomNavigation.selectedItemId = tabId
+                    isProgrammaticSelection = false
+                }
+            }
+        }
+
         binding.bgNavCenterView.setOnClickListener {
             if (navController.currentDestination?.id != R.id.explore_fragment) {
-                navController.navigate(R.id.explore_fragment)
+                if (!navController.popBackStack(R.id.explore_fragment, false)) {
+                    navController.navigate(resId = R.id.explore_fragment, args = null)
+                }
             }
         }
 
@@ -127,7 +156,6 @@ class MainActivity : AppCompatActivity() {
             if (isExploreSelected) R.drawable.bg_nav_center_selected
             else R.drawable.bg_nav_center_unselected
         )
-        
         binding.icNavCenterIcon.alpha = if (isExploreSelected) 1.0f else 0.5f
     }
 
@@ -137,20 +165,15 @@ class MainActivity : AppCompatActivity() {
 
     fun signOut() {
         syncManager.signOut()
-        binding.root.postDelayed({
-            refreshSyncPreference()
-        }, 500)
+        binding.root.postDelayed({ refreshSyncPreference() }, 500)
         Toast.makeText(this, getString(R.string.signed_out), Toast.LENGTH_SHORT).show()
     }
 
     private fun refreshSyncPreference() {
-        // Try to find and refresh the SyncPreference in SettingsFragment
         supportFragmentManager.fragments.forEach { parentFragment ->
             if (parentFragment is NavHostFragment) {
                 parentFragment.childFragmentManager.fragments.forEach { fragment ->
                     if (fragment is SettingsFragment) {
-                        Log.d("MainActivity", "Found SettingsFragment, refreshing SyncPreference")
-                        // Force refresh to trigger onBindViewHolder update
                         binding.root.postDelayed({
                             fragment.findPreference<SyncPreference>("google_sync_card")?.refresh()
                         }, 100)
@@ -162,12 +185,8 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        // Re-attempt sync when app comes back to foreground (handles token refresh)
         syncManager.sync()
-        // Refresh UI to show current login state
-        binding.root.postDelayed({
-            refreshSyncPreference()
-        }, 500)
+        binding.root.postDelayed({ refreshSyncPreference() }, 500)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -183,7 +202,7 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_settings -> {
-                getNavController().navigate(R.id.settings_fragment)
+                getNavController().navigate(resId = R.id.settings_fragment, args = null)
                 true
             }
             else -> super.onOptionsItemSelected(item)
@@ -191,9 +210,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onSupportNavigateUp(): Boolean {
-        val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
-        appBarConfiguration = AppBarConfiguration(navHostFragment.navController.graph)
-        return getNavController().navigateUp(appBarConfiguration)
-            || super.onSupportNavigateUp()
+        return getNavController().navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
 }

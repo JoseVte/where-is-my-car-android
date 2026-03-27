@@ -279,8 +279,8 @@ class LocationFlowTest {
     @Test
     fun testCategoryFilteringInHistory() {
         val catRepo = CategoryRepository(context)
-        val cat1Id = catRepo.insertCategory(Category(label = "Home", icon = "home", color = "#00FF00"))
-        val cat2Id = catRepo.insertCategory(Category(label = "Work", icon = "work", color = "#0000FF"))
+        val cat1Id = catRepo.insertCategory(Category(label = "Home", icon = "@drawable/ic_home", color = "#00FF00"))
+        val cat2Id = catRepo.insertCategory(Category(label = "Work", icon = "@drawable/ic_route", color = "#0000FF"))
 
         val repo = SavedLocationRepository(context)
         repo.insertLocation("Home Location", "Display Home Location", "", "", 0.0, 0.0, hashMapOf(), cat1Id)

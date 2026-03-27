@@ -70,7 +70,8 @@ class SettingsFragment : PreferenceFragmentCompat() {
     private fun setupPreferenceListeners() {
         findPreference<AppSettingsPreference>("app_settings_card")?.apply {
             onManageCategoriesClick = {
-                findNavController().navigate(R.id.action_settings_fragment_to_manage_categories_fragment)
+                // Use named arguments to avoid ambiguity with type-safe navigation overloads
+                findNavController().navigate(resId = R.id.action_settings_fragment_to_manage_categories_fragment, args = null)
             }
             onArrivalAlertsClick = {
                 // Handle arrival alerts click

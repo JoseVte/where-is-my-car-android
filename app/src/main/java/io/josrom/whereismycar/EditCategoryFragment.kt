@@ -61,9 +61,9 @@ class EditCategoryFragment : Fragment() {
         // Row 1
         "ic_forbidden",
         "ic_custom_emoji",
-        "home",
-        "favorite",
-        "route",
+        "ic_home",
+        "ic_favorite",
+        "ic_route",
         // Row 2
         "ic_coffee",
         "ic_layers",
@@ -75,7 +75,7 @@ class EditCategoryFragment : Fragment() {
         "ic_drive",
         "ic_location",
         "ic_search",
-        "tags"
+        "ic_tags"
     )
 
     override fun onCreateView(

@@ -38,7 +38,8 @@ class SyncPreference(context: Context, attrs: AttributeSet?) : Preference(contex
         }
 
         holder.findViewById(R.id.btn_sync_settings)?.setOnClickListener {
-            it.findNavController().navigate(R.id.action_settings_fragment_to_cloud_sync_settings_fragment)
+            // Use named arguments to avoid ambiguity with type-safe navigation overloads
+            it.findNavController().navigate(resId = R.id.action_settings_fragment_to_cloud_sync_settings_fragment, args = null)
         }
     }
 
@@ -94,8 +95,8 @@ class SyncPreference(context: Context, attrs: AttributeSet?) : Preference(contex
             }
             
             (context as? MainActivity)?.syncManager?.getSyncStats(object : SyncManager.SyncStatsListener {
-                override fun onStatsLoaded(localLocs: Int, localCats: Int, cloudLocs: Int, cloudCats: Int) {
-                    locationsTv?.text = context.getString(R.string.user_stats, localLocs, cloudLocs)
+                override fun onStatsLoaded(localLocations: Int, localCats: Int, cloudLocations: Int, cloudCats: Int) {
+                    locationsTv?.text = context.getString(R.string.user_stats, localLocations, cloudLocations)
                     categoriesTv?.text = context.getString(R.string.user_stats, localCats, cloudCats)
                 }
             })
