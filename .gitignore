@@ -15,6 +15,7 @@
 .externalNativeBuild
 .cxx
 local.properties
+/.ollamassist
 
 # Secrets and Credentials
 google-services.json

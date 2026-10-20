@@ -54,6 +54,12 @@
     <string name="waiting_for_gps">Waiting for GPS location…</string>
     <string name="stop_navigation">Stop Navigation</string>
     <string name="start_navigation">Start Navigation</string>
+    <string name="calculate_route">Calculate Route</string>
+    <string name="navigation_started">Navigation started</string>
+    <string name="next_steps">Next steps</string>
+    <string name="step_continue">Continue</string>
+    <string name="distance_m_short">%d m</string>
+    <string name="distance_km_short">%.1f km</string>
     <string name="distance_km_away">%.1f km away</string>
     <string name="distance_m_away">%d m away</string>
     <string name="time_min_driving">%d min driving</string>
@@ -198,4 +204,14 @@
     <string name="hours_ago">%1$d hours ago</string>
     <string name="days_ago">%1$d days ago</string>
     <string name="never_synced">Never synced</string>
+    <string name="remove_route">Remove route</string>
+
+    <!-- Preference Keys and Internal Values -->
+    <string name="pref_name" translatable="false">app_prefs</string>
+    <string name="pref_onboarding_completed" translatable="false">onboarding_completed</string>
+    <string name="pref_theme_selection" translatable="false">theme_selection</string>
+    <string name="pref_value_system" translatable="false">system</string>
+    <string name="pref_value_light" translatable="false">light</string>
+    <string name="pref_value_dark" translatable="false">dark</string>
+    <string name="pref_google_sync_card" translatable="false">google_sync_card</string>
 </resources>

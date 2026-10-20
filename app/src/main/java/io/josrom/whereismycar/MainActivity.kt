@@ -8,6 +8,7 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.fragment.NavHostFragment
@@ -18,6 +19,9 @@ import androidx.preference.PreferenceManager
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.common.api.ApiException
 import io.josrom.whereismycar.databinding.ActivityMainBinding
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class MainActivity : AppCompatActivity() {
 
@@ -49,8 +53,8 @@ class MainActivity : AppCompatActivity() {
         applySavedTheme()
         super.onCreate(savedInstanceState)
 
-        val sharedPref = getSharedPreferences("app_prefs", MODE_PRIVATE)
-        if (!sharedPref.getBoolean("onboarding_completed", false)) {
+        val sharedPref = getSharedPreferences(getString(R.string.pref_name), MODE_PRIVATE)
+        if (!sharedPref.getBoolean(getString(R.string.pref_onboarding_completed), false)) {
             startActivity(Intent(this, OnboardingActivity::class.java))
             finish()
             return
@@ -141,10 +145,10 @@ class MainActivity : AppCompatActivity() {
 
     private fun applySavedTheme() {
         val sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this)
-        val themeValue = sharedPrefs.getString("theme_selection", "system") ?: "system"
+        val themeValue = sharedPrefs.getString(getString(R.string.pref_theme_selection), getString(R.string.pref_value_system)) ?: getString(R.string.pref_value_system)
         val mode = when (themeValue) {
-            "light" -> AppCompatDelegate.MODE_NIGHT_NO
-            "dark" -> AppCompatDelegate.MODE_NIGHT_YES
+            getString(R.string.pref_value_light) -> AppCompatDelegate.MODE_NIGHT_NO
+            getString(R.string.pref_value_dark) -> AppCompatDelegate.MODE_NIGHT_YES
             else -> AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
         }
         AppCompatDelegate.setDefaultNightMode(mode)
@@ -175,7 +179,7 @@ class MainActivity : AppCompatActivity() {
                 parentFragment.childFragmentManager.fragments.forEach { fragment ->
                     if (fragment is SettingsFragment) {
                         binding.root.postDelayed({
-                            fragment.findPreference<SyncPreference>("google_sync_card")?.refresh()
+                            fragment.findPreference<SyncPreference>(getString(R.string.pref_google_sync_card))?.refresh()
                         }, 100)
                     }
                 }

@@ -25,6 +25,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -203,8 +204,6 @@ class ExploreFragment : Fragment(), LocationListener,
                     } else {
                         _locationRepository.insertLocation(getString(R.string.unknown_location), location)
                     }
-                    
-
                     resetAndLoadLocations()
                 }
             }
@@ -260,13 +259,25 @@ class ExploreFragment : Fragment(), LocationListener,
 
     private fun setupRecyclerView() {
         _locationAdapter = LocationAdapter(mutableListOf(), { location ->
-            _mapController.animateTo(GeoPoint(location.latitude, location.longitude))
-            _bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+            // Navigate to LocationDetailsFragment when item is clicked
+            val bundle = Bundle().apply {
+                putInt("locationId", location.id)
+            }
+            findNavController().navigate(R.id.action_explore_fragment_to_location_details_fragment, bundle)
         }, { location ->
             location.confirmAndDelete(requireContext(), _locationRepository) {
                 resetAndLoadLocations()
                 Toast.makeText(context, getString(R.string.location_deleted), Toast.LENGTH_SHORT).show()
             }
+        }, { location ->
+            // Edit functionality - navigate to edit fragment
+            val bundle = Bundle().apply {
+                putInt("locationId", location.id)
+            }
+            findNavController().navigate(R.id.action_explore_fragment_to_edit_location_fragment, bundle)
+        }, { location ->
+            // Share functionality
+            location.share(requireContext())
         })
 
         binding?.carLocations?.apply {

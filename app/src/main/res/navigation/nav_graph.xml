@@ -20,6 +20,9 @@
         <action
             android:id="@+id/action_explore_fragment_to_location_history_fragment"
             app:destination="@id/location_history_fragment" />
+        <action
+            android:id="@+id/action_explore_fragment_to_edit_location_fragment"
+            app:destination="@id/edit_location_fragment" />
     </fragment>
 
     <fragment

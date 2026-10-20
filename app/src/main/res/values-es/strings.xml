@@ -48,6 +48,12 @@
     <string name="waiting_for_gps">Esperando señal GPS…</string>
     <string name="stop_navigation">Detener navegación</string>
     <string name="start_navigation">Iniciar navegación</string>
+    <string name="calculate_route">Calcular ruta</string>
+    <string name="navigation_started">Navegación iniciada</string>
+    <string name="next_steps">Próximos pasos</string>
+    <string name="step_continue">Continuar</string>
+    <string name="distance_m_short">%d m</string>
+    <string name="distance_km_short">%.1f km</string>
     <string name="distance_km_away">a %.1f km</string>
     <string name="distance_m_away">a %d m</string>
     <string name="time_min_driving">%d min conduciendo</string>
@@ -188,4 +194,5 @@
     <string name="days_ago">Hace %1$d días</string>
     <string name="never_synced">Nunca sincronizado</string>
     <string name="date_value">Jueves, 12 de Marzo de 2026</string>
+    <string name="remove_route">Borrar ruta</string>
 </resources>
