@@ -82,7 +82,7 @@ The app uses a single-activity architecture with Android Navigation Component:
 - Single inserts, updates and deletes are pushed right away when auto sync is on. All API calls run on `Dispatchers.IO`, one at a time (`Mutex`). Failures are logged and retried on the next full sync.
 - Network code lives in the `api` package: `WhereIsMyCarApi` (Retrofit), `ApiClient` (adds the Firebase ID token and `Accept-Language`, refreshes the token once on 401) and `ApiMappers` (local and API models, dates and the API limits).
 - Dates: SQLite keeps `yyyy-MM-dd HH:mm:ss` in the device time zone, the API uses ISO 8601 UTC. Colors: the color picker returns `#AARRGGBB`, the API only accepts `#RRGGBB`. Always convert through `ApiMappers`.
-- API URL: `BuildConfig.API_BASE_URL`, from `api.base.url` in `local.properties` (default `http://10.0.2.2:8080/`, the host machine as seen from the emulator).
+- API URL: `BuildConfig.API_BASE_URL`. Debug builds use `api.base.url` from `local.properties` (default `http://10.0.2.2:8080/`, the host machine as seen from the emulator). Release builds use `api.base.url.release` (default `https://api-where-is-my-car.josrom.io/`).
 - Every location has a category (the API rejects locations without one). `SavedLocationRepository.insertLocation` falls back to `CategoryRepository.getOrCreateDefaultCategory()` ("Others"), the edit screen requires a category, and deleting a category deletes its locations (locally and in the API). There is no "Uncategorized" anymore.
 - Known limitation: deletions made while offline are not queued, so the next full sync downloads those items again from the API.
 

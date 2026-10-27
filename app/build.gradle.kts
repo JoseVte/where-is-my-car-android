@@ -13,6 +13,8 @@ val googleApiKey: String = properties.getProperty("google.api.key")
 // Base URL of the Where Is My Car API. 10.0.2.2 is the host machine as seen from the emulator.
 // Override it in local.properties with api.base.url (for example your Mac's IP when using a real device).
 val apiBaseUrl: String = properties.getProperty("api.base.url", "http://10.0.2.2:8080/")
+// Release builds talk to the production API (override with api.base.url.release)
+val apiBaseUrlRelease: String = properties.getProperty("api.base.url.release", "https://api-where-is-my-car.josrom.io/")
 
 
 android {
@@ -42,6 +44,7 @@ android {
 
     buildTypes {
         release {
+            buildConfigField("String", "API_BASE_URL", "\"$apiBaseUrlRelease\"")
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
