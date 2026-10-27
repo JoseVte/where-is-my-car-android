@@ -12,6 +12,9 @@ import androidx.test.platform.app.InstrumentationRegistry
 import com.google.android.material.chip.Chip
 import org.hamcrest.Matchers.allOf
 import org.hamcrest.Matchers.instanceOf
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -83,12 +86,9 @@ class HistoryFilterTest {
     }
 
     @Test
-    fun testUncategorizedFilter() {
-        val catRepo = CategoryRepository(context)
-        val catId = catRepo.insertCategory(Category(label = "Home", icon = "@drawable/ic_home", color = "#00FF00"))
-        
+    fun testNoUncategorizedFilter() {
+        val catId = CategoryRepository(context).insertCategory(Category(label = "Home", icon = "@drawable/ic_home", color = "#00FF00"))
         repository.insertLocation("Categorized", "Display Categorized", "", "", 0.0, 0.0, hashMapOf(), catId)
-        repository.insertLocation("Uncategorized Loc", "Display Uncategorized Loc", "", "", 0.0, 0.0, hashMapOf(), null)
 
         ActivityScenario.launch(MainActivity::class.java).use {
             onView(withId(R.id.location_history_fragment)).perform(click())
@@ -96,12 +96,39 @@ class HistoryFilterTest {
             onView(withId(R.id.btn_filters)).perform(click())
             Thread.sleep(500)
 
-            // Select "Uncategorized" filter
-            onView(allOf(withText(R.string.uncategorized), instanceOf(Chip::class.java), isDescendantOfA(withId(R.id.categories_container)))).perform(click())
-            Thread.sleep(1000)
-
-            onView(withText("Display Uncategorized Loc")).check(matches(isDisplayed()))
-            onView(withText("Display Categorized")).check(doesNotExist())
+            // Every location has a category, so there is nothing to filter as "Uncategorized"
+            onView(allOf(withText(R.string.uncategorized), instanceOf(Chip::class.java), isDescendantOfA(withId(R.id.categories_container)))).check(doesNotExist())
         }
+    }
+
+    @Test
+    fun testLocationWithoutCategoryGetsTheDefaultCategory() {
+        val categories = CategoryRepository(context)
+
+        // No categories at all: the default one is created
+        val firstId = repository.insertLocation("A", "A", "", "", 0.0, 0.0, hashMapOf(), null)
+        val others = categories.getAllCategories().single()
+        assertEquals(DBHelper.DEFAULT_CATEGORY_LABEL, others.label)
+        assertEquals(others.id, repository.getLocation(firstId)?.categoryId)
+
+        // It is reused, not duplicated
+        val secondId = repository.insertLocation("B", "B", "", "", 0.0, 0.0, hashMapOf(), null)
+        assertEquals(others.id, repository.getLocation(secondId)?.categoryId)
+        assertEquals(1, categories.getAllCategories().size)
+    }
+
+    @Test
+    fun testDeletingACategoryDeletesItsLocations() {
+        val categories = CategoryRepository(context)
+        val homeId = categories.insertCategory(Category(label = "Home", icon = "@drawable/ic_home", color = "#00FF00"))
+        val workId = categories.insertCategory(Category(label = "Work", icon = "@drawable/ic_route", color = "#0000FF"))
+        val inHome = repository.insertLocation("Garage", "Garage", "", "", 0.0, 0.0, hashMapOf(), homeId)
+        val inWork = repository.insertLocation("Office", "Office", "", "", 0.0, 0.0, hashMapOf(), workId)
+
+        categories.deleteCategory(homeId)
+
+        assertNull(categories.getCategory(homeId))
+        assertNull(repository.getLocation(inHome))
+        assertNotNull(repository.getLocation(inWork))
     }
 }

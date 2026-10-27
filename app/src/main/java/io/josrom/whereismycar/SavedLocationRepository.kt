@@ -101,6 +101,7 @@ class SavedLocationRepository(private val context: Context) {
                 "${SavedLocation.TABLE_NAME}.${SavedLocation.COLUMN_DATE}",
                 "${SavedLocation.TABLE_NAME}.${SavedLocation.COLUMN_CATEGORY_ID}",
                 "${SavedLocation.TABLE_NAME}.${SavedLocation.COLUMN_NOTE}",
+                "${SavedLocation.TABLE_NAME}.${SavedLocation.COLUMN_REMOTE_ID}",
                 Category.COLUMN_LABEL,
                 Category.COLUMN_COLOR,
                 Category.COLUMN_ICON
@@ -155,6 +156,7 @@ class SavedLocationRepository(private val context: Context) {
                 "${SavedLocation.TABLE_NAME}.${SavedLocation.COLUMN_DATE}",
                 "${SavedLocation.TABLE_NAME}.${SavedLocation.COLUMN_CATEGORY_ID}",
                 "${SavedLocation.TABLE_NAME}.${SavedLocation.COLUMN_NOTE}",
+                "${SavedLocation.TABLE_NAME}.${SavedLocation.COLUMN_REMOTE_ID}",
                 Category.COLUMN_LABEL,
                 Category.COLUMN_COLOR,
                 Category.COLUMN_ICON
@@ -209,7 +211,10 @@ class SavedLocationRepository(private val context: Context) {
             )
         }
 
-        return SavedLocation(id, displayName, address, city, country, latitude, longitude, date, categoryId, note, addressData, category)
+        val remoteIdIndex = cursor.getColumnIndex(SavedLocation.COLUMN_REMOTE_ID)
+        val remoteId = if (remoteIdIndex < 0 || cursor.isNull(remoteIdIndex)) null else cursor.getInt(remoteIdIndex)
+
+        return SavedLocation(id, displayName, address, city, country, latitude, longitude, date, categoryId, note, addressData, category, remoteId)
     }
 
     fun insertLocation(displayName: String, location: IGeoPoint, categoryId: Int? = null, note: String? = null): Int {
@@ -269,7 +274,9 @@ class SavedLocationRepository(private val context: Context) {
         return addressParts
     }
 
+    /** A location always has a category: without one, the default category is used. */
     fun insertLocation(address: String, displayName: String, city: String, country: String, latitude: Double, longitude: Double, addressMap: HashMap<String, String>, categoryId: Int? = null, note: String? = null): Int {
+        val categoryId = categoryId ?: CategoryRepository(context).getOrCreateDefaultCategory().id
         val dateString = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Date())
         val values = ContentValues().apply {
             put(SavedLocation.COLUMN_DISPLAY_NAME, displayName)
@@ -308,7 +315,7 @@ class SavedLocationRepository(private val context: Context) {
         return newId
     }
 
-    fun updateLocation(id: Int, displayName: String, categoryId: Int?, note: String?) {
+    fun updateLocation(id: Int, displayName: String, categoryId: Int, note: String?) {
         val values = ContentValues().apply {
             put(SavedLocation.COLUMN_DISPLAY_NAME, displayName)
             put(SavedLocation.COLUMN_CATEGORY_ID, categoryId)
@@ -333,10 +340,43 @@ class SavedLocationRepository(private val context: Context) {
         val db = dbHelper.writableDatabase
         db.delete(SavedLocation.TABLE_NAME, "${SavedLocation.COLUMN_ID} = ?", arrayOf(id.toString()))
         
-        // Auto-sync if enabled
-        if (locationToDelete != null && shouldSyncLocation(locationToDelete.categoryId)) {
-            syncManager?.deleteFromCloud(id)
+        // Auto-sync if enabled (only locations already in the API have something to delete)
+        val remoteId = locationToDelete?.remoteId
+        if (remoteId != null && shouldSyncLocation(locationToDelete.categoryId)) {
+            syncManager?.deleteFromCloud(remoteId)
         }
+    }
+
+    // Sync with the API. These methods never trigger an upload themselves.
+
+    fun setRemoteId(locationId: Int, remoteId: Int?) {
+        val values = ContentValues().apply {
+            if (remoteId == null) putNull(SavedLocation.COLUMN_REMOTE_ID) else put(SavedLocation.COLUMN_REMOTE_ID, remoteId)
+        }
+        dbHelper.writableDatabase.update(SavedLocation.TABLE_NAME, values, "${SavedLocation.COLUMN_ID} = ?", arrayOf(locationId.toString()))
+    }
+
+    fun clearAllRemoteIds() {
+        val values = ContentValues().apply { putNull(SavedLocation.COLUMN_REMOTE_ID) }
+        dbHelper.writableDatabase.update(SavedLocation.TABLE_NAME, values, null, null)
+    }
+
+    /** Inserts a location downloaded from the API, already linked. Returns the local id. */
+    fun insertFromRemote(location: SavedLocation): Int {
+        val values = ContentValues().apply {
+            put(SavedLocation.COLUMN_DISPLAY_NAME, location.displayName)
+            put(SavedLocation.COLUMN_ADDRESS, location.address)
+            put(SavedLocation.COLUMN_CITY, location.city)
+            put(SavedLocation.COLUMN_COUNTRY, location.country)
+            put(SavedLocation.COLUMN_LATITUDE, location.latitude)
+            put(SavedLocation.COLUMN_LONGITUDE, location.longitude)
+            put(SavedLocation.COLUMN_DATE, location.date)
+            put(SavedLocation.COLUMN_CATEGORY_ID, location.categoryId)
+            put(SavedLocation.COLUMN_NOTE, location.note)
+            put(SavedLocation.COLUMN_ADDRESS_DATA, gson.toJson(location.addressData))
+            put(SavedLocation.COLUMN_REMOTE_ID, location.remoteId)
+        }
+        return dbHelper.writableDatabase.insert(SavedLocation.TABLE_NAME, null, values).toInt()
     }
 
     private fun shouldSyncLocation(categoryId: Int?): Boolean {

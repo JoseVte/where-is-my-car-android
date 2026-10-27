@@ -41,6 +41,8 @@ class EditCategoryFragment : Fragment() {
 
     private var categoryId: Int? = null
     private var selectedColor: String = "#E65100"
+    /** Label of a default category (a string resource), kept as is on save. */
+    private var systemLabel: String? = null
     private var selectedIcon: String = "favorite"
     private var customColor: String? = null
     private val randomEmoji = listOf("🤩", "🚀", "🎨", "🎭", "🎮", "🎸", "⛺", "🌈", "🍦", "🍩").random()
@@ -132,7 +134,7 @@ class EditCategoryFragment : Fragment() {
     }
 
     private fun saveCategory() {
-        val name = binding.categoryName.text.toString()
+        val name = systemLabel ?: binding.categoryName.text.toString()
         if (name.isNotBlank()) {
             val iconToSave = if (icons.contains(selectedIcon)) {
                 "@drawable/$selectedIcon"
@@ -171,7 +173,12 @@ class EditCategoryFragment : Fragment() {
     private fun loadCategoryData() {
         categoryId?.let { id ->
             repository.getCategory(id)?.let { category ->
-                binding.categoryName.setText(category.label)
+                binding.categoryName.setText(category.getResolvedLabel(requireContext()))
+                if (category.isSystem) {
+                    systemLabel = category.label
+                    binding.categoryName.isEnabled = false
+                    binding.categoryName.alpha = 0.6f
+                }
                 selectedColor = category.color
                 selectedIcon = if (category.icon.startsWith("@drawable/")) {
                     category.icon.substringAfterLast("/")

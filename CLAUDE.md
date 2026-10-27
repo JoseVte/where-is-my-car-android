@@ -31,6 +31,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 # Run instrumented tests (requires connected device/emulator)
 ./gradlew connectedAndroidTest
 
+# Run JVM unit tests of the mobile flavor (includes the API client and mappers)
+./gradlew :app:testMobileDebugUnitTest
+
 # Run specific unit test
 ./gradlew test --tests io.josrom.whereismycar.ExampleUnitTest
 
@@ -72,6 +75,17 @@ The app uses a single-activity architecture with Android Navigation Component:
 - **Architecture Components**: Navigation Component, ViewBinding
 - **UI**: Material Design Components, ConstraintLayout
 
+### Sync with the Where Is My Car API
+- SQLite (`DBHelper`, version 3) is the source of truth, so the app works offline. `SyncManager` syncs it with the REST API (Spring Boot project in `~/Projects/Personal/whereismycar`). Firebase Realtime Database is no longer used.
+- Every synced row stores its API id in `remote_id` (`Category.remoteId`, `SavedLocation.remoteId`). Local ids and API ids are different, never mix them. Read `remote_id` before deleting a local row, the delete call to the API needs it.
+- Full sync (after Google sign in and on resume): `GET /api/me` (creates the API user), then categories, then locations. It downloads what is missing locally, links local categories to API categories with the same label (the API does not allow duplicate labels), and uploads local changes. Local wins on conflicts.
+- Single inserts, updates and deletes are pushed right away when auto sync is on. All API calls run on `Dispatchers.IO`, one at a time (`Mutex`). Failures are logged and retried on the next full sync.
+- Network code lives in the `api` package: `WhereIsMyCarApi` (Retrofit), `ApiClient` (adds the Firebase ID token and `Accept-Language`, refreshes the token once on 401) and `ApiMappers` (local and API models, dates and the API limits).
+- Dates: SQLite keeps `yyyy-MM-dd HH:mm:ss` in the device time zone, the API uses ISO 8601 UTC. Colors: the color picker returns `#AARRGGBB`, the API only accepts `#RRGGBB`. Always convert through `ApiMappers`.
+- API URL: `BuildConfig.API_BASE_URL`, from `api.base.url` in `local.properties` (default `http://10.0.2.2:8080/`, the host machine as seen from the emulator).
+- Every location has a category (the API rejects locations without one). `SavedLocationRepository.insertLocation` falls back to `CategoryRepository.getOrCreateDefaultCategory()` ("Others"), the edit screen requires a category, and deleting a category deletes its locations (locally and in the API). There is no "Uncategorized" anymore.
+- Known limitation: deletions made while offline are not queued, so the next full sync downloads those items again from the API.
+
 ## Important Implementation Notes
 
 1. **OSMDroid Initialization**: Must call `Configuration.getInstance().load()` in `onCreateView()` BEFORE inflating layouts that contain MapView, otherwise the map will not render correctly.
@@ -80,9 +94,11 @@ The app uses a single-activity architecture with Android Navigation Component:
 
 3. **ViewBinding**: All fragments and activities use ViewBinding. Binding instances are nullable in fragments and must be cleaned up in `onDestroyView()`.
 
-4. **Java Version**: Project uses Java 11 for source and target compatibility.
+4. **Database migrations**: `DBHelper.onUpgrade` migrates step by step (`if (oldVersion < N)`) and must keep user data. Never drop tables on upgrade.
 
-5. **Gradle Version Catalog**: Dependencies are managed via `libs` version catalog (see `gradle/libs.versions.toml` if it exists).
+5. **Java Version**: Project uses Java 11 for source and target compatibility.
+
+6. **Gradle Version Catalog**: Dependencies are managed via `libs` version catalog (see `gradle/libs.versions.toml` if it exists).
 
 ## Test Structure
 

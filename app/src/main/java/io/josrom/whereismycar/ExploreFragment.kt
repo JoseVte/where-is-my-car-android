@@ -401,10 +401,6 @@ class ExploreFragment : Fragment(), LocationListener,
             return
         }
 
-        val locationManager = requireContext().getSystemService(LOCATION_SERVICE) as LocationManager
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0L, 0f, this)
-        _myLocationNewOverlay?.enableMyLocation()
-
         val isEnabled = _prefs.getBoolean("location_service", true)
         if (isEnabled) {
             if (checkPermission(requireContext(), activity as MainActivity)) {

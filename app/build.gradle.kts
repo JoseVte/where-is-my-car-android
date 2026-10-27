@@ -10,6 +10,9 @@ val properties = Properties()
 val localPropertiesFile: File = project.rootProject.file("local.properties")
 properties.load(localPropertiesFile.inputStream())
 val googleApiKey: String = properties.getProperty("google.api.key")
+// Base URL of the Where Is My Car API. 10.0.2.2 is the host machine as seen from the emulator.
+// Override it in local.properties with api.base.url (for example your Mac's IP when using a real device).
+val apiBaseUrl: String = properties.getProperty("api.base.url", "http://10.0.2.2:8080/")
 
 
 android {
@@ -26,6 +29,7 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
         buildConfigField("String", "GOOGLE_API_KEY", googleApiKey)
+        buildConfigField("String", "API_BASE_URL", "\"$apiBaseUrl\"")
     }
 
     flavorDimensions += "device"
@@ -101,7 +105,9 @@ dependencies {
     // Firebase
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.auth)
-    implementation(libs.firebase.database)
+    // App Check: Play Integrity in release, debug provider (token in logcat) in debug builds
+    releaseImplementation(libs.firebase.appcheck.playintegrity)
+    debugImplementation(libs.firebase.appcheck.debug)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.recyclerview)
 
@@ -111,7 +117,17 @@ dependencies {
     
     implementation(libs.glide)
 
+    // API client
+    implementation(libs.retrofit)
+    implementation(libs.retrofit.converter.gson)
+    implementation(libs.okhttp)
+    implementation(libs.okhttp.logging.interceptor)
+    implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.kotlinx.coroutines.play.services)
+
     testImplementation(libs.junit)
+    testImplementation(libs.okhttp.mockwebserver)
+    testImplementation(libs.kotlinx.coroutines.test)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(libs.androidx.espresso.contrib)

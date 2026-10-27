@@ -164,14 +164,6 @@ class CloudSyncSettingsFragment : Fragment() {
 
     private fun setupCategoryList() {
         val categories = categoryRepository.getAllCategories()
-        
-        val uncategorized = Category(
-            id = -1,
-            label = getString(R.string.uncategorized),
-            icon = "ic_forbidden",
-            color = "#7D6E5D"
-        )
-        categories.add(0, uncategorized)
 
         val prefs = PreferenceManager.getDefaultSharedPreferences(requireContext())
         val selectedJson = prefs.getString("sync_selected_categories", "[]") ?: "[]"

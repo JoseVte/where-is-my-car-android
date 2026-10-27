@@ -225,25 +225,6 @@ class HistoryFragment : Fragment() {
             binding.categoriesContainer.addView(allChip)
         }
 
-        // Uncategorized filter
-        val isUncategorizedSelected = selectedCategoryIds.contains(-1)
-        val uncategorizedChip = createFilterChip(
-            context = requireContext(),
-            label = getString(R.string.uncategorized),
-            iconRes = 0, // Consistently hide forbidden/uncategorized icon foreground
-            isSelected = isUncategorizedSelected,
-            baseColor = ContextCompat.getColor(requireContext(), R.color.text_secondary)
-        ) {
-            if (isUncategorizedSelected) {
-                selectedCategoryIds.remove(-1)
-            } else {
-                selectedCategoryIds.add(-1)
-            }
-            renderFilters()
-            loadLocations()
-        }
-        binding.categoriesContainer.addView(uncategorizedChip)
-
         val categories = categoryRepository.getAllCategories()
         for (category in categories) {
             val isSelected = selectedCategoryIds.contains(category.id)

@@ -12,6 +12,7 @@
         tools:ignore="ScopedStorage" />
 
     <application
+        android:name=".WhereIsMyCarApplication"
         android:allowBackup="true"
         tools:replace="android:allowBackup"
         android:dataExtractionRules="@xml/data_extraction_rules"

@@ -12,7 +12,8 @@ data class SavedLocation(
     val categoryId: Int? = null,
     val note: String? = null,
     val addressData: HashMap<String, String> = hashMapOf(),
-    val category: Category? = null
+    val category: Category? = null,
+    val remoteId: Int? = null // Id in the API, null until synced
 ) {
     companion object {
         const val TABLE_NAME = "locations"
@@ -27,5 +28,6 @@ data class SavedLocation(
         const val COLUMN_DATE = "date"
         const val COLUMN_CATEGORY_ID = "category_id"
         const val COLUMN_NOTE = "note"
+        const val COLUMN_REMOTE_ID = "remote_id"
     }
 }

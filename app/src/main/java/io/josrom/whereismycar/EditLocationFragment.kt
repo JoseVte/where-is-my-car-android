@@ -106,24 +106,11 @@ class EditLocationFragment : Fragment() {
         val categories = categoryRepository.getAllCategories()
         binding.categoryChipGroup.removeAllViews()
 
-        // None / Uncategorized chip
-        val isNoneSelected = selectedCategoryId == null
-        val noneChip = createFilterChip(
-            context = requireContext(),
-            label = getString(R.string.uncategorized),
-            iconRes = 0, // Forbidden icon foreground removed for Uncategorized
-            isSelected = isNoneSelected,
-            baseColor = ContextCompat.getColor(requireContext(), R.color.text_secondary)
-        ) {
-            selectedCategoryId = null
-            loadCategories()
-        }
-        binding.categoryChipGroup.addView(noneChip)
-
         for (category in categories) {
             val isSelected = category.id == selectedCategoryId
             val chip = category.createChip(requireContext(), isSelected, category.label == getString(R.string.uncategorized)) {
-                selectedCategoryId = if (selectedCategoryId == category.id) null else category.id
+                // A category is required, so tapping the selected one keeps it selected
+                selectedCategoryId = category.id
                 loadCategories() // Refresh all chips to update visuals
             }
             binding.categoryChipGroup.addView(chip)
@@ -169,8 +156,14 @@ class EditLocationFragment : Fragment() {
     private fun saveChanges() {
         val newName = binding.etLocationDisplayName.text.toString()
         val newNotes = binding.etNotes.text.toString()
-        
-        locationRepository.updateLocation(locationId, newName, selectedCategoryId, newNotes)
+        val categoryId = selectedCategoryId
+
+        if (categoryId == null) {
+            Toast.makeText(requireContext(), getString(R.string.category_required), Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        locationRepository.updateLocation(locationId, newName, categoryId, newNotes)
         
         Toast.makeText(requireContext(), getString(R.string.location_updated), Toast.LENGTH_SHORT).show()
         findNavController().popBackStack()

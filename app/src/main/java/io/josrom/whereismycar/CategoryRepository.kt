@@ -2,6 +2,8 @@ package io.josrom.whereismycar
 
 import android.content.ContentValues
 import android.content.Context
+import android.database.Cursor
+import android.database.sqlite.SQLiteDatabase
 import androidx.core.database.sqlite.transaction
 import androidx.preference.PreferenceManager
 import org.json.JSONArray
@@ -25,7 +27,7 @@ class CategoryRepository(private val context: Context) {
                     val label = it.getString(it.getColumnIndexOrThrow(Category.COLUMN_LABEL))
                     val icon = it.getString(it.getColumnIndexOrThrow(Category.COLUMN_ICON))
                     val color = it.getString(it.getColumnIndexOrThrow(Category.COLUMN_COLOR))
-                    categories.add(Category(id, label, icon, color))
+                    categories.add(Category(id, label, icon, color, remoteIdOf(it)))
                 } while (it.moveToNext())
             }
         }
@@ -69,33 +71,28 @@ class CategoryRepository(private val context: Context) {
     }
 
     fun deleteCategory(categoryId: Int) {
+        // Read the API id before the row is gone
+        val remoteId = getCategory(categoryId)?.remoteId
         val db = dbHelper.writableDatabase
         db.transaction {
-            try {
-                // Unset category_id from locations
-                val values = ContentValues().apply {
-                    putNull(SavedLocation.COLUMN_CATEGORY_ID)
-                }
-                update(
-                    SavedLocation.TABLE_NAME,
-                    values,
-                    "${SavedLocation.COLUMN_CATEGORY_ID} = ?",
-                    arrayOf(categoryId.toString())
-                )
+            // A location always has a category: deleting the category deletes its locations
+            // (the API does the same, so only the category delete is sent)
+            delete(
+                SavedLocation.TABLE_NAME,
+                "${SavedLocation.COLUMN_CATEGORY_ID} = ?",
+                arrayOf(categoryId.toString())
+            )
 
-                // Delete the category
-                delete(
-                    Category.TABLE_NAME,
-                    "${Category.COLUMN_ID} = ?",
-                    arrayOf(categoryId.toString())
-                )
-            } finally {
-            }
+            delete(
+                Category.TABLE_NAME,
+                "${Category.COLUMN_ID} = ?",
+                arrayOf(categoryId.toString())
+            )
         }
 
         // Auto-sync if enabled
-        if (shouldSyncCategory(categoryId)) {
-            syncManager?.deleteCategoryFromCloud(categoryId)
+        if (remoteId != null && shouldSyncCategory(categoryId)) {
+            syncManager?.deleteCategoryFromCloud(remoteId)
         }
     }
 
@@ -110,10 +107,24 @@ class CategoryRepository(private val context: Context) {
                 val icon = it.getString(it.getColumnIndexOrThrow(Category.COLUMN_ICON))
                 val color = it.getString(it.getColumnIndexOrThrow(Category.COLUMN_COLOR))
 
-                return Category(id, label, icon, color)
+                return Category(id, label, icon, color, remoteIdOf(it))
             }
             return null
         }
+    }
+
+    /**
+     * The category used when a location is saved without one: "Others" if it exists, otherwise the first
+     * category, otherwise a new "Others" category.
+     */
+    fun getOrCreateDefaultCategory(): Category {
+        val categories = getAllCategories()
+        categories.firstOrNull { it.label.equals(DBHelper.DEFAULT_CATEGORY_LABEL, ignoreCase = true) }?.let { return it }
+        categories.firstOrNull()?.let { return it }
+
+        val (label, icon, color) = dbHelper.defaultCategory()
+        val id = insertCategory(Category(label = label, icon = icon, color = color))
+        return getCategory(id) ?: Category(id, label, icon, color)
     }
 
     fun getLocationCountForCategory(categoryId: Int): Int {
@@ -124,6 +135,37 @@ class CategoryRepository(private val context: Context) {
             }
         }
         return 0
+    }
+
+    // Sync with the API. These methods never trigger an upload themselves.
+
+    fun setRemoteId(categoryId: Int, remoteId: Int?) {
+        val values = ContentValues().apply {
+            if (remoteId == null) putNull(Category.COLUMN_REMOTE_ID) else put(Category.COLUMN_REMOTE_ID, remoteId)
+        }
+        dbHelper.writableDatabase.update(Category.TABLE_NAME, values, "${Category.COLUMN_ID} = ?", arrayOf(categoryId.toString()))
+    }
+
+    fun clearAllRemoteIds() {
+        val values = ContentValues().apply { putNull(Category.COLUMN_REMOTE_ID) }
+        dbHelper.writableDatabase.update(Category.TABLE_NAME, values, null, null)
+    }
+
+    /** Inserts a category downloaded from the API, already linked. Returns the local id, or -1 on conflict. */
+    fun insertFromRemote(category: Category): Int {
+        val values = ContentValues().apply {
+            put(Category.COLUMN_LABEL, category.label)
+            put(Category.COLUMN_ICON, category.icon)
+            put(Category.COLUMN_COLOR, category.color)
+            put(Category.COLUMN_REMOTE_ID, category.remoteId)
+        }
+        return dbHelper.writableDatabase
+            .insertWithOnConflict(Category.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_IGNORE).toInt()
+    }
+
+    private fun remoteIdOf(cursor: Cursor): Int? {
+        val index = cursor.getColumnIndex(Category.COLUMN_REMOTE_ID)
+        return if (index < 0 || cursor.isNull(index)) null else cursor.getInt(index)
     }
 
     private fun shouldSyncCategory(categoryId: Int): Boolean {

@@ -18,7 +18,7 @@
     <string name="sync_title">Sync with Wear OS</string>
 
     <string name="location_service_title">Location Service</string>
-    <string name="location_service_summary">Enable/Disable location updates</string>
+    <string name="location_service_summary">Shows and follows your position on the map. When off, it is only used to save a location or calculate a route.</string>
     <string name="current_location">Go to current location</string>
     <string name="onboarding_title_1">Never Forget a Place</string>
     <string name="onboarding_description_1">Save your current location and never lose track of where you parked or found that hidden gem.</string>
@@ -50,6 +50,9 @@
     <string name="saved_location_default">Saved Location</string>
     <string name="no_notes_added">No notes added for this location.</string>
     <string name="category_leisure">Leisure</string>
+    <string name="category_home">Home</string>
+    <string name="category_favorites">Favorites</string>
+    <string name="category_others">Others</string>
     <string name="coords_copied">Coordinates copied to clipboard</string>
     <string name="waiting_for_gps">Waiting for GPS location…</string>
     <string name="stop_navigation">Stop Navigation</string>
@@ -139,7 +142,8 @@
     <string name="select_emoji_desc">Choose an emoji to represent this category</string>
 
     <string name="delete_category_confirmation_title">Delete Category?</string>
-    <string name="delete_category_confirmation_message">Are you sure you want to delete this category? This won\'t delete the locations in it.</string>
+    <string name="delete_category_confirmation_message">Are you sure you want to delete this category? Its saved locations will also be deleted.</string>
+    <string name="category_required">Choose a category</string>
     <string name="uncategorized">Uncategorized</string>
     <string name="search_for_locations">Search for locations…</string>
 

@@ -16,8 +16,14 @@ import com.google.android.material.shape.CornerFamily
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
 
+/** Default categories store a string resource as label: translated on display and not editable. */
+val Category.isSystem: Boolean
+    get() = label.startsWith(SYSTEM_LABEL_PREFIX)
+
+const val SYSTEM_LABEL_PREFIX = "@string/"
+
 fun Category.getResolvedLabel(context: Context): String {
-    return if (this.label.startsWith("@string/")) {
+    return if (this.isSystem) {
         val resourceName = this.label.substringAfterLast("/")
         val resourceId = context.resources.getIdentifier(resourceName, "string", context.packageName)
         if (resourceId != 0) context.getString(resourceId) else this.label

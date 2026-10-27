@@ -12,7 +12,7 @@
     <string name="sync_title">Sincronizar con Wear OS</string>
 
     <string name="location_service_title">Servicio de ubicación</string>
-    <string name="location_service_summary">Activar/Desactivar actualizaciones de ubicación</string>
+    <string name="location_service_summary">Muestra y sigue tu posición en el mapa. Si lo desactivas, solo se usa al guardar una ubicación o calcular una ruta.</string>
     <string name="current_location">Ir a mi ubicación actual</string>
     <string name="onboarding_title_1">No olvides ningún lugar</string>
     <string name="onboarding_description_1">Guarda tu ubicación actual y nunca pierdas la pista de dónde aparcaste o encontraste ese rincón especial.</string>
@@ -44,6 +44,9 @@
     <string name="saved_location_default">Ubicación guardada</string>
     <string name="no_notes_added">Sin notas para esta ubicación.</string>
     <string name="category_leisure">Ocio</string>
+    <string name="category_home">Casa</string>
+    <string name="category_favorites">Favoritos</string>
+    <string name="category_others">Otros</string>
     <string name="coords_copied">Coordenadas copiadas al portapapeles</string>
     <string name="waiting_for_gps">Esperando señal GPS…</string>
     <string name="stop_navigation">Detener navegación</string>
@@ -129,7 +132,8 @@
     <string name="select_emoji_desc">Elige un emoji para representar esta categoría</string>
 
     <string name="delete_category_confirmation_title">¿Eliminar categoría?</string>
-    <string name="delete_category_confirmation_message">¿Estás seguro de que quieres eliminar esta categoría? No se borrarán los lugares asociados.</string>
+    <string name="delete_category_confirmation_message">¿Estás seguro de que quieres eliminar esta categoría? También se eliminarán los lugares guardados en ella.</string>
+    <string name="category_required">Elige una categoría</string>
     <string name="uncategorized">Sin categoría</string>
     <string name="search_for_locations">Buscar ubicaciones…</string>
 
